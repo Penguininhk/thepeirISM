@@ -29,6 +29,7 @@ export default function StudentLoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
       if (err instanceof FirebaseError && err.code === 'auth/user-not-found') {
+        // If user does not exist, try to create a new account.
         try {
           await createUserWithEmailAndPassword(auth, email, password);
         } catch (createErr) {
@@ -38,12 +39,15 @@ export default function StudentLoginPage() {
             setError("An unexpected error occurred during sign up.");
           }
         }
-      } else if (err instanceof FirebaseError && err.code === 'auth/invalid-credential') {
-        setError("Invalid email or password. Please try again.");
-      }
-      else if (err instanceof FirebaseError) {
-        setError(err.message);
-      } else {
+      } else if (err instanceof FirebaseError) {
+         // Handle other Firebase errors, like wrong password
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+          setError("Invalid email or password. Please try again.");
+        } else {
+          setError(err.message);
+        }
+      } 
+      else {
         setError("An unexpected error occurred during login.");
       }
     }
