@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -34,12 +34,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UserProfile } from '@/lib/data';
+import { UserProfile, ActionLog } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, History } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -62,6 +63,29 @@ export default function AdminDashboardPage() {
   }, [firestore]);
 
   const { data: users, isLoading, error } = useCollection<UserProfile>(usersQuery);
+  
+  const actionLogsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'actionLogs'), orderBy('timestamp', 'desc'), limit(10));
+  }, [firestore]);
+
+  const { data: actionLogs } = useCollection<ActionLog>(actionLogsQuery);
+  
+  const logAction = async (actionType: ActionLog['actionType'], details: string) => {
+    if (!firestore) return;
+    try {
+      await addDoc(collection(firestore, 'actionLogs'), {
+        timestamp: serverTimestamp(),
+        adminId: 'admin', // In a real app, this would be the logged-in admin's ID
+        actionType,
+        details,
+      });
+    } catch (e) {
+      console.error("Failed to log action:", e);
+      // Optional: show a toast that logging failed, but don't block main action
+    }
+  };
+
 
   const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
     if (!firestore) return;
@@ -82,6 +106,10 @@ export default function AdminDashboardPage() {
         title: 'User Status Updated',
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
+      
+      const logDetails = `User '${user.firstName} ${user.lastName}' (${user.email}) was ${newStatus}.`;
+      await logAction('user_status_update', logDetails);
+
     } catch (e) {
       console.error('Failed to update user status:', e);
       toast({
@@ -114,6 +142,10 @@ export default function AdminDashboardPage() {
         title: "User Created",
         description: `Account for ${newUser.firstName} ${newUser.lastName} has been created and approved.`,
       });
+
+      const logDetails = `New ${newUser.role} account created for '${newUser.firstName} ${newUser.lastName}' (${newUser.email}).`;
+      await logAction('user_created', logDetails);
+
       setCreateUserOpen(false);
       setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
 
@@ -214,88 +246,125 @@ export default function AdminDashboardPage() {
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pending Approvals</CardTitle>
-          <CardDescription>Review and approve or reject new account requests.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {pendingUsers.length > 0 ? (
-            <div className="overflow-hidden rounded-lg border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendingUsers.map(user => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(user, 'approved')}>Approve</Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(user, 'rejected')}>Reject</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground py-8">No pending requests.</p>
-          )}
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>All Users</CardTitle>
-          <CardDescription>A list of all registered users in the system.</CardDescription>
-        </CardHeader>
-        <CardContent>
-           <div className="overflow-hidden rounded-lg border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {otherUsers.map(user => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                       <TableCell>
-                        <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                         <Badge
-                          className={cn({
-                            "bg-green-500 text-white": user.status === "approved",
-                            "bg-red-500 text-white": user.status === "rejected",
-                          })}
-                        >
-                          {user.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pending Approvals</CardTitle>
+              <CardDescription>Review and approve or reject new account requests.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {pendingUsers.length > 0 ? (
+                <div className="overflow-hidden rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pendingUsers.map(user => (
+                        <TableRow key={user.id}>
+                          <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(user, 'approved')}>Approve</Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(user, 'rejected')}>Reject</Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-8">No pending requests.</p>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>All Users</CardTitle>
+              <CardDescription>A list of all registered users in the system.</CardDescription>
+            </CardHeader>
+            <CardContent>
+               <div className="overflow-hidden rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {otherUsers.map(user => (
+                        <TableRow key={user.id}>
+                          <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                           <TableCell>
+                            <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                             <Badge
+                              className={cn({
+                                "bg-green-500 text-white": user.status === "approved",
+                                "bg-red-500 text-white": user.status === "rejected",
+                              })}
+                            >
+                              {user.status}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="lg:col-span-1">
+           <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  Action Log
+                </CardTitle>
+                <CardDescription>A log of recent administrative actions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {actionLogs && actionLogs.length > 0 ? (
+                    actionLogs.map(log => (
+                      <div key={log.id} className="flex items-start gap-3">
+                         <div className="flex-shrink-0 pt-1">
+                           <div className="h-2 w-2 rounded-full bg-accent" />
+                         </div>
+                         <div>
+                          <p className="text-sm">{log.details}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {log.timestamp ? `${formatDistanceToNow(log.timestamp.toDate())} ago` : 'just now'} by {log.adminId}
+                          </p>
+                         </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-center text-muted-foreground py-4">No actions logged yet.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+        </div>
+      </div>
     </div>
   );
-
+}
     

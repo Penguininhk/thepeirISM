@@ -61,6 +61,15 @@ export type Class = {
   studentIds?: string[];
 }
 
+export type ActionLog = {
+  id: string;
+  timestamp: Timestamp;
+  adminId: string;
+  actionType: 'user_status_update' | 'user_created';
+  details: string;
+};
+
+
 // The following data is kept for page structure reference and will be removed.
 export const studentProfile = {
   id: 'usr-001',
@@ -95,3 +104,5 @@ export const classLists = [
 export const availableCourses = [
   { id: 'crs-201', name: 'Calculus I', code: 'MATH-301', description: 'An introduction to differential and integral calculus.', teacher: { name: 'Mr. David Chen'}, imageUrl: 'https://picsum.photos/seed/105/600/400' },
 ];
+
+    
