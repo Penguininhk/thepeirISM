@@ -9,13 +9,13 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { doc, updateDoc } from 'firebase/firestore';
-import { getFirestore } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 
 const UpdateUserStatusInputSchema = z.object({
   userId: z.string().describe('The ID of the user to update.'),
   status: z.enum(['approved', 'rejected']).describe('The new status for the user.'),
+  email: z.string().email().describe('The email of the user to notify.'),
 });
 export type UpdateUserStatusInput = z.infer<typeof UpdateUserStatusInputSchema>;
 
@@ -87,29 +87,18 @@ const updateUserStatusFlow = ai.defineFlow(
     outputSchema: UpdateUserStatusOutputSchema,
   },
   async (input) => {
-    const { userId, status } = input;
-    const { firestore } = initializeFirebase();
+    const { userId, status, email } = input;
+    
+    // NOTE: The direct Firestore update from the server-side flow is removed
+    // to prevent the client/server boundary error. The client-side code
+    // in the AdminDashboardPage already handles the Firestore update.
+    // This flow is now only responsible for the notification.
 
     try {
-      const userRef = doc(firestore, 'users', userId);
-
-      // Get user data to find their email
-      const { getDoc } = await import('firebase/firestore');
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        return { success: false, message: 'User not found.' };
-      }
-      const userData = userSnap.data();
-      const userEmail = userData.email;
-
-      // Update the user's status in Firestore
-      await updateDoc(userRef, { status });
-
       // Generate the notification email content
       const llmResponse = await prompt({
         status,
-        email: userEmail,
+        email,
       });
 
       const emailContent = llmResponse.output;
@@ -120,12 +109,12 @@ const updateUserStatusFlow = ai.defineFlow(
       
       // Use the sendEmail tool
       await ai.runTool('sendEmail', {
-        to: userEmail,
+        to: email,
         subject: emailContent.subject,
         body: emailContent.body,
       });
 
-      return { success: true, message: `User status updated to ${status} and notification sent.` };
+      return { success: true, message: `Notification sent for user status update to ${status}.` };
     } catch (error) {
       console.error('Error in updateUserStatusFlow: ', error);
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';

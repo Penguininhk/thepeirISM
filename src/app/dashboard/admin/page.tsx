@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Table,
@@ -32,20 +32,26 @@ export default function AdminDashboardPage() {
 
   const { data: users, isLoading, error } = useCollection<UserProfile>(usersQuery);
 
-  const handleUpdateStatus = async (userId: string, newStatus: 'approved' | 'rejected') => {
+  const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
     if (!firestore) return;
 
     try {
-      const userInput: UpdateUserStatusInput = {
-        userId,
+      // 1. Update status in Firestore
+      const userRef = doc(firestore, 'users', user.id);
+      await updateDoc(userRef, { status: newStatus });
+      
+      // 2. Trigger the notification flow
+      const flowInput: UpdateUserStatusInput = {
+        userId: user.id,
         status: newStatus,
+        email: user.email,
       };
 
-      await updateUserStatus(userInput);
+      await updateUserStatus(flowInput);
       
       toast({
         title: 'User Status Updated',
-        description: `User has been ${newStatus}.`,
+        description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
     } catch (e) {
       console.error('Failed to update user status:', e);
@@ -109,8 +115,8 @@ export default function AdminDashboardPage() {
                         <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
                       </TableCell>
                       <TableCell className="text-right space-x-2">
-                        <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(user.id, 'approved')}>Approve</Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(user.id, 'rejected')}>Reject</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(user, 'approved')}>Approve</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(user, 'rejected')}>Reject</Button>
                       </TableCell>
                     </TableRow>
                   ))}
