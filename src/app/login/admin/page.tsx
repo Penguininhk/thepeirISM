@@ -24,13 +24,15 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState<string | null>(null);
 
-  const createAdminUser = async () => {
+  const createAdminUserAndProfile = async () => {
     if (!auth || !firestore) return null;
     try {
+      // First, create the user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const adminUser = userCredential.user;
       
-      // Create a profile for the admin user in Firestore.
+      // IMPORTANT: Immediately create the user's profile document in Firestore.
+      // The security rules rely on this document existing to grant permissions.
       await setDoc(doc(firestore, "users", adminUser.uid), {
         id: adminUser.uid,
         firstName: 'Admin',
@@ -40,9 +42,12 @@ export default function AdminLoginPage() {
         status: 'approved',
       });
       
+      console.log('Admin user and profile created successfully.');
       return userCredential;
     } catch (creationError) {
-      console.error("Admin user creation failed:", creationError);
+      console.error("Fatal: Admin user creation failed:", creationError);
+      // This is a critical failure, as the app can't function without the admin.
+      setError('A critical error occurred while setting up the admin account. Please refresh and try again.');
       return null;
     }
   }
@@ -53,25 +58,29 @@ export default function AdminLoginPage() {
     if (!auth) return;
 
     try {
+      // Attempt to sign in first.
       await signInWithEmailAndPassword(auth, email, password);
-      // The useEffect will handle redirection on successful login
+      // If successful, the useEffect will handle redirection.
     } catch (err) {
       if (err instanceof FirebaseError) {
-        // Handle cases where the user does not exist by creating them.
-        // 'auth/invalid-credential' can be returned for non-existent users in newer SDKs.
+        // If sign-in fails because the user doesn't exist, create the user and their profile.
         if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-          const newUser = await createAdminUser();
+          console.log('Admin user not found, attempting to create...');
+          const newUser = await createAdminUserAndProfile();
           if (newUser) {
-            // New user created, sign-in is now implicit, and useEffect will redirect.
+            // After creation, the onAuthStateChanged listener will pick up the new user,
+            // and the useEffect below will redirect.
           } else {
-             setError("Could not create or sign in as admin.");
+             // The createAdminUserAndProfile function sets its own specific error message.
           }
         } else if (err.code === 'auth/wrong-password') {
            setError("Invalid admin credentials.");
         } else {
+          console.error("Admin login error:", err);
           setError(err.message);
         }
       } else {
+        console.error("Unexpected admin login error:", err);
         setError('An unexpected error occurred.');
       }
     }
