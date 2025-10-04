@@ -12,7 +12,7 @@ export default function AdminDashboardLayout({
 }) {
   const router = useRouter();
   const auth = useAuth();
-  const { user, isUserLoading } = useUser();
+  const { user, profile, isUserLoading } = useUser();
 
   useEffect(() => {
     if (isUserLoading) {
@@ -25,18 +25,18 @@ export default function AdminDashboardLayout({
       return;
     }
 
-    // Check if the logged-in user is the admin.
-    // The UID 'V5h753v5w5d8Y3Z1U5g8x5Yv4P92' is for admin@school.edu.
-    if (user.uid !== 'V5h753v5w5d8Y3Z1U5g8x5Yv4P92') {
-      // If the user is not the admin, sign them out and redirect
-      if (auth) {
+    // Check if the logged-in user is an admin by role
+    if (profile?.role !== 'admin') {
+       // If the user is not an admin, sign them out and redirect
+       if (auth) {
         signOut(auth);
       }
       router.push('/login/admin');
     }
-  }, [user, isUserLoading, router, auth]);
 
-  if (isUserLoading || !user || user.uid !== 'V5h753v5w5d8Y3Z1U5g8x5Yv4P92') {
+  }, [user, profile, isUserLoading, router, auth]);
+
+  if (isUserLoading || !user || profile?.role !== 'admin') {
     // While loading or if not the correct admin user, show a loading state
     return (
       <div className="flex h-screen w-full items-center justify-center bg-muted/40">
