@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import AppLogo from "@/components/app-logo";
 import { useAuth, useUser } from "@/firebase";
 import React, { useEffect, useState } from "react";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, Auth } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 
 export default function TeacherLoginPage() {
@@ -38,7 +38,10 @@ export default function TeacherLoginPage() {
             setError("An unexpected error occurred during sign up.");
           }
         }
-      } else if (err instanceof FirebaseError) {
+      } else if (err instanceof FirebaseError && err.code === 'auth/invalid-credential') {
+        setError("Invalid email or password. Please try again.");
+      }
+      else if (err instanceof FirebaseError) {
         setError(err.message);
       } else {
         setError("An unexpected error occurred during login.");
@@ -73,7 +76,7 @@ export default function TeacherLoginPage() {
         <CardContent>
           <form onSubmit={handleLogin}>
             <div className="grid gap-4">
-              {error && <div className="text-red-500 text-sm p-3 bg-red-100 border border-red-400 rounded-md">{error}</div>}
+              {error && <div className="rounded-md border border-red-400 bg-red-100 p-3 text-sm text-red-500">{error}</div>}
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
