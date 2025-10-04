@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import AppLogo from "@/components/app-logo";
 import { useAuth, useUser } from "@/firebase";
 import React, { useEffect, useState } from "react";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 
 export default function StudentLoginPage() {
@@ -28,26 +28,13 @@ export default function StudentLoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      if (err instanceof FirebaseError && err.code === 'auth/user-not-found') {
-        // If user does not exist, try to create a new account.
-        try {
-          await createUserWithEmailAndPassword(auth, email, password);
-        } catch (createErr) {
-          if (createErr instanceof FirebaseError) {
-            setError(createErr.message);
-          } else {
-            setError("An unexpected error occurred during sign up.");
-          }
-        }
-      } else if (err instanceof FirebaseError) {
-         // Handle other Firebase errors, like wrong password
-        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-          setError("Invalid email or password. Please try again.");
+      if (err instanceof FirebaseError) {
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+          setError("Invalid email or password. Please try again or sign up.");
         } else {
           setError(err.message);
         }
-      } 
-      else {
+      } else {
         setError("An unexpected error occurred during login.");
       }
     }
@@ -111,11 +98,17 @@ export default function StudentLoginPage() {
                 />
               </div>
               <Button type="submit" className="w-full">
-                Login or Sign Up
+                Login
               </Button>
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
+            Don't have an account?{" "}
+            <Link href="/signup/student" className="underline">
+              Sign up
+            </Link>
+          </div>
+          <div className="mt-2 text-center text-sm">
             Not a student?{" "}
             <Link href="/login/teacher" className="underline">
               Login as a teacher
