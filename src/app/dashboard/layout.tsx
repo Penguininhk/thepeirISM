@@ -21,8 +21,13 @@ export default function DashboardLayout({
 
   const isStudentPage = pathname.startsWith('/dashboard/student');
   const isTeacherPage = pathname.startsWith('/dashboard/teacher');
+  const isAdminPage = pathname.startsWith('/dashboard/admin');
 
   useEffect(() => {
+    if (isAdminPage) {
+      return; // Admin layout will handle authentication
+    }
+
     if (isUserLoading) {
       return; // Wait until user auth state is determined
     }
@@ -72,7 +77,12 @@ export default function DashboardLayout({
        return;
     }
 
-  }, [user, profile, isUserLoading, router, pathname, isStudentPage, isTeacherPage, toast]);
+  }, [user, profile, isUserLoading, router, pathname, isStudentPage, isTeacherPage, isAdminPage, toast]);
+  
+  // Let the admin layout handle its own loading/rendering
+  if (isAdminPage) {
+    return <>{children}</>;
+  }
 
   if (isUserLoading || !user || !profile) {
     return (

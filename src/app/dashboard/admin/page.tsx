@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
@@ -31,13 +31,6 @@ export default function AdminDashboardPage() {
   }, [firestore]);
 
   const { data: users, isLoading, error } = useCollection<UserProfile>(usersQuery);
-
-  useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem('isAdminAuthenticated');
-    if (isAuthenticated !== 'true') {
-      router.push('/login/admin');
-    }
-  }, [router]);
 
   const handleUpdateStatus = async (userId: string, newStatus: 'approved' | 'rejected') => {
     if (!firestore) return;
