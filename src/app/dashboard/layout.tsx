@@ -1,11 +1,12 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/user-nav';
 import { StudentSidebar } from '@/components/student-sidebar';
 import { TeacherSidebar } from '@/components/teacher-sidebar';
-import { studentProfile, teacherProfile } from '@/lib/data';
+import { useUser } from '@/firebase';
+import { useEffect } from 'react';
 
 export default function DashboardLayout({
   children,
@@ -13,8 +14,24 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
   const isStudent = pathname.startsWith('/dashboard/student');
-  const user = isStudent ? studentProfile : teacherProfile;
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -25,7 +42,7 @@ export default function DashboardLayout({
           <div className="flex-1">
             {/* Header content like breadcrumbs or page title can go here */}
           </div>
-          <UserNav user={user} />
+          <UserNav />
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </SidebarInset>
