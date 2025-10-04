@@ -30,7 +30,7 @@ export function StudentSidebar() {
         <div className="flex items-center gap-2">
           <AppLogo className="h-8 w-8" />
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold tracking-tight text-sidebar-primary-foreground font-headline">
+            <h2 className="text-lg font-semibold tracking-tight text-sidebar-primary font-headline">
               The PIER
             </h2>
             <p className="text-xs text-sidebar-foreground">Student Portal</p>
