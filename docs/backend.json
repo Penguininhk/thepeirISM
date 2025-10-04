@@ -1,0 +1,528 @@
+{
+  "entities": {
+    "Announcement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Announcement",
+      "type": "object",
+      "description": "Represents an announcement made by a teacher or the school, visible on the announcements board.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the announcement."
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Reference to the User (teacher or admin) who created the announcement. (Relationship: User 1:N Announcement)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the announcement."
+        },
+        "content": {
+          "type": "string",
+          "description": "The main text content of the announcement."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the announcement was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the announcement was last updated.",
+          "format": "date-time"
+        },
+        "classIds": {
+          "type": "array",
+          "description": "References to Classes that this announcement is relevant to. (Relationship: Class N:N Announcement)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "schoolWide": {
+          "type": "boolean",
+          "description": "Indicates if the announcement is for the entire school."
+        }
+      },
+      "required": [
+        "id",
+        "authorId",
+        "title",
+        "content",
+        "createdAt"
+      ]
+    },
+    "Assignment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Assignment",
+      "type": "object",
+      "description": "Represents a classwork assignment given to students.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the assignment."
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to the Course this assignment belongs to. (Relationship: Course 1:N Assignment)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the assignment."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the assignment."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "The date and time the assignment is due.",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the assignment was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the assignment was last updated.",
+          "format": "date-time"
+        },
+        "maxPoints": {
+          "type": "number",
+          "description": "The maximum possible points for the assignment."
+        }
+      },
+      "required": [
+        "id",
+        "courseId",
+        "title",
+        "description",
+        "dueDate",
+        "maxPoints"
+      ]
+    },
+    "Submission": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Submission",
+      "type": "object",
+      "description": "Represents a student's submission for an assignment.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the submission."
+        },
+        "assignmentId": {
+          "type": "string",
+          "description": "Reference to the Assignment this submission is for. (Relationship: Assignment 1:N Submission)"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the User (student) who made the submission. (Relationship: User 1:N Submission)"
+        },
+        "submissionDate": {
+          "type": "string",
+          "description": "The date and time the submission was made.",
+          "format": "date-time"
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the submission (e.g., file URL, text).",
+          "format": "uri"
+        },
+        "grade": {
+          "type": "number",
+          "description": "The grade received for the submission."
+        },
+        "teacherFeedback": {
+          "type": "string",
+          "description": "Feedback given by the teacher for the submission."
+        }
+      },
+      "required": [
+        "id",
+        "assignmentId",
+        "studentId",
+        "submissionDate",
+        "content"
+      ]
+    },
+    "Attendance": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Attendance",
+      "type": "object",
+      "description": "Represents a student's attendance record for a specific class.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the attendance record."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the User (student) whose attendance is being recorded. (Relationship: User 1:N Attendance)"
+        },
+        "classId": {
+          "type": "string",
+          "description": "Reference to the Class for which attendance is being recorded. (Relationship: Class 1:N Attendance)"
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the attendance record.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The attendance status (e.g., Present, Absent, Tardy)."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "classId",
+        "date",
+        "status"
+      ]
+    },
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
+      "type": "object",
+      "description": "Represents a course offered at the school.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the course."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the course."
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Reference to the User (teacher) who teaches the course. (Relationship: User 1:N Course)"
+        },
+        "classIds": {
+          "type": "array",
+          "description": "References to Classes that belong to this course. (Relationship: Class N:N Course)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "teacherId"
+      ]
+    },
+    "Class": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Class",
+      "type": "object",
+      "description": "Represents a specific class section.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the class."
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to the Course this class belongs to. (Relationship: Course 1:N Class)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name or section identifier of the class (e.g., 'Math 101 - A')."
+        },
+        "schedule": {
+          "type": "string",
+          "description": "The class schedule (e.g., 'Mon/Wed/Fri 9:00 AM - 9:50 AM')."
+        },
+        "studentIds": {
+          "type": "array",
+          "description": "References to Users (students) enrolled in this class. (Relationship: User N:N Class)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "courseId",
+        "name",
+        "schedule"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the application (student, teacher, admin).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The user's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The user's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "The user's role (e.g., student, teacher, admin)."
+        },
+        "classIds": {
+          "type": "array",
+          "description": "References to Classes that the user (student or teacher) is associated with. (Relationship: Class N:N User)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "role"
+      ]
+    },
+    "CourseSelection": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CourseSelection",
+      "type": "object",
+      "description": "Represents a student's course selection for an upcoming semester.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course selection record."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the User (student) who made the course selection. (Relationship: User 1:N CourseSelection)"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to the Course selected. (Relationship: Course 1:N CourseSelection)"
+        },
+        "semester": {
+          "type": "string",
+          "description": "The semester for which the course is selected (e.g., 'Fall 2024')."
+        },
+        "selectionDate": {
+          "type": "string",
+          "description": "The date when the course was selected.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "courseId",
+        "semester",
+        "selectionDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/announcements/{announcementId}",
+        "definition": {
+          "entityName": "Announcement",
+          "schema": {
+            "$ref": "#/backend/entities/Announcement"
+          },
+          "description": "School-wide announcements. `schoolWide` boolean indicates the announcement is for everyone.",
+          "params": [
+            {
+              "name": "announcementId",
+              "description": "Unique identifier for the announcement."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/classes/{classId}",
+        "definition": {
+          "entityName": "Class",
+          "schema": {
+            "$ref": "#/backend/entities/Class"
+          },
+          "description": "Represents a class section with denormalized studentIds to avoid complex queries.",
+          "params": [
+            {
+              "name": "classId",
+              "description": "Unique identifier for the class."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/classes/{classId}/announcements/{announcementId}",
+        "definition": {
+          "entityName": "Announcement",
+          "schema": {
+            "$ref": "#/backend/entities/Announcement"
+          },
+          "description": "Announcements specific to a class. Includes denormalized 'classIds' for authorization independence.",
+          "params": [
+            {
+              "name": "classId",
+              "description": "Unique identifier for the class."
+            },
+            {
+              "name": "announcementId",
+              "description": "Unique identifier for the announcement."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}",
+        "definition": {
+          "entityName": "Course",
+          "schema": {
+            "$ref": "#/backend/entities/Course"
+          },
+          "description": "Courses offered by the school.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "Unique identifier for the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/assignments/{assignmentId}",
+        "definition": {
+          "entityName": "Assignment",
+          "schema": {
+            "$ref": "#/backend/entities/Assignment"
+          },
+          "description": "Assignments for a specific course.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "Unique identifier for the course."
+            },
+            {
+              "name": "assignmentId",
+              "description": "Unique identifier for the assignment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/assignments/{assignmentId}/submissions/{submissionId}",
+        "definition": {
+          "entityName": "Submission",
+          "schema": {
+            "$ref": "#/backend/entities/Submission"
+          },
+          "description": "Student submissions for an assignment.",
+          "params": [
+            {
+              "name": "assignmentId",
+              "description": "Unique identifier for the assignment."
+            },
+            {
+              "name": "submissionId",
+              "description": "Unique identifier for the submission."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "User profiles.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/courseSelections/{courseSelectionId}",
+        "definition": {
+          "entityName": "CourseSelection",
+          "schema": {
+            "$ref": "#/backend/entities/CourseSelection"
+          },
+          "description": "Course selections made by a student.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            },
+            {
+              "name": "courseSelectionId",
+              "description": "Unique identifier for the course selection record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_teacher/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Documents indicating a user is a teacher. Existence implies the teacher role.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Documents indicating a user is an administrator. Existence implies the admin role.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to address the issues of announcement updates, assignment creation/grading, course information updates, and course selection visibility. It prioritizes authorization independence and QAPs through denormalization and structural segregation.\n\n**Authorization Independence:**\n*   Teacher and admin roles are checked using document existence in `/roles_teacher/{userId}` and `/roles_admin/{userId}`. No custom claims are used.\n*   Announcements include denormalized `classIds` and `schoolWide` flags to avoid requiring `get()` operations to determine visibility for users.\n*   Submissions are stored under a path that includes both `assignmentId` and `studentId` for easy retrieval and permission validation.\n*   Access to course selections uses path-based ownership (`/users/{userId}/courseSelections/{courseSelectionId}`) so we don't need to store student information on course selections for security.\n\n**QAPs:**\n*   Segregation of data by user role and ownership allows for secure `list` operations. For example, listing assignments for a specific course is done within the `/courses/{courseId}/assignments` collection, and security rules can easily verify the requesting user is the course teacher or an enrolled student.\n\n**Structure Explanation:**\n*   `/announcements`: School-wide announcements. The `schoolWide` boolean determines visibility.\n*   `/classes/{classId}/announcements`: Class-specific announcements. Teachers associated with the class (denormalized in the class document) can create announcements. Students enrolled in the class (also denormalized) can view them.\n*   `/courses`: Courses offered by the school. Teachers who 'own' the course can manage its details and create assignments.\n*   `/courses/{courseId}/assignments`: Assignments for a specific course.\n*   `/assignments/{assignmentId}/submissions/{submissionId}`: Student submissions are nested under their associated assignment for easier retrieval and grading.\n*   `/users/{userId}`: User profiles, containing basic information like name, email, and role.\n*   `/users/{userId}/courseSelections`: Course selections made by students.  This ensures that only the student (or an admin) can view or modify their course selections.\n*   `/roles_teacher/{userId}`: Indicates that the user is a teacher.\n*   `/roles_admin/{userId}`: Indicates that the user is an admin.\n\nThis design addresses the core issues raised in the user request by:\n\n*   Ensuring announcements are visible to the correct users (teachers, students, school-wide).\n*   Enabling teachers to create and grade assignments within their courses.\n*   Allowing students to view their course selections for upcoming semesters."
+  }
+}
