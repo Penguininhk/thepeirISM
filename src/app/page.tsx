@@ -20,7 +20,7 @@ export default function Home() {
           The Harbour School's official portal for students and faculty. Access your dashboard to stay updated with announcements, classwork, and more.
         </p>
 
-        <div className="mt-12 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-12 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
           <Link href="/login/student" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
@@ -58,27 +58,19 @@ export default function Home() {
               </CardContent>
             </Card>
           </Link>
-          
-           <Link href="/login/admin" passHref>
-            <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-center gap-3">
-                  <ShieldCheck className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
-                  <span className="font-headline">Admin</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Manage users, approve accounts, and oversee school data.
-                </p>
-                <Button variant="link" className="mt-4 p-0">
-                  Admin Login
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
         </div>
       </main>
+
+      <Link href="/login/admin" passHref>
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg"
+          aria-label="Admin Login"
+        >
+          <ShieldCheck className="h-6 w-6" />
+        </Button>
+      </Link>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
         <p>&copy; {new Date().getFullYear()} The Harbour School. Hong Kong.</p>
