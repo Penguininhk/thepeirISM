@@ -7,19 +7,43 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AppLogo from "@/components/app-logo";
-import { useAuth, initiateEmailSignIn, useUser } from "@/firebase";
-import React, { useEffect } from "react";
+import { useAuth, useUser } from "@/firebase";
+import React, { useEffect, useState } from "react";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, Auth } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 export default function StudentLoginPage() {
   const auth = useAuth();
   const router = useRouter();
   const { user, isUserLoading } = useUser();
-  const [email, setEmail] = React.useState("alice@school.edu");
-  const [password, setPassword] = React.useState("password123");
+  const [email, setEmail] = useState("alice@school.edu");
+  const [password, setPassword] = useState("password123");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    initiateEmailSignIn(auth, email, password);
+    setError(null);
+    if (!auth) return;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      if (err instanceof FirebaseError && err.code === 'auth/user-not-found') {
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+        } catch (createErr) {
+          if (createErr instanceof FirebaseError) {
+            setError(createErr.message);
+          } else {
+            setError("An unexpected error occurred during sign up.");
+          }
+        }
+      } else if (err instanceof FirebaseError) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred during login.");
+      }
+    }
   };
 
   useEffect(() => {
@@ -49,6 +73,7 @@ export default function StudentLoginPage() {
         <CardContent>
           <form onSubmit={handleLogin}>
             <div className="grid gap-4">
+              {error && <div className="text-red-500 text-sm p-3 bg-red-100 border border-red-400 rounded-md">{error}</div>}
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -79,7 +104,7 @@ export default function StudentLoginPage() {
                 />
               </div>
               <Button type="submit" className="w-full">
-                Login
+                Login or Sign Up
               </Button>
             </div>
           </form>
