@@ -12,10 +12,33 @@ import { z } from 'genkit';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 
+// In a real app, you would use the Firebase Admin SDK to set custom claims.
+// Since we can't use firebase-admin here, we will simulate this.
+// In a real Firebase environment, this would be:
+// import * as admin from 'firebase-admin';
+// await admin.auth().setCustomUserClaims(userId, { isAdmin: true });
+const setAdminClaim = ai.defineTool(
+  {
+    name: 'setAdminClaim',
+    description: 'Sets a custom claim on a user to grant admin privileges.',
+    inputSchema: z.object({
+      userId: z.string().describe("The ID of the user to make an admin."),
+    }),
+    outputSchema: z.object({ success: z.boolean() }),
+  },
+  async ({ userId }) => {
+    console.log(`--- SIMULATING: Setting custom claim { isAdmin: true } for user ${userId} ---`);
+    // In a real app, this would interact with the Firebase Admin SDK.
+    return { success: true };
+  }
+);
+
+
 const UpdateUserStatusInputSchema = z.object({
   userId: z.string().describe('The ID of the user to update.'),
   status: z.enum(['approved', 'rejected']).describe('The new status for the user.'),
   email: z.string().email().describe('The email of the user to notify.'),
+  role: z.enum(['student', 'teacher', 'admin']).describe('The role of the user.'),
 });
 export type UpdateUserStatusInput = z.infer<typeof UpdateUserStatusInputSchema>;
 
@@ -25,9 +48,6 @@ const UpdateUserStatusOutputSchema = z.object({
 });
 export type UpdateUserStatusOutput = z.infer<typeof UpdateUserStatusOutputSchema>;
 
-// Define a tool for sending emails. In a real app, this would integrate
-// with an email service like SendGrid, Mailgun, or Firebase Extensions.
-// For now, it just logs to the console.
 const sendEmail = ai.defineTool(
   {
     name: 'sendEmail',
@@ -45,7 +65,6 @@ const sendEmail = ai.defineTool(
     console.log(`Subject: ${input.subject}`);
     console.log(`Body: ${input.body}`);
     console.log('------------------------------------');
-    // Simulate a successful email send.
     return { success: true };
   }
 );
@@ -87,14 +106,20 @@ const updateUserStatusFlow = ai.defineFlow(
     outputSchema: UpdateUserStatusOutputSchema,
   },
   async (input) => {
-    const { userId, status, email } = input;
+    const { userId, status, email, role } = input;
     
-    // NOTE: The direct Firestore update from the server-side flow is removed
-    // to prevent the client/server boundary error. The client-side code
-    // in the AdminDashboardPage already handles the Firestore update.
-    // This flow is now only responsible for the notification.
+    // Client-side code already handles the Firestore update.
+    // This flow handles notifications and setting admin claims.
 
     try {
+      // If a user with the 'admin' role is approved, set their custom claim.
+      if (status === 'approved' && role === 'admin') {
+        const claimResult = await ai.runTool('setAdminClaim', { userId });
+        if (!claimResult.success) {
+          return { success: false, message: 'Failed to set admin claim.' };
+        }
+      }
+
       // Generate the notification email content
       const llmResponse = await prompt({
         status,

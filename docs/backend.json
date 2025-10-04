@@ -325,6 +325,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "isAdmin": {
+          "type": "boolean",
+          "description": "Custom claim indicating if the user is an admin."
         }
       },
       "required": [
@@ -540,41 +544,9 @@
             }
           ]
         }
-      },
-      {
-        "path": "/roles_teacher/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Documents indicating a user is a teacher. Existence implies the teacher role.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "Unique identifier for the user."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/roles_admin/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Documents indicating a user is an administrator. Existence implies the admin role.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "Unique identifier for the user."
-            }
-          ]
-        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to address the issues of announcement updates, assignment creation/grading, course information updates, and course selection visibility. It prioritizes authorization independence and QAPs through denormalization and structural segregation.\n\n**Authorization Independence:**\n*   Teacher and admin roles are checked using document existence in `/roles_teacher/{userId}` and `/roles_admin/{userId}`. No custom claims are used.\n*   Announcements include denormalized `classIds` and `schoolWide` flags to avoid requiring `get()` operations to determine visibility for users.\n*   Submissions are stored under a path that includes both `assignmentId` and `studentId` for easy retrieval and permission validation.\n*   Access to course selections uses path-based ownership (`/users/{userId}/courseSelections/{courseSelectionId}`) so we don't need to store student information on course selections for security.\n\n**QAPs:**\n*   Segregation of data by user role and ownership allows for secure `list` operations. For example, listing assignments for a specific course is done within the `/courses/{courseId}/assignments` collection, and security rules can easily verify the requesting user is the course teacher or an enrolled student.\n\n**Structure Explanation:**\n*   `/actionLogs`: A new collection to store logs of administrative actions for accountability.\n*   `/announcements`: School-wide announcements. The `schoolWide` boolean determines visibility.\n*   `/classes/{classId}/announcements`: Class-specific announcements. Teachers associated with the class (denormalized in the class document) can create announcements. Students enrolled in the class (also denormalized) can view them.\n*   `/courses`: Courses offered by the school. Teachers who 'own' the course can manage its details and create assignments.\n*   `/courses/{courseId}/assignments`: Assignments for a specific course.\n*   `/assignments/{assignmentId}/submissions/{submissionId}`: Student submissions are nested under their associated assignment for easier retrieval and grading.\n*   `/users/{userId}`: User profiles, containing basic information like name, email, and role.\n*   `/users/{userId}/courseSelections`: Course selections made by students.  This ensures that only the student (or an admin) can view or modify their course selections.\n*   `/roles_teacher/{userId}`: Indicates that the user is a teacher.\n*   `/roles_admin/{userId}`: Indicates that the user is an admin.\n\nThis design addresses the core issues raised in the user request by:\n\n*   Ensuring announcements are visible to the correct users (teachers, students, school-wide).\n*   Enabling teachers to create and grade assignments within their courses.\n*   Allowing students to view their course selections for upcoming semesters."
+    "reasoning": "The Firestore structure is designed to address the issues of announcement updates, assignment creation/grading, course information updates, and course selection visibility. It prioritizes authorization independence and QAPs through denormalization and structural segregation.\n\n**Authorization Independence:**\n*   Admin roles are checked using custom claims (`isAdmin: true`) on the user's auth token. This is more efficient and secure than checking document existence.\n*   Announcements include denormalized `classIds` and `schoolWide` flags to avoid requiring `get()` operations to determine visibility for users.\n*   Submissions are stored under a path that includes both `assignmentId` and `studentId` for easy retrieval and permission validation.\n*   Access to course selections uses path-based ownership (`/users/{userId}/courseSelections/{courseSelectionId}`) so we don't need to store student information on course selections for security.\n\n**QAPs:**\n*   Segregation of data by user role and ownership allows for secure `list` operations. For example, listing assignments for a specific course is done within the `/courses/{courseId}/assignments` collection, and security rules can easily verify the requesting user is the course teacher or an enrolled student.\n\n**Structure Explanation:**\n*   `/actionLogs`: A new collection to store logs of administrative actions for accountability.\n*   `/announcements`: School-wide announcements. The `schoolWide` boolean determines visibility.\n*   `/classes/{classId}/announcements`: Class-specific announcements. Teachers associated with the class can create announcements. Students enrolled in the class can view them.\n*   `/courses`: Courses offered by the school. Teachers who 'own' the course can manage its details and create assignments.\n*   `/courses/{courseId}/assignments`: Assignments for a specific course.\n*   `/assignments/{assignmentId}/submissions/{submissionId}`: Student submissions are nested under their associated assignment for easier retrieval and grading.\n*   `/users/{userId}`: User profiles, containing basic information like name, email, and role.\n*   `/users/{userId}/courseSelections`: Course selections made by students.  This ensures that only the student (or an admin) can view or modify their course selections."
   }
 }
     

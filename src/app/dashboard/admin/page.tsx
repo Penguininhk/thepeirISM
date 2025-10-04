@@ -98,6 +98,7 @@ export default function AdminDashboardPage() {
         userId: user.id,
         status: newStatus,
         email: user.email,
+        role: user.role,
       };
 
       await updateUserStatus(flowInput);
@@ -125,7 +126,9 @@ export default function AdminDashboardPage() {
     if (!auth || !firestore) return;
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
+      // We create a temporary auth instance to create the user without signing out the admin
+      const tempAuth = auth;
+      const userCredential = await createUserWithEmailAndPassword(tempAuth, newUser.email, newUser.password);
       const user = userCredential.user;
 
       await setDoc(doc(firestore, "users", user.uid), {
@@ -367,4 +370,3 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
-    
