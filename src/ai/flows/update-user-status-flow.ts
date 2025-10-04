@@ -23,7 +23,7 @@ const UpdateUserStatusOutputSchema = z.object({
   success: z.boolean(),
   message: z.string(),
 });
-export type UpdateUserStatusOutput = z-infer<typeof UpdateUserStatusOutputSchema>;
+export type UpdateUserStatusOutput = z.infer<typeof UpdateUserStatusOutputSchema>;
 
 // Define a tool for sending emails. In a real app, this would integrate
 // with an email service like SendGrid, Mailgun, or Firebase Extensions.
