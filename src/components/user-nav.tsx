@@ -16,24 +16,29 @@ import { signOut } from "firebase/auth";
 
 export function UserNav() {
   const auth = useAuth();
-  const { user } = useUser();
+  const { user, profile } = useUser();
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("");
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (firstName && lastName) {
+      return `${firstName[0]}${lastName[0]}`;
+    }
+    if (firstName) {
+      return firstName.substring(0, 2);
+    }
+    return "U";
   };
 
   const handleLogout = () => {
-    signOut(auth);
+    if (auth) {
+      signOut(auth);
+    }
   };
 
-  if (!user) {
+  if (!user || !profile) {
     return null;
   }
 
-  const name = user.displayName || user.email || "User";
+  const name = profile ? `${profile.firstName} ${profile.lastName}` : user.email || "User";
   const email = user.email || "";
 
   return (
@@ -42,7 +47,7 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.photoURL || undefined} alt={name} />
-            <AvatarFallback>{getInitials(name)}</AvatarFallback>
+            <AvatarFallback>{getInitials(profile.firstName, profile.lastName)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

@@ -9,6 +9,7 @@ export type UserProfile = {
   lastName: string;
   email: string;
   role: 'student' | 'teacher' | 'admin';
+  status: 'pending' | 'approved' | 'rejected';
   classIds?: string[];
 };
 
