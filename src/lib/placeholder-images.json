@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "user-avatar-1",
+      "description": "User avatar 1",
+      "imageUrl": "https://images.unsplash.com/photo-1725028748781-7adb1df9a943?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwZXJzb24lMjBmYWNlfGVufDB8fHx8MTc1OTU3ODk3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person face"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "User avatar 2",
+      "imageUrl": "https://images.unsplash.com/photo-1719087358997-12957d0859e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzU5NTQ4MjA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "user-avatar-3",
+      "description": "User avatar 3",
+      "imageUrl": "https://images.unsplash.com/photo-1624395213043-fa2e123b2656?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTk1ODAxMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "user-avatar-4",
+      "description": "User avatar 4",
+      "imageUrl": "https://images.unsplash.com/photo-1727605508264-6a48402bb30b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdHVkZW50JTIwZ2xhc3Nlc3xlbnwwfHx8fDE3NTk1MTQ0MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "student glasses"
+    },
+    {
+      "id": "course-marine-biology",
+      "description": "Marine Biology course image",
+      "imageUrl": "https://images.unsplash.com/photo-1580019542155-247062e19ce4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb3JhbCUyMHJlZWZ8ZW58MHx8fHwxNzU5NDY1ODY2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "coral reef"
+    },
+    {
+      "id": "course-robotics",
+      "description": "Robotics course image",
+      "imageUrl": "https://images.unsplash.com/photo-1641311281574-98b9e7a76479?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyb2JvdCUyMGFybXxlbnwwfHx8fDE3NTk0ODcwNjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot arm"
+    },
+    {
+      "id": "course-creative-writing",
+      "description": "Creative Writing course image",
+      "imageUrl": "https://images.unsplash.com/photo-1541963463532-d68292c34b19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxvcGVuJTIwYm9va3xlbnwwfHx8fDE3NTk0NjI2NTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "open book"
+    },
+    {
+      "id": "course-world-history",
+      "description": "World History course image",
+      "imageUrl": "https://images.unsplash.com/photo-1596195985766-ed92f3ec64eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhbmNpZW50JTIwbWFwfGVufDB8fHx8MTc1OTQ4OTQ3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancient map"
+    },
+    {
+      "id": "course-calculus",
+      "description": "Calculus course image",
+      "imageUrl": "https://images.unsplash.com/photo-1758685848697-b5fb55f87407?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjaGFsa2JvYXJkJTIwZXF1YXRpb25zfGVufDB8fHx8MTc1OTQ5MzQ4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chalkboard equations"
+    },
+    {
+      "id": "course-digital-art",
+      "description": "Digital Art course image",
+      "imageUrl": "https://images.unsplash.com/photo-1497091071254-cc9b2ba7c48a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmF3aW5nJTIwdGFibGV0fGVufDB8fHx8MTc1OTU4MTY2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "drawing tablet"
+    }
+  ]
 }
