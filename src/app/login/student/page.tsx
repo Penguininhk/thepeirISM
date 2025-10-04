@@ -9,11 +9,14 @@ import { Label } from "@/components/ui/label";
 import AppLogo from "@/components/app-logo";
 import { useAuth, useUser } from "@/firebase";
 import React, { useEffect, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import { doc, getDoc } from "firebase/firestore";
+import { useFirestore } from "@/firebase";
 
 export default function StudentLoginPage() {
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
   const { user, isUserLoading } = useUser();
   const [email, setEmail] = useState("alice@school.edu");
@@ -23,10 +26,31 @@ export default function StudentLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!auth) return;
+    if (!auth || !firestore) return;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      const userDoc = await getDoc(doc(firestore, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.status === 'pending') {
+          setError("Your account is pending approval.");
+          await auth.signOut(); // Sign out the user
+        } else if (userData.status === 'rejected') {
+          setError("Your account has been rejected.");
+           await auth.signOut(); // Sign out the user
+        } else if (userData.role !== 'student') {
+          setError("You are not authorized to log in as a student.");
+          await auth.signOut();
+        }
+        // Approved students will be redirected by the useEffect
+      } else {
+         setError("No user profile found for this account.");
+         await auth.signOut();
+      }
+
     } catch (err) {
       if (err instanceof FirebaseError) {
         if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {

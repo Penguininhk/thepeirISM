@@ -11,9 +11,12 @@ import { useAuth, useUser } from "@/firebase";
 import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import { doc, getDoc } from "firebase/firestore";
+import { useFirestore } from "@/firebase";
 
 export default function TeacherLoginPage() {
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
   const { user, isUserLoading } = useUser();
   const [email, setEmail] = useState("e.reed@school.edu");
@@ -23,10 +26,31 @@ export default function TeacherLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!auth) return;
+    if (!auth || !firestore) return;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      const userDoc = await getDoc(doc(firestore, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.status === 'pending') {
+          setError("Your account is pending approval.");
+          await auth.signOut();
+        } else if (userData.status === 'rejected') {
+           setError("Your account has been rejected.");
+          await auth.signOut();
+        } else if (userData.role !== 'teacher') {
+          setError("You are not authorized to log in as a teacher.");
+          await auth.signOut();
+        }
+        // Approved teachers will be redirected by the useEffect
+      } else {
+        setError("No user profile found for this account.");
+        await auth.signOut();
+      }
+
     } catch (err) {
       if (err instanceof FirebaseError) {
          if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {

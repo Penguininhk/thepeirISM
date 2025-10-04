@@ -285,6 +285,10 @@
           "type": "string",
           "description": "The user's role (e.g., student, teacher, admin)."
         },
+        "status": {
+          "type": "string",
+          "description": "The user's account status (e.g., pending, approved, rejected)."
+        },
         "classIds": {
           "type": "array",
           "description": "References to Classes that the user (student or teacher) is associated with. (Relationship: Class N:N User)",
@@ -298,7 +302,8 @@
         "firstName",
         "lastName",
         "email",
-        "role"
+        "role",
+        "status"
       ]
     },
     "CourseSelection": {
