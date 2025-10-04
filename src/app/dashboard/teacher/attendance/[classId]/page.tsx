@@ -18,10 +18,12 @@ import { Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
+import { use } from 'react';
 
-export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
+export default function TakeAttendancePage({ params }: { params: Promise<{ classId: string }> }) {
+  const { classId } = use(params);
   const { toast } = useToast();
-  const classInfo = classLists.find(cl => cl.id === params.classId);
+  const classInfo = classLists.find(cl => cl.id === classId);
 
   if (!classInfo) {
     return (
