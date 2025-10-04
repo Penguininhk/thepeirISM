@@ -24,8 +24,14 @@ export default function AdminDashboardLayout({
       router.push('/login/admin');
       return;
     }
+    
+    // This is the primary admin user, allow access even if profile is loading or lacks role initially.
+    // This breaks the chicken-and-egg problem of needing admin role to get the admin role.
+    if (user.email === 'admin@school.edu') {
+      return;
+    }
 
-    // Check if the logged-in user is an admin by role
+    // For any other user, check if they are an admin by role
     if (profile?.role !== 'admin') {
        // If the user is not an admin, sign them out and redirect
        if (auth) {
@@ -36,8 +42,8 @@ export default function AdminDashboardLayout({
 
   }, [user, profile, isUserLoading, router, auth]);
 
-  if (isUserLoading || !user || profile?.role !== 'admin') {
-    // While loading or if not the correct admin user, show a loading state
+  if (isUserLoading || !user || (user.email !== 'admin@school.edu' && profile?.role !== 'admin')) {
+    // While loading or if not an authorized admin, show a loading state
     return (
       <div className="flex h-screen w-full items-center justify-center bg-muted/40">
         <p>Loading admin dashboard...</p>
