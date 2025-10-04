@@ -42,9 +42,7 @@ export default function AdminLoginPage() {
       
       return userCredential;
     } catch (creationError) {
-      // If creation fails (e.g. email already exists from a failed previous attempt),
-      // it's okay, we'll just try to sign in.
-      console.error("Admin user creation might have failed or user already exists:", creationError);
+      console.error("Admin user creation failed:", creationError);
       return null;
     }
   }
@@ -59,16 +57,17 @@ export default function AdminLoginPage() {
       // The useEffect will handle redirection on successful login
     } catch (err) {
       if (err instanceof FirebaseError) {
-        if (err.code === 'auth/user-not-found') {
-          // If the admin user does not exist, create it.
+        // Handle cases where the user does not exist by creating them.
+        // 'auth/invalid-credential' can be returned for non-existent users in newer SDKs.
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
           const newUser = await createAdminUser();
           if (newUser) {
-            // New user created, sign-in is implicit, useEffect will redirect.
+            // New user created, sign-in is now implicit, and useEffect will redirect.
           } else {
              setError("Could not create or sign in as admin.");
           }
-        } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-          setError("Invalid admin credentials.");
+        } else if (err.code === 'auth/wrong-password') {
+           setError("Invalid admin credentials.");
         } else {
           setError(err.message);
         }
@@ -79,13 +78,11 @@ export default function AdminLoginPage() {
   };
 
   useEffect(() => {
-    if (!isUserLoading && user) {
-       // A simple check to see if the logged-in user is the admin
-      if (user.email === 'admin@school.edu') {
-        router.push('/dashboard/admin');
-      }
+    // Redirect if the user is loaded and is the admin
+    if (!isUserLoading && user && user.email === 'admin@school.edu') {
+      router.push('/dashboard/admin');
     }
-  }, [user, isUserLoading, router, auth]);
+  }, [user, isUserLoading, router]);
 
 
   if (isUserLoading) {
