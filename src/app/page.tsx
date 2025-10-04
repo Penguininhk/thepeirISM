@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { School, User } from "lucide-react";
+import { School, User, ShieldCheck } from "lucide-react";
 import AppLogo from "@/components/app-logo";
 
 export default function Home() {
@@ -20,21 +20,21 @@ export default function Home() {
           The Harbour School's official portal for students and faculty. Access your dashboard to stay updated with announcements, classwork, and more.
         </p>
 
-        <div className="mt-12 grid w-full max-w-md grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="mt-12 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-3">
           <Link href="/login/student" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center justify-center gap-3">
                   <User className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
-                  <span className="font-headline">Student Portal</span>
+                  <span className="font-headline">Student</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  View your assignments, track your attendance, and select your courses.
+                  View assignments, track attendance, and select courses.
                 </p>
                 <Button variant="link" className="mt-4 p-0">
-                  Login as Student
+                  Student Login
                 </Button>
               </CardContent>
             </Card>
@@ -45,15 +45,34 @@ export default function Home() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-center gap-3">
                   <School className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
-                  <span className="font-headline">Teacher Portal</span>
+                  <span className="font-headline">Teacher</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Manage your classes, post announcements, and take attendance.
+                  Manage classes, post announcements, and take attendance.
                 </p>
                 <Button variant="link" className="mt-4 p-0">
-                  Login as Teacher
+                  Teacher Login
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+          
+           <Link href="/login/admin" passHref>
+            <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-center gap-3">
+                  <ShieldCheck className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
+                  <span className="font-headline">Admin</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Manage users, approve accounts, and oversee school data.
+                </p>
+                <Button variant="link" className="mt-4 p-0">
+                  Admin Login
                 </Button>
               </CardContent>
             </Card>

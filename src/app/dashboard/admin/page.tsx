@@ -1,0 +1,176 @@
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, doc, updateDoc } from 'firebase/firestore';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { UserProfile } from '@/lib/data';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
+
+export default function AdminDashboardPage() {
+  const router = useRouter();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+  
+  const usersQuery = useMemo(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'users');
+  }, [firestore]);
+
+  const { data: users, isLoading, error } = useCollection<UserProfile>(usersQuery);
+
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem('isAdminAuthenticated');
+    if (isAuthenticated !== 'true') {
+      router.push('/login/admin');
+    }
+  }, [router]);
+
+  const handleUpdateStatus = async (userId: string, newStatus: 'approved' | 'rejected') => {
+    if (!firestore) return;
+
+    try {
+      const userInput: UpdateUserStatusInput = {
+        userId,
+        status: newStatus,
+      };
+
+      await updateUserStatus(userInput);
+      
+      toast({
+        title: 'User Status Updated',
+        description: `User has been ${newStatus}.`,
+      });
+    } catch (e) {
+      console.error('Failed to update user status:', e);
+      toast({
+        variant: 'destructive',
+        title: 'Update Failed',
+        description: 'Could not update the user status.',
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p>Loading user data...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+     return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p className="text-red-500">Error loading users: {error.message}</p>
+      </div>
+    );
+  }
+
+  const pendingUsers = users?.filter(u => u.status === 'pending') || [];
+  const otherUsers = users?.filter(u => u.status !== 'pending') || [];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
+        <p className="text-muted-foreground">Manage user accounts and school settings.</p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Pending Approvals</CardTitle>
+          <CardDescription>Review and approve or reject new account requests.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {pendingUsers.length > 0 ? (
+            <div className="overflow-hidden rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingUsers.map(user => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(user.id, 'approved')}>Approve</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(user.id, 'rejected')}>Reject</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-8">No pending requests.</p>
+          )}
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>All Users</CardTitle>
+          <CardDescription>A list of all registered users in the system.</CardDescription>
+        </CardHeader>
+        <CardContent>
+           <div className="overflow-hidden rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {otherUsers.map(user => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                       <TableCell>
+                        <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                         <Badge
+                          className={cn({
+                            "bg-green-500 text-white": user.status === "approved",
+                            "bg-red-500 text-white": user.status === "rejected",
+                          })}
+                        >
+                          {user.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
