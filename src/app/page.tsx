@@ -21,7 +21,7 @@ export default function Home() {
         </p>
 
         <div className="mt-12 grid w-full max-w-md grid-cols-1 gap-6 md:grid-cols-2">
-          <Link href="/login/student" legacyBehavior passHref>
+          <Link href="/login/student" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center justify-center gap-3">
@@ -40,7 +40,7 @@ export default function Home() {
             </Card>
           </Link>
 
-          <Link href="/login/teacher" legacyBehavior passHref>
+          <Link href="/login/teacher" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center justify-center gap-3">
