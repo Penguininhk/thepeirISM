@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCollection, useFirestore } from '@/firebase';
-import { collection, doc, updateDoc } from 'firebase/firestore';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Table,
@@ -25,7 +25,7 @@ export default function AdminDashboardPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   
-  const usersQuery = useMemo(() => {
+  const usersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return collection(firestore, 'users');
   }, [firestore]);
