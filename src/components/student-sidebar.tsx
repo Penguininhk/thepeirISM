@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenCheck, CalendarCheck, LayoutDashboard, ListPlus, Megaphone, BrainCircuit, Calendar, MessageSquare } from "lucide-react";
+import { BookOpenCheck, CalendarCheck, LayoutDashboard, ListPlus, Megaphone, FileText, Calendar, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,7 @@ export function StudentSidebar() {
     { href: "/dashboard/student", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/student/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/student/classwork", label: "Classwork", icon: BookOpenCheck },
+    { href: "/dashboard/student/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/student/attendance", label: "Attendance", icon: CalendarCheck },
     { href: "/dashboard/student/schedule", label: "My Schedule", icon: Calendar },
     { href: "/dashboard/student/courses", label: "Course Selection", icon: ListPlus },
@@ -45,7 +46,7 @@ export function StudentSidebar() {
             <SidebarMenuItem key={item.label}>
               <Link href={item.href} passHref>
                 <SidebarMenuButton
-                  isActive={pathname.startsWith(item.href)}
+                  isActive={item.href === '/dashboard/student' ? pathname === item.href : pathname.startsWith(item.href)}
                   tooltip={item.label}
                 >
                   <item.icon />

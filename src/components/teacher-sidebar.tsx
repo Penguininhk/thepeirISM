@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookMarked, LayoutDashboard, Megaphone, MessageSquare, Coffee } from "lucide-react";
+import { BookMarked, LayoutDashboard, Megaphone, MessageSquare, Coffee, FileText } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,7 @@ export function TeacherSidebar() {
   const menuItems = [
     { href: "/dashboard/teacher", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/teacher/classwork", label: "Classwork", icon: BookMarked },
+    { href: "/dashboard/teacher/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/teacher/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/forums", label: "Forums", icon: MessageSquare },
     { href: "/dashboard/teacher/lounge", label: "Faculty Lounge", icon: Coffee },

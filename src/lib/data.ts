@@ -1,4 +1,3 @@
-
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -142,6 +141,19 @@ export type ActionLog = {
   actionType: 'user_status_update' | 'user_created';
   details: string;
 };
+
+export type ReportCard = {
+  id: string;
+  student: { id: string; name: string };
+  classId: string;
+  course: { name: string };
+  teacher: { id: string; name: string };
+  semester: string;
+  grade: string;
+  comments: string;
+  status: 'draft' | 'pending_review' | 'released';
+};
+
 
 // --- MOCK DATA ---
 
@@ -460,4 +472,51 @@ export const actionLogs: ActionLog[] = [
     actionType: 'user_status_update',
     details: "Approved 'Alice Johnson' registration.",
   },
+];
+
+export const reportCards: ReportCard[] = [
+  {
+    id: 'rc-001',
+    student: { id: 'usr-stud-001', name: 'Alice Johnson' },
+    classId: 'cl-101',
+    course: { name: 'AP Marine Biology' },
+    teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
+    semester: 'Fall 2023',
+    grade: 'A-',
+    comments: 'Alice has shown a remarkable aptitude for marine biology. Her participation in class discussions is always insightful. Keep up the excellent work!',
+    status: 'released',
+  },
+  {
+    id: 'rc-002',
+    student: { id: 'usr-stud-001', name: 'Alice Johnson' },
+    classId: 'cl-102',
+    course: { name: 'AP English Literature' },
+    teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
+    semester: 'Fall 2023',
+    grade: 'B+',
+    comments: 'Alice is a strong writer, but she could benefit from contributing more to group discussions. Her essays are well-researched and thoughtfully argued.',
+    status: 'released',
+  },
+   {
+    id: 'rc-003',
+    student: { id: 'usr-stud-002', name: 'Bob Williams' },
+    classId: 'cl-101',
+    course: { name: 'AP Marine Biology' },
+    teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
+    semester: 'Fall 2023',
+    grade: 'B',
+    comments: 'Bob has a solid grasp of the material. I encourage him to be more proactive in asking questions to deepen his understanding.',
+    status: 'pending_review',
+  },
+    {
+    id: 'rc-004',
+    student: { id: 'usr-stud-003', name: 'Charlie Brown' },
+    classId: 'cl-101',
+    course: { name: 'AP Marine Biology' },
+    teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
+    semester: 'Fall 2023',
+    grade: 'C+',
+    comments: 'Charlie is a pleasure to have in class, but he has struggled with some of the more complex topics. Extra help sessions would be beneficial.',
+    status: 'draft',
+  }
 ];
