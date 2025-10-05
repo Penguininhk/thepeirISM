@@ -24,7 +24,6 @@ export function StudentSidebar() {
     { href: "/dashboard/student/schedule", label: "My Schedule", icon: Calendar },
     { href: "/dashboard/student/courses", label: "Course Selection", icon: ListPlus },
     { href: "/dashboard/forums", label: "Forums", icon: MessageSquare },
-    { href: "/dashboard/student/study-buddy", label: "AI Study Buddy", icon: BrainCircuit },
   ];
 
   return (

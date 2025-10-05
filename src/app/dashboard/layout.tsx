@@ -6,6 +6,7 @@ import { UserNav } from '@/components/user-nav';
 import { StudentSidebar } from '@/components/student-sidebar';
 import { TeacherSidebar } from '@/components/teacher-sidebar';
 import { studentProfile, teacherProfile } from '@/lib/data';
+import { StudyBuddyBubble } from '@/components/study-buddy-bubble';
 
 export default function DashboardLayout({
   children,
@@ -34,6 +35,7 @@ export default function DashboardLayout({
           <UserNav user={user} />
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
+        {role === 'student' && <StudyBuddyBubble />}
       </SidebarInset>
     </SidebarProvider>
   );
