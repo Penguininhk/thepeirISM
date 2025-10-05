@@ -1,4 +1,5 @@
-import { initializeServerFirebase } from '@/firebase/server-config';
+'use client';
+
 import type { UserProfile } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -13,18 +14,13 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import StatusActionButtons from './status-action-buttons';
 
-async function getUsers() {
-  const { firestore } = initializeServerFirebase();
-  const usersSnapshot = await firestore.collection('users').get();
-  const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
-  return usersList;
+interface UserManagementProps {
+  initialUsers: UserProfile[];
 }
 
-export default async function UserManagement() {
-  const users = await getUsers();
-  
-  const pendingUsers = users.filter(u => u.status === 'pending');
-  const otherUsers = users.filter(u => u.status !== 'pending');
+export default function UserManagement({ initialUsers }: UserManagementProps) {
+  const pendingUsers = initialUsers.filter(u => u.status === 'pending');
+  const otherUsers = initialUsers.filter(u => u.status !== 'pending');
 
   return (
     <>

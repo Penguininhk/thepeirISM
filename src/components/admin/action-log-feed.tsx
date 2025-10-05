@@ -1,33 +1,15 @@
-import { initializeServerFirebase } from '@/firebase/server-config';
+'use client';
+
 import type { ActionLog } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { History } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { Timestamp } from 'firebase-admin/firestore';
 
-async function getActionLogs() {
-  const { firestore } = initializeServerFirebase();
-  const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
-  const logsList = logsSnapshot.docs.map(doc => {
-    const data = doc.data() as ActionLog;
-    // Firestore Timestamps need to be converted to a serializable format (e.g., ISO string)
-    // for the Server Component to pass to the client component if needed.
-    // Here we'll convert it for direct rendering.
-    if (data.timestamp && data.timestamp instanceof Timestamp) {
-      return {
-        ...data,
-        id: doc.id,
-        timestamp: data.timestamp.toDate().toISOString(),
-      };
-    }
-    return { id: doc.id, ...data, timestamp: new Date().toISOString() };
-  });
-  return logsList;
+interface ActionLogFeedProps {
+  initialLogs: ActionLog[];
 }
 
-export default async function ActionLogFeed() {
-  const actionLogs = await getActionLogs();
-
+export default function ActionLogFeed({ initialLogs }: ActionLogFeedProps) {
   return (
     <Card>
       <CardHeader>
@@ -39,8 +21,8 @@ export default async function ActionLogFeed() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {actionLogs && actionLogs.length > 0 ? (
-            actionLogs.map(log => (
+          {initialLogs && initialLogs.length > 0 ? (
+            initialLogs.map(log => (
               <div key={log.id} className="flex items-start gap-3">
                  <div className="flex-shrink-0 pt-1">
                    <div className="h-2 w-2 rounded-full bg-accent" />
