@@ -3,7 +3,30 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import UserManagement from '@/components/admin/user-management';
 import ActionLogFeed from '@/components/admin/action-log-feed';
 import CreateUserDialog from '@/components/admin/create-user-dialog';
-import { getUsers, getActionLogs } from '@/app/actions/admin';
+import { getDocs, collection, query, orderBy, limit } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
+import type { UserProfile, ActionLog } from '@/lib/data';
+import { Timestamp } from 'firebase/firestore';
+
+async function getUsers(): Promise<UserProfile[]> {
+  const { firestore } = initializeFirebase();
+  const usersSnapshot = await getDocs(collection(firestore, 'users'));
+  return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
+}
+
+async function getActionLogs(): Promise<ActionLog[]> {
+   const { firestore } = initializeFirebase();
+   const logsQuery = query(collection(firestore, 'actionLogs'), orderBy('timestamp', 'desc'), limit(10));
+   const logsSnapshot = await getDocs(logsQuery);
+   return logsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        timestamp: data.timestamp instanceof Timestamp ? data.timestamp.toDate().toISOString() : new Date().toISOString(),
+      } as ActionLog;
+    });
+}
 
 export default async function AdminDashboardPage() {
   const users = await getUsers();

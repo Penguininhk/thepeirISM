@@ -2,9 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import * as admin from 'firebase-admin';
-import type { UserProfile, ActionLog } from '@/lib/data';
-import { Timestamp } from 'firebase-admin/firestore';
-
+import type { UserProfile } from '@/lib/data';
 
 function initializeAdminApp() {
   const appName = 'firebase-admin-app-for-server-actions';
@@ -42,39 +40,6 @@ function handleError(error: any, action: string) {
   // Re-throwing the error is important for the client to catch it
   throw new Error(message);
 }
-
-export async function getUsers(): Promise<UserProfile[]> {
-  try {
-    const app = initializeAdminApp();
-    const firestore = app.firestore();
-    const usersSnapshot = await firestore.collection('users').get();
-    return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
-  } catch (error) {
-    handleError(error, 'get-users');
-    return []; // This line won't be reached due to throw in handleError
-  }
-}
-
-export async function getActionLogs(): Promise<ActionLog[]> {
-  try {
-    const app = initializeAdminApp();
-    const firestore = app.firestore();
-    const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
-    return logsSnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        ...data,
-        id: doc.id,
-        // Safely convert Firestore Timestamp to a serializable string
-        timestamp: data.timestamp instanceof Timestamp ? data.timestamp.toDate().toISOString() : new Date().toISOString(),
-      } as ActionLog;
-    });
-  } catch (error) {
-    handleError(error, 'get-action-logs');
-    return []; // This line won't be reached
-  }
-}
-
 
 export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | 'classIds'> & { password?: string }) {
   try {
