@@ -18,7 +18,7 @@ export default function StudentLoginPage() {
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
-  const { user, isUserLoading } = useUser();
+  const { user, profile, isUserLoading } = useUser();
   const [email, setEmail] = useState("alice@school.edu");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState<string | null>(null);
@@ -65,12 +65,15 @@ export default function StudentLoginPage() {
   };
 
   useEffect(() => {
-    if (!isUserLoading && user) {
+    // Only redirect if user is loaded, logged in, and has the correct role for this page.
+    if (!isUserLoading && user && profile?.role === 'student') {
       router.push('/dashboard/student');
     }
-  }, [user, isUserLoading, router]);
+  }, [user, profile, isUserLoading, router]);
 
-  if (isUserLoading || user) {
+  // Show loading state while determining auth/profile state,
+  // but only if the user isn't already logged in with the wrong role.
+  if (isUserLoading || (user && profile?.role === 'student')) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Loading...</p>
