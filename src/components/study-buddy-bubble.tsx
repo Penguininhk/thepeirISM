@@ -68,7 +68,7 @@ export function StudyBuddyBubble() {
     <>
       <div className={cn(
         "fixed bottom-6 right-6 z-50 transition-all duration-300",
-        isOpen ? "w-[400px] h-[600px] pointer-events-auto" : "w-16 h-16 pointer-events-none"
+        isOpen ? "w-[400px] h-[600px] pointer-events-auto" : "w-14 h-14 pointer-events-none"
       )}>
         <Card className={cn(
           "h-full w-full flex flex-col transition-all duration-300 overflow-hidden shadow-2xl",
@@ -171,12 +171,12 @@ export function StudyBuddyBubble() {
 
        <Button
         className={cn(
-          "fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full shadow-lg flex items-center justify-center transition-all duration-300",
+          "fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300",
           isOpen ? "opacity-0 scale-75 pointer-events-none" : "opacity-100 scale-100 pointer-events-auto"
         )}
         onClick={() => setIsOpen(true)}
       >
-        <BrainCircuit className="h-8 w-8" />
+        <BrainCircuit className="h-7 w-7" />
         <Sparkles className="absolute bottom-1 right-1 h-5 w-5 fill-amber-400 text-white" />
       </Button>
     </>
