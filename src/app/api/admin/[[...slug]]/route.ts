@@ -1,7 +1,5 @@
 import 'dotenv/config'; // Load environment variables
-import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
-import { listUsers } from '@/ai/flows/list-users-flow';
-import { updateUserStatus } from '@/ai/flows/update-user-status-flow';
+import { initializeServerFirebase } from '@/firebase/server-config';
 import type { UpdateUserStatusInput } from '@/lib/data';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,16 +8,35 @@ export async function GET(
   { params }: { params: { slug: string[] } }
 ) {
   const slug = params.slug?.[0];
+  const { firestore } = initializeServerFirebase();
 
   try {
     switch (slug) {
       case 'list-users':
-        const users = await listUsers();
-        return NextResponse.json(users);
+        const usersCol = firestore.collection('users');
+        const userSnapshot = await usersCol.get();
+        if (userSnapshot.empty) {
+          return NextResponse.json([]);
+        }
+        const userList = userSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        return NextResponse.json(userList);
 
       case 'list-action-logs':
-        const logs = await listActionLogs();
-        return NextResponse.json(logs);
+        const logsCol = firestore.collection('actionLogs');
+        const logsQuery = logsCol.orderBy('timestamp', 'desc').limit(10);
+        const logsSnapshot = await logsQuery.get();
+        if (logsSnapshot.empty) {
+          return NextResponse.json([]);
+        }
+        const logsList = logsSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            timestamp: data.timestamp.toDate().toISOString(),
+          };
+        });
+        return NextResponse.json(logsList);
 
       default:
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });
@@ -40,20 +57,41 @@ export async function POST(
   { params }: { params: { slug: string[] } }
 ) {
   const slug = params.slug?.[0];
+  const { auth, firestore } = initializeServerFirebase();
 
   try {
     switch (slug) {
       case 'update-user-status':
         const body: UpdateUserStatusInput = await request.json();
-        const result = await updateUserStatus(body);
-        if (result.success) {
-          return NextResponse.json(result);
-        } else {
-          return NextResponse.json(
-            { error: 'Flow Execution Error', details: result.message },
-            { status: 500 }
-          );
+        const { userId, status, email, role } = body;
+
+        // Step 1: Update the user's status in the Firestore document.
+        const userRef = firestore.collection('users').doc(userId);
+        await userRef.update({ status: status });
+
+        // Step 2: If an 'admin' role is approved, set their custom claim.
+        if (status === 'approved' && role === 'admin') {
+          await auth.setCustomUserClaims(userId, { isAdmin: true });
+          console.log(`Successfully set custom claim { isAdmin: true } for user ${userId}`);
         }
+
+        // Step 3: Log the administrative action.
+        const logDetails = `User '${email}' status updated to '${status}'.`;
+        await firestore.collection('actionLogs').add({
+          timestamp: new Date(),
+          adminId: 'admin', // In a real app, this would be the UID of the logged-in admin.
+          actionType: 'user_status_update',
+          details: logDetails,
+        });
+
+        // Step 4: Simulate sending a notification email.
+        console.log('--- Sending Email (Simulation) ---');
+        console.log(`To: ${email}`);
+        console.log(`Subject: Your Account Status has been updated`);
+        console.log(`Body: Hello, your account status has been updated to: ${status}.`);
+        console.log('------------------------------------');
+
+        return NextResponse.json({ success: true, message: `User status updated and action logged successfully.` });
 
       default:
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });
