@@ -1,3 +1,4 @@
+
 // IMPORTANT: Load environment variables from .env.local before any other imports.
 import 'dotenv/config';
 import { NextRequest, NextResponse } from 'next/server';
