@@ -11,14 +11,21 @@ import { z } from 'genkit';
 import { initializeServerFirebase } from '@/firebase/server-config';
 import { ActionLog } from '@/lib/data';
 
-// Define a tool that can fetch all action logs.
-// This will run with server-side privileges, bypassing client-side security rules.
-const getActionLogs = ai.defineTool(
+// Define the schema for the output of the main flow function.
+const ListActionLogsOutputSchema = z.custom<ActionLog[]>();
+export type ListActionLogsOutput = z.infer<typeof ListActionLogsOutputSchema>;
+
+// This is the main function that will be exported and called by the client.
+export async function listActionLogs(): Promise<ListActionLogsOutput> {
+  return listActionLogsFlow();
+}
+
+// Define the Genkit flow.
+const listActionLogsFlow = ai.defineFlow(
   {
-    name: 'getActionLogs',
-    description: 'Retrieves a list of all action logs from Firestore.',
+    name: 'listActionLogsFlow',
     inputSchema: z.void(),
-    outputSchema: z.array(z.any()), // We'll cast this to ActionLog[] later.
+    outputSchema: ListActionLogsOutputSchema,
   },
   async () => {
     const { firestore } = initializeServerFirebase();
@@ -38,32 +45,8 @@ const getActionLogs = ai.defineTool(
         ...data, 
         id: doc.id,
         timestamp: data.timestamp.toDate().toISOString(),
-      };
+      } as ActionLog;
     });
     return logsList;
-  }
-);
-
-// Define the schema for the output of the main flow function.
-const ListActionLogsOutputSchema = z.custom<ActionLog[]>();
-export type ListActionLogsOutput = z.infer<typeof ListActionLogsOutputSchema>;
-
-// This is the main function that will be exported and called by the client.
-export async function listActionLogs(): Promise<ListActionLogsOutput> {
-  return listActionLogsFlow();
-}
-
-// Define the Genkit flow.
-const listActionLogsFlow = ai.defineFlow(
-  {
-    name: 'listActionLogsFlow',
-    inputSchema: z.void(),
-    outputSchema: z.custom<any[]>(), // Output as any[] and cast on client.
-  },
-  async () => {
-    // Run the getActionLogs tool to fetch the data.
-    const logs = await getActionLogs();
-    // The tool returns data with ISO string timestamps. The client is responsible for parsing.
-    return logs;
   }
 );
