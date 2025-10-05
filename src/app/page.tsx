@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { School, User, ShieldCheck } from "lucide-react";
+import { School, User } from "lucide-react";
 import AppLogo from "@/components/app-logo";
 
 export default function Home() {
@@ -19,8 +19,11 @@ export default function Home() {
         <p className="mt-4 max-w-xl text-lg text-foreground/80">
           The Harbour School's official portal for students and faculty. Access your dashboard to stay updated with announcements, classwork, and more.
         </p>
-
-        <div className="mt-12 grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
+        
+        <h2 className="mt-12 text-center text-lg font-semibold text-foreground/90">
+            Select your role to sign in
+        </h2>
+        <div className="mt-6 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
           <Link href="/login/student" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
@@ -52,27 +55,16 @@ export default function Home() {
               </CardContent>
             </Card>
           </Link>
-
-          <Link href="/login/admin" passHref>
-            <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-center gap-3">
-                  <ShieldCheck className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
-                  <span className="font-headline">Administrator</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Button variant="link" className="mt-4 p-0">
-                  Admin Login
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
         </div>
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
         <p>&copy; {new Date().getFullYear()} The Harbour School. Hong Kong.</p>
+        <p className="mt-1">
+            <Link href="/login/admin" className="underline hover:text-primary">
+                Administrator Login
+            </Link>
+        </p>
       </footer>
     </div>
   );
