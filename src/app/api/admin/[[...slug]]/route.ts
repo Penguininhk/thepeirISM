@@ -8,9 +8,9 @@ export async function GET(
   { params }: { params: { slug: string[] } }
 ) {
   const slug = params.slug?.[0];
-  const { firestore } = initializeServerFirebase();
 
   try {
+    const { firestore } = initializeServerFirebase();
     switch (slug) {
       case 'list-users':
         const usersCol = firestore.collection('users');
@@ -30,6 +30,7 @@ export async function GET(
         }
         const logsList = logsSnapshot.docs.map(doc => {
           const data = doc.data();
+          // Convert Firestore Timestamp to a serializable format (ISO string)
           return {
             ...data,
             id: doc.id,
@@ -57,9 +58,10 @@ export async function POST(
   { params }: { params: { slug: string[] } }
 ) {
   const slug = params.slug?.[0];
-  const { auth, firestore } = initializeServerFirebase();
+
 
   try {
+    const { auth, firestore } = initializeServerFirebase();
     switch (slug) {
       case 'update-user-status':
         const body: UpdateUserStatusInput = await request.json();
