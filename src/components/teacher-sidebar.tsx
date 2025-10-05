@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarPlus, LayoutDashboard, Megaphone, MessageSquare, School } from "lucide-react";
+import { BookMarked, LayoutDashboard, Megaphone, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +19,7 @@ export function TeacherSidebar() {
 
   const menuItems = [
     { href: "/dashboard/teacher", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/teacher/classwork", label: "Classwork", icon: BookMarked },
     { href: "/dashboard/teacher/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/forums", label: "Forums", icon: MessageSquare },
   ];
@@ -40,7 +42,7 @@ export function TeacherSidebar() {
             <SidebarMenuItem key={item.label}>
               <Link href={item.href} passHref>
                 <SidebarMenuButton
-                  isActive={pathname.startsWith(item.href)}
+                  isActive={item.href === '/dashboard/teacher' ? pathname === item.href : pathname.startsWith(item.href)}
                   tooltip={item.label}
                 >
                   <item.icon />

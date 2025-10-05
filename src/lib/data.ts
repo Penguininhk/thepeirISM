@@ -1,3 +1,4 @@
+
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -48,6 +49,7 @@ export type Announcement = {
 export type ClassInfo = {
   id: string;
   course: {
+    id: string;
     name: string;
     code: string;
     teacher: { id: string; };
@@ -90,6 +92,26 @@ export type ForumTopic = {
   }
 };
 
+export type Assignment = {
+    id: string;
+    title: string;
+    course: { id: string; name: string };
+    dueDate: string; // ISO String
+    maxPoints: number;
+};
+
+export type Submission = {
+    id: string;
+    assignmentId: string;
+    student: {
+        id: string;
+        name: string;
+        avatarUrl: string;
+    };
+    status: 'submitted' | 'graded';
+    submittedAt: string; // ISO String
+    grade?: number; // points
+};
 
 // --- MOCK DATA ---
 
@@ -178,16 +200,17 @@ export const announcements: Announcement[] = [
 export const classLists: ClassInfo[] = [
   {
     id: 'cl-101',
-    course: { name: 'AP Marine Biology', code: 'SCI-301', teacher: { id: 'usr-teach-001' } },
+    course: { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { id: 'usr-teach-001' } },
     students: [
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
       { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
       { id: 'usr-stud-003', name: 'Charlie Brown', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
+      { id: 'usr-stud-006', name: 'Frank Green', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
     ],
   },
   {
     id: 'cl-102',
-    course: { name: 'AP English Literature', code: 'ENG-205', teacher: { id: 'usr-teach-001' } },
+    course: { id: 'crs-102', name: 'AP English Literature', code: 'ENG-401', teacher: { id: 'usr-teach-001' } },
     students: [
       { id: 'usr-stud-004', name: 'Diana Prince', avatarUrl: getImageUrl('user-avatar-4') },
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
@@ -281,4 +304,42 @@ export const forumTopics: ForumTopic[] = [
       timestamp: "2024-05-29T09:00:00Z",
     }
   },
+];
+
+export const teacherAssignments: Assignment[] = [
+    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { id: 'crs-101', name: 'AP Marine Biology' }, dueDate: '2024-06-05T23:59:00Z', maxPoints: 100 },
+    { id: 'asg-004', title: 'Poetry Analysis: The Romantics', course: { id: 'crs-102', name: 'AP English Literature' }, dueDate: '2024-06-15T23:59:00Z', maxPoints: 50 },
+    { id: 'asg-006', title: 'Whale Migration Patterns Quiz', course: { id: 'crs-101', name: 'AP Marine Biology' }, dueDate: '2024-06-18T23:59:00Z', maxPoints: 25 },
+];
+
+export const assignmentSubmissions: Submission[] = [
+    {
+        id: 'sub-001',
+        assignmentId: 'asg-001',
+        student: { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
+        status: 'graded',
+        submittedAt: '2024-06-04T10:00:00Z',
+        grade: 92
+    },
+    {
+        id: 'sub-002',
+        assignmentId: 'asg-001',
+        student: { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
+        status: 'submitted',
+        submittedAt: '2024-06-05T11:30:00Z',
+    },
+     {
+        id: 'sub-003',
+        assignmentId: 'asg-004',
+        student: { id: 'usr-stud-004', name: 'Diana Prince', avatarUrl: getImageUrl('user-avatar-4') },
+        status: 'submitted',
+        submittedAt: '2024-06-14T21:00:00Z',
+    },
+     {
+        id: 'sub-004',
+        assignmentId: 'asg-004',
+        student: { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
+        status: 'submitted',
+        submittedAt: '2024-06-15T09:15:00Z',
+    },
 ];

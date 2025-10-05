@@ -1,8 +1,9 @@
+
 import Link from "next/link";
 import { classLists, announcements, teacherProfile } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bell, CalendarPlus, PlusCircle, Users } from "lucide-react";
+import { ArrowRight, Bell, CalendarPlus, PlusCircle, Users, BookMarked } from "lucide-react";
 
 export default function TeacherDashboard() {
   const myAnnouncements = announcements.filter(ann => ann.author.id === teacherProfile.id);
@@ -25,13 +26,16 @@ export default function TeacherDashboard() {
                   <CardTitle className="text-lg">{cl.course.name}</CardTitle>
                   <CardDescription>{cl.course.code}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-grow">
+                <CardContent className="flex-grow space-y-2">
                   <div className="flex items-center text-muted-foreground">
                     <Users className="mr-2 h-4 w-4" />
                     <span>{cl.students.length} students</span>
                   </div>
-                </CardContent>
-                <CardContent>
+                   <Button asChild className="w-full" variant="outline">
+                    <Link href={`/dashboard/teacher/roster/${cl.id}`}>
+                      <Users className="mr-2 h-4 w-4" /> View Roster
+                    </Link>
+                  </Button>
                   <Button asChild className="w-full" variant="outline">
                     <Link href={`/dashboard/teacher/attendance/${cl.id}`}>
                       <CalendarPlus className="mr-2 h-4 w-4" /> Take Attendance
@@ -44,6 +48,22 @@ export default function TeacherDashboard() {
         </Card>
       </div>
       <div className="space-y-6">
+        <Card>
+           <CardHeader>
+            <CardTitle className="flex items-center gap-2 font-headline">
+              <BookMarked className="h-5 w-5 text-primary" />
+              <span>Classwork</span>
+            </CardTitle>
+             <CardDescription>Create, view, and grade assignments.</CardDescription>
+          </CardHeader>
+          <CardContent>
+             <Button asChild className="w-full">
+              <Link href="/dashboard/teacher/classwork">
+                Manage Classwork <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-headline">
@@ -60,7 +80,7 @@ export default function TeacherDashboard() {
             </Button>
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">Recent Postings:</h4>
-               {myAnnouncements.slice(0, 3).map(ann => (
+               {myAnnouncements.slice(0, 2).map(ann => (
                   <div key={ann.id} className="text-sm p-2 border-l-2 border-primary/20 bg-muted/50 rounded-r-md">
                     <p className="truncate font-medium">{ann.title}</p>
                     <p className="text-xs text-muted-foreground">{ann.classId ? `For ${classLists.find(cl => cl.course.id === ann.classId)?.course.name}` : "School-wide"}</p>
