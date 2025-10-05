@@ -12,11 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User as UserIcon } from "lucide-react";
+import { LogOut, Settings, User as UserIcon, Shield } from "lucide-react";
 import type { Student, Teacher } from "@/lib/data";
 
+type AdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin';
+  avatarUrl: string;
+  status: 'approved';
+}
+
 interface UserNavProps {
-  user: Student | Teacher;
+  user: Student | Teacher | AdminUser;
 }
 
 export function UserNav({ user }: UserNavProps) {
@@ -28,13 +37,15 @@ export function UserNav({ user }: UserNavProps) {
     return name.substring(0, 2);
   };
 
+  const is_admin = user.role === 'admin';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.avatarUrl} alt={user.name} />
-            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+            <AvatarFallback>{is_admin ? <Shield/> : getInitials(user.name)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
