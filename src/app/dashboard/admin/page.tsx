@@ -35,28 +35,14 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, History } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { useFirestore, useAuth } from '@/firebase';
-import { 
-  collection, 
-  getDocs, 
-  doc, 
-  updateDoc, 
-  setDoc,
-  query, 
-  orderBy, 
-  limit,
-  Timestamp,
-  addDoc
-} from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '@/firebase';
 
 
 type ActionLogWithDate = Omit<ActionLog, 'timestamp'> & { timestamp: Date };
 
 export default function AdminDashboardPage() {
   const { toast } = useToast();
-  const firestore = useFirestore();
-  const auth = useAuth();
+  const { user: adminUser } = useAuth();
   
   const [isCreateUserOpen, setCreateUserOpen] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -69,55 +55,55 @@ export default function AdminDashboardPage() {
   
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
-  const [usersError, setUsersError] = useState<Error | null>(null);
+  const [usersError, setUsersError] = useState<string | null>(null);
   
   const [actionLogs, setActionLogs] = useState<ActionLogWithDate[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState(true);
-  const [logsError, setLogsError] = useState<Error | null>(null);
+  const [logsError, setLogsError] = useState<string | null>(null);
 
   const fetchData = async () => {
-    if (!firestore) return;
     setIsLoadingUsers(true);
     setIsLoadingLogs(true);
     setUsersError(null);
     setLogsError(null);
 
+    // Fetch Users
     try {
-      const usersCol = collection(firestore, 'users');
-      const userSnapshot = await getDocs(usersCol);
-      const userList = userSnapshot.docs.map(doc => ({ ...(doc.data() as UserProfile), id: doc.id }));
-      setUsers(userList);
+      const response = await fetch('/api/admin?action=list-users');
+      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      setUsers(data);
     } catch (e) {
-      setUsersError(e as Error);
+      const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
+      setUsersError(errorMsg);
       toast({
         variant: 'destructive',
         title: 'Failed to load users',
-        description: (e as Error).message,
+        description: errorMsg,
       });
     } finally {
       setIsLoadingUsers(false);
     }
     
+    // Fetch Action Logs
     try {
-      const logsCol = collection(firestore, 'actionLogs');
-      const logsQuery = query(logsCol, orderBy('timestamp', 'desc'), limit(10));
-      const logsSnapshot = await getDocs(logsQuery);
-      const logsList = logsSnapshot.docs.map(doc => {
-        const data = doc.data();
-        // Firestore timestamps need to be converted to JS Dates
-        return {
-          ...data,
-          id: doc.id,
-          timestamp: (data.timestamp as Timestamp).toDate(),
-        } as ActionLogWithDate;
-      });
+      const response = await fetch('/api/admin?action=list-action-logs');
+      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      const logsList = data.map((log: any) => ({
+        ...log,
+        timestamp: new Date(log.timestamp),
+      }));
       setActionLogs(logsList);
     } catch (e) {
-      setLogsError(e as Error);
+      const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
+      setLogsError(errorMsg);
       toast({
         variant: 'destructive',
         title: 'Failed to load action logs',
-        description: (e as Error).message,
+        description: errorMsg,
       });
     } finally {
       setIsLoadingLogs(false);
@@ -126,16 +112,18 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchData();
-  }, [firestore]);
+  }, []);
   
   const logAction = async (details: string, actionType: 'user_status_update' | 'user_created') => {
-    if (!firestore) return;
-    try {
-        await addDoc(collection(firestore, "actionLogs"), {
-            timestamp: new Date(),
-            adminId: auth?.currentUser?.email || 'admin',
-            actionType,
-            details,
+     try {
+        await fetch('/api/admin?action=log-action', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                details,
+                actionType,
+                adminId: adminUser?.email || 'admin',
+            }),
         });
     } catch (error) {
         console.error("Failed to log action:", error);
@@ -149,16 +137,22 @@ export default function AdminDashboardPage() {
 
 
   const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
-    if (!firestore) return;
     const originalUsers = users;
     setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
 
     try {
-      const userRef = doc(firestore, 'users', user.id);
-      await updateDoc(userRef, { status: newStatus });
+      const response = await fetch('/api/admin?action=update-user-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            userId: user.id, 
+            status: newStatus,
+            isAdmin: user.role === 'admin',
+        }),
+      });
+
+      if (!response.ok) throw new Error('Server responded with an error.');
       
-      // In a real app with server-side logic, you would set custom claims here.
-      // This client-side code can't set claims. We'll log the action.
       await logAction(`User '${user.email}' status updated to '${newStatus}'.`, 'user_status_update');
 
       toast({
@@ -170,11 +164,12 @@ export default function AdminDashboardPage() {
 
     } catch (e) {
       setUsers(originalUsers);
+      const errorMsg = e instanceof Error ? e.message : 'Could not update user status.';
       console.error('Failed to update user status:', e);
       toast({
         variant: 'destructive',
         title: 'Update Failed',
-        description: (e as Error).message || 'Could not update the user status.',
+        description: errorMsg,
       });
     }
   };
@@ -182,44 +177,33 @@ export default function AdminDashboardPage() {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth || !firestore) {
-      toast({ variant: "destructive", title: "Auth not ready", description: "Firebase is not available."});
-      return;
-    }
-
+   
     try {
-       // This approach creates the user on the client, which requires email/password auth to be enabled.
-       // For security, this is typically done on a backend, but we'll do it here for simplicity.
-       // NOTE: This will sign the admin out and sign the new user in. This is a known limitation of using client-side SDK for this.
-       // A proper implementation would use a server-side function to create the user without affecting admin's session.
-       // However, since the goal is to get the app working, we accept this limitation.
+        const response = await fetch('/api/admin?action=create-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newUser),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to create user on server.');
+        }
+
+        const createdUser = await response.json();
         
-        // This is a placeholder for a more secure backend function.
-        // We're creating a dummy user object for the UI for now.
-        const mockNewUserId = `new-user-${Date.now()}`;
-        const newUserProfile: UserProfile = {
-            id: mockNewUserId,
-            firstName: newUser.firstName,
-            lastName: newUser.lastName,
-            email: newUser.email,
-            role: newUser.role,
-            status: 'approved',
-            classIds: [],
-        };
-       
-        await setDoc(doc(firestore, "users", mockNewUserId), newUserProfile);
         await logAction(`New user '${newUser.email}' created with role '${newUser.role}'.`, 'user_created');
       
-      toast({
-        title: "User Created (Simulated)",
-        description: `Account for ${newUser.firstName} ${newUser.lastName} has been added.`,
-      });
+        toast({
+            title: "User Created",
+            description: `Account for ${newUser.firstName} ${newUser.lastName} has been created.`,
+        });
 
-      setUsers([...users, newUserProfile]);
-      fetchData();
+        setUsers([...users, createdUser]);
+        setCreateUserOpen(false);
+        setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
+        fetchData();
 
-      setCreateUserOpen(false);
-      setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
 
     } catch (err) {
        toast({ 
@@ -241,7 +225,7 @@ export default function AdminDashboardPage() {
   if (usersError || logsError) {
      return (
       <div className="flex h-screen w-full items-center justify-center">
-        <p className="text-red-500">Error loading data: {usersError?.message || logsError?.message}</p>
+        <p className="text-red-500">Error loading data: {usersError || logsError}</p>
       </div>
     );
   }
@@ -286,10 +270,10 @@ export default function AdminDashboardPage() {
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" value={newUser.email} onChange={(e) => setNewUser({...newUser, email: e.target.value})} required/>
                 </div>
-                {/* 
-                  Password field is removed from UI for simulation. 
-                  In a real app, you would have a secure way to set an initial password.
-                */}
+                <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input id="password" type="password" value={newUser.password} onChange={(e) => setNewUser({...newUser, password: e.target.value})} required/>
+                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="role">Role</Label>
                   <Select value={newUser.role} onValueChange={(value: 'student' | 'teacher') => setNewUser({...newUser, role: value})}>
@@ -433,5 +417,3 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
-
-    
