@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { usePathname } from 'next/navigation';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/user-nav';
@@ -8,19 +9,25 @@ import { TeacherSidebar } from '@/components/teacher-sidebar';
 import { studentProfile, teacherProfile } from '@/lib/data';
 import { StudyBuddyBubble } from '@/components/study-buddy-bubble';
 
+type Role = 'student' | 'teacher';
+
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [role, setRole] = React.useState<Role>('student');
 
-  const isStudentPage = pathname.startsWith('/dashboard/student');
-  const isTeacherPage = pathname.startsWith('/dashboard/teacher');
-  
-  // In a real app, role would come from auth state.
-  // Here we just infer it from the URL for the showcase.
-  const role = isStudentPage ? 'student' : 'teacher';
+  React.useEffect(() => {
+    if (pathname.startsWith('/dashboard/student')) {
+      setRole('student');
+    } else if (pathname.startsWith('/dashboard/teacher')) {
+      setRole('teacher');
+    }
+    // If it's a shared page like /dashboard/forums, the role will persist from the last page.
+  }, [pathname]);
+
   const user = role === 'student' ? studentProfile : teacherProfile;
 
   return (
