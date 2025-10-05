@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { useAuth, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -38,6 +38,7 @@ import { UserProfile, ActionLog } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
+import { listUsers } from '@/ai/flows/list-users-flow';
 import { PlusCircle, History } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
 import { formatDistanceToNow } from 'date-fns';
@@ -56,13 +57,31 @@ export default function AdminDashboardPage() {
     password: 'password123',
     role: 'student' as 'student' | 'teacher',
   });
+  
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  const usersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'users');
-  }, [firestore]);
-
-  const { data: users, isLoading, error } = useCollection<UserProfile>(usersQuery);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const userList = await listUsers();
+        setUsers(userList);
+      } catch (e) {
+        setError(e as Error);
+        toast({
+          variant: 'destructive',
+          title: 'Failed to load users',
+          description: (e as Error).message,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUsers();
+  }, [toast]);
   
   const actionLogsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -107,6 +126,8 @@ export default function AdminDashboardPage() {
         title: 'User Status Updated',
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
+
+      setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
       
       const logDetails = `User '${user.firstName} ${user.lastName}' (${user.email}) was ${newStatus}.`;
       await logAction('user_status_update', logDetails);
@@ -131,7 +152,7 @@ export default function AdminDashboardPage() {
       const userCredential = await createUserWithEmailAndPassword(tempAuth, newUser.email, newUser.password);
       const user = userCredential.user;
 
-      await setDoc(doc(firestore, "users", user.uid), {
+      const newUserProfile: UserProfile = {
         id: user.uid,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
@@ -139,12 +160,16 @@ export default function AdminDashboardPage() {
         role: newUser.role,
         status: "approved",
         classIds: [],
-      });
+      };
+
+      await setDoc(doc(firestore, "users", user.uid), newUserProfile);
       
       toast({
         title: "User Created",
         description: `Account for ${newUser.firstName} ${newUser.lastName} has been created and approved.`,
       });
+
+      setUsers([...users, newUserProfile]);
 
       const logDetails = `New ${newUser.role} account created for '${newUser.firstName} ${newUser.lastName}' (${newUser.email}).`;
       await logAction('user_created', logDetails);
@@ -183,8 +208,8 @@ export default function AdminDashboardPage() {
     );
   }
 
-  const pendingUsers = users?.filter(u => u.status === 'pending') || [];
-  const otherUsers = users?.filter(u => u.status !== 'pending') || [];
+  const pendingUsers = users.filter(u => u.status === 'pending');
+  const otherUsers = users.filter(u => u.status !== 'pending');
 
   return (
     <div className="space-y-6">
