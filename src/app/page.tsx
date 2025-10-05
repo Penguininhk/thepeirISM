@@ -21,7 +21,7 @@ export default function Home() {
         </p>
         
         <h2 className="mt-12 text-center text-lg font-semibold text-foreground/90">
-            Select your role to sign in
+            sign in options
         </h2>
         <div className="mt-6 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
           <Link href="/login/student" passHref>
