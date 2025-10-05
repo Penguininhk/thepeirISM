@@ -1,23 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { UserManagement } from "@/components/admin/user-management";
+import { ActionLogFeed } from "@/components/admin/action-log-feed";
+import { users, actionLogs } from "@/lib/data";
 
 export default function AdminDashboardPage() {
   return (
-    <div className="flex h-full flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold font-headline">Admin Dashboard</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground mb-6">This section is for system administration.</p>
-          <Button asChild>
-            <Link href="/">
-              Return to Portal Home
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+    <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2">
+        <UserManagement users={users} />
+      </div>
+      <div>
+        <ActionLogFeed logs={actionLogs} />
+      </div>
     </div>
-  )
+  );
 }

@@ -6,12 +6,17 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 // Helper function to find an image URL by its ID from the placeholder data
 const getImageUrl = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || 'https://picsum.photos/seed/placeholder/600/400';
 
-export type Student = {
+export type User = {
   id: string;
   name: string;
   email: string;
-  role: 'student';
+  role: 'student' | 'teacher';
   avatarUrl: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+export type Student = User & {
+  role: 'student';
   attendance: { date: string; status: 'present' | 'late' | 'absent', course: { name: string } }[];
   courses: { id: string; name: string; code: string; teacher: { name: string }; block: string; }[];
   assignments: {
@@ -28,12 +33,8 @@ export type Student = {
   }[];
 };
 
-export type Teacher = {
-  id: string;
-  name: string;
-  email: string;
+export type Teacher = User & {
   role: 'teacher';
-  avatarUrl: string;
   courses: { id: string; name: string; }[];
 };
 
@@ -131,14 +132,30 @@ export type ChatChannel = {
   messages: ChatMessage[];
 };
 
+export type ActionLog = {
+  id: string;
+  timestamp: string; // ISO 8601
+  admin: {
+    name: string;
+    id: string;
+  };
+  actionType: 'user_status_update' | 'user_created';
+  details: string;
+};
 
 // --- MOCK DATA ---
+
+const adminUser = {
+  id: 'usr-admin-001',
+  name: 'Admin User',
+}
 
 export const teacherProfile: Teacher = {
   id: 'usr-teach-001',
   name: 'Dr. Evelyn Reed',
   email: 'e.reed@school.edu',
   role: 'teacher',
+  status: 'approved',
   avatarUrl: getImageUrl('user-avatar-2'),
   courses: [
     { id: 'crs-101', name: 'AP Marine Biology' },
@@ -146,10 +163,10 @@ export const teacherProfile: Teacher = {
   ],
 };
 
-const otherTeachers = [
-  { id: 'usr-teach-002', name: 'Mr. David Chen', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d' },
-  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d' },
-  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d' },
+const otherTeachers: User[] = [
+  { id: 'usr-teach-002', name: 'Mr. David Chen', role: 'teacher', email: 'd.chen@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d' },
+  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', role: 'teacher', email: 'c.kim@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d' },
+  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', role: 'teacher', email: 's.greene@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d' },
 ]
 
 const studentCourses = [
@@ -165,6 +182,7 @@ export const studentProfile: Student = {
   name: 'Alice Johnson',
   email: 'alice@school.edu',
   role: 'student',
+  status: 'approved',
   avatarUrl: getImageUrl('user-avatar-1'),
   attendance: [
     { date: '2024-05-20', status: 'present', course: { name: 'AP Marine Biology'} },
@@ -196,6 +214,20 @@ export const studentProfile: Student = {
     { block: 'F', course: { name: 'AP English Literature', code: 'ENG-401', room: 'L212' } },
   ],
 };
+
+const otherStudents: User[] = [
+  { id: 'usr-stud-002', name: 'Bob Williams', role: 'student', email: 'bob@school.edu', status: 'approved', avatarUrl: getImageUrl('user-avatar-3') },
+  { id: 'usr-stud-003', name: 'Charlie Brown', role: 'student', email: 'charlie@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
+  { id: 'usr-stud-004', name: 'Diana Prince', role: 'student', email: 'diana@school.edu', status: 'rejected', avatarUrl: getImageUrl('user-avatar-4') },
+  { id: 'usr-stud-005', name: 'Eve Adams', role: 'student', email: 'eve@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
+];
+
+export const users: User[] = [
+  studentProfile,
+  teacherProfile,
+  ...otherStudents,
+  ...otherTeachers,
+];
 
 export const announcements: Announcement[] = [
   {
@@ -375,9 +407,9 @@ export const facultyChat: ChatChannel[] = [
     name: 'general',
     description: 'General announcements and discussion for all faculty.',
     messages: [
-      { id: 'msg-001', author: teacherProfile, timestamp: '2024-05-29T09:05:00Z', content: 'Morning all! Just a reminder that final grades are due this Friday.' },
-      { id: 'msg-002', author: otherTeachers[0], timestamp: '2024-05-29T09:15:00Z', content: 'Thanks for the reminder, Evelyn. I\'ve got a few more essays to get through.' },
-      { id: 'msg-003', author: otherTeachers[1], timestamp: '2024-05-29T10:30:00Z', content: 'Anyone else having trouble with the new projector in room 204?' },
+      { id: 'msg-001', author: { ...teacherProfile }, timestamp: '2024-05-29T09:05:00Z', content: 'Morning all! Just a reminder that final grades are due this Friday.' },
+      { id: 'msg-002', author: { ...otherTeachers[0] as Teacher }, timestamp: '2024-05-29T09:15:00Z', content: 'Thanks for the reminder, Evelyn. I\'ve got a few more essays to get through.' },
+      { id: 'msg-003', author: { ...otherTeachers[1] as Teacher }, timestamp: '2024-05-29T10:30:00Z', content: 'Anyone else having trouble with the new projector in room 204?' },
     ],
   },
   {
@@ -385,8 +417,8 @@ export const facultyChat: ChatChannel[] = [
     name: 'curriculum-planning',
     description: 'Collaboration on curriculum development for the next school year.',
     messages: [
-      { id: 'msg-004', author: otherTeachers[3], timestamp: '2024-05-28T11:00:00Z', content: 'I was thinking of introducing a new segment on the Cold War for the World History class. Thoughts?' },
-      { id: 'msg-005', author: teacherProfile, timestamp: '2024-05-28T11:25:00Z', content: 'That sounds great, Samuel. We could tie it into the literature of that period in the English class.' },
+      { id: 'msg-004', author: { ...otherTeachers[3] as Teacher }, timestamp: '2024-05-28T11:00:00Z', content: 'I was thinking of introducing a new segment on the Cold War for the World History class. Thoughts?' },
+      { id: 'msg-005', author: { ...teacherProfile }, timestamp: '2024-05-28T11:25:00Z', content: 'That sounds great, Samuel. We could tie it into the literature of that period in the English class.' },
     ],
   },
   {
@@ -394,7 +426,38 @@ export const facultyChat: ChatChannel[] = [
     name: 'random',
     description: 'A place for non-work-related chat and fun.',
     messages: [
-       { id: 'msg-006', author: otherTeachers[2], timestamp: '2024-05-27T15:00:00Z', content: 'Anyone seen the latest season of that space show? No spoilers!' },
+       { id: 'msg-006', author: { ...otherTeachers[2] as Teacher }, timestamp: '2024-05-27T15:00:00Z', content: 'Anyone seen the latest season of that space show? No spoilers!' },
     ],
   }
 ]
+
+export const actionLogs: ActionLog[] = [
+  {
+    id: 'log-001',
+    timestamp: '2024-05-30T10:00:00Z',
+    admin: adminUser,
+    actionType: 'user_status_update',
+    details: "Approved 'Ms. Chloe Kim' registration.",
+  },
+  {
+    id: 'log-002',
+    timestamp: '2024-05-29T14:20:00Z',
+    admin: adminUser,
+    actionType: 'user_status_update',
+    details: "Rejected 'Diana Prince' registration.",
+  },
+  {
+    id: 'log-003',
+    timestamp: '2024-05-28T11:00:00Z',
+    admin: adminUser,
+    actionType: 'user_created',
+    details: "Created new student account 'Bob Williams'.",
+  },
+    {
+    id: 'log-004',
+    timestamp: '2024-05-27T09:00:00Z',
+    admin: adminUser,
+    actionType: 'user_status_update',
+    details: "Approved 'Alice Johnson' registration.",
+  },
+];
