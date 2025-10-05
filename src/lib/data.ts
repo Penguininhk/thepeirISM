@@ -113,6 +113,25 @@ export type Submission = {
     grade?: number; // points
 };
 
+export type ChatMessage = {
+  id: string;
+  author: {
+    id: string;
+    name: string;
+    avatarUrl: string;
+  };
+  timestamp: string; // ISO string
+  content: string;
+};
+
+export type ChatChannel = {
+  id: string;
+  name: string;
+  description: string;
+  messages: ChatMessage[];
+};
+
+
 // --- MOCK DATA ---
 
 export const teacherProfile: Teacher = {
@@ -126,6 +145,12 @@ export const teacherProfile: Teacher = {
     { id: 'crs-102', name: 'AP English Literature' },
   ],
 };
+
+const otherTeachers = [
+  { id: 'usr-teach-002', name: 'Mr. David Chen', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d' },
+  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d' },
+  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d' },
+]
 
 const studentCourses = [
   { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { name: 'Dr. Evelyn Reed' }, block: 'A' },
@@ -343,3 +368,33 @@ export const assignmentSubmissions: Submission[] = [
         submittedAt: '2024-06-15T09:15:00Z',
     },
 ];
+
+export const facultyChat: ChatChannel[] = [
+  {
+    id: 'chat-001',
+    name: 'general',
+    description: 'General announcements and discussion for all faculty.',
+    messages: [
+      { id: 'msg-001', author: teacherProfile, timestamp: '2024-05-29T09:05:00Z', content: 'Morning all! Just a reminder that final grades are due this Friday.' },
+      { id: 'msg-002', author: otherTeachers[0], timestamp: '2024-05-29T09:15:00Z', content: 'Thanks for the reminder, Evelyn. I\'ve got a few more essays to get through.' },
+      { id: 'msg-003', author: otherTeachers[1], timestamp: '2024-05-29T10:30:00Z', content: 'Anyone else having trouble with the new projector in room 204?' },
+    ],
+  },
+  {
+    id: 'chat-002',
+    name: 'curriculum-planning',
+    description: 'Collaboration on curriculum development for the next school year.',
+    messages: [
+      { id: 'msg-004', author: otherTeachers[3], timestamp: '2024-05-28T11:00:00Z', content: 'I was thinking of introducing a new segment on the Cold War for the World History class. Thoughts?' },
+      { id: 'msg-005', author: teacherProfile, timestamp: '2024-05-28T11:25:00Z', content: 'That sounds great, Samuel. We could tie it into the literature of that period in the English class.' },
+    ],
+  },
+  {
+    id: 'chat-003',
+    name: 'random',
+    description: 'A place for non-work-related chat and fun.',
+    messages: [
+       { id: 'msg-006', author: otherTeachers[2], timestamp: '2024-05-27T15:00:00Z', content: 'Anyone seen the latest season of that space show? No spoilers!' },
+    ],
+  }
+]
