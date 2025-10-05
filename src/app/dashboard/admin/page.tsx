@@ -119,34 +119,27 @@ export default function AdminDashboardPage() {
     if (!firestore) return;
     try {
       const newLog = {
-        timestamp: serverTimestamp(),
+        timestamp: new Date().toISOString(),
         adminId: 'admin', // In a real app, this would be the logged-in admin's ID
         actionType,
         details,
       };
-      const docRef = await addDoc(collection(firestore, 'actionLogs'), newLog);
-      
-      // Manually add the new log to the local state to avoid a refetch
-      setActionLogs(prevLogs => [{ id: docRef.id, ...newLog, timestamp: new Date().toISOString() } as ActionLog, ...prevLogs]);
+      // The server flow now handles logging, but we can optimistically update UI
+      setActionLogs(prevLogs => [{ id: String(Date.now()), ...newLog }, ...prevLogs]);
 
     } catch (e) {
-      console.error("Failed to log action:", e);
+      console.error("Failed to optimistically log action:", e);
       // Optional: show a toast that logging failed, but don't block main action
     }
   };
 
 
   const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
-    if (!firestore) return;
+    // Optimistically update the local state for a better UX
+    const originalUsers = users;
+    setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
 
     try {
-      // Optimistically update the local state for a better UX
-      setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
-
-      // Update the status in Firestore
-      const userRef = doc(firestore, 'users', user.id);
-      await updateDoc(userRef, { status: newStatus });
-      
       const flowInput: UpdateUserStatusInput = {
         userId: user.id,
         status: newStatus,
@@ -162,8 +155,6 @@ export default function AdminDashboardPage() {
       });
 
       if (!response.ok) {
-        // If the API call fails, revert the optimistic update
-        setUsers(users.map(u => u.id === user.id ? {...u, status: user.status} : u));
         const errorData = await response.json();
         throw new Error(errorData.details || 'Failed to trigger user update flow.');
       }
@@ -173,10 +164,13 @@ export default function AdminDashboardPage() {
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
       
+      // Optimistically add to the log view
       const logDetails = `User '${user.firstName} ${user.lastName}' (${user.email}) was ${newStatus}.`;
       await logAction('user_status_update', logDetails);
 
     } catch (e) {
+      // If the API call fails, revert the optimistic update
+      setUsers(originalUsers);
       console.error('Failed to update user status:', e);
       toast({
         variant: 'destructive',

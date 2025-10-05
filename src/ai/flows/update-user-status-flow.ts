@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview A flow for updating a user's status and notifying them.
+ * @fileOverview A flow for updating a user's status and logging the action.
  *
- * - updateUserStatus - Updates a user's status in Firestore and sends a notification email.
+ * - updateUserStatus - Updates a user's status, sets admin claims if needed, and simulates a notification.
  * - UpdateUserStatusInput - The input type for the updateUserStatus function.
  * - UpdateUserStatusOutput - The return type for the updateUserStatus function.
  */
@@ -10,37 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { initializeServerFirebase } from '@/firebase/server-config';
-import { UpdateUserStatusInputSchema } from '@/lib/data';
-import type { UpdateUserStatusInput } from '@/lib/data';
-
-
-// In a real app, you would use the Firebase Admin SDK to set custom claims.
-// Since we can't use firebase-admin here, we will simulate this.
-// In a real Firebase environment, this would be:
-// import * as admin from 'firebase-admin';
-// await admin.auth().setCustomUserClaims(userId, { isAdmin: true });
-const setAdminClaim = ai.defineTool(
-  {
-    name: 'setAdminClaim',
-    description: 'Sets a custom claim on a user to grant admin privileges.',
-    inputSchema: z.object({
-      userId: z.string().describe("The ID of the user to make an admin."),
-    }),
-    outputSchema: z.object({ success: z.boolean() }),
-  },
-  async ({ userId }) => {
-    const { auth } = initializeServerFirebase();
-    try {
-      await auth.setCustomUserClaims(userId, { isAdmin: true });
-      console.log(`Successfully set custom claim { isAdmin: true } for user ${userId}`);
-      return { success: true };
-    } catch (error) {
-      console.error(`--- FAILED: Setting custom claim for user ${userId} ---`, error);
-      return { success: false };
-    }
-  }
-);
-
+import { UpdateUserStatusInput, UpdateUserStatusInputSchema } from '@/lib/data';
 
 const UpdateUserStatusOutputSchema = z.object({
   success: z.boolean(),
@@ -48,55 +18,10 @@ const UpdateUserStatusOutputSchema = z.object({
 });
 export type UpdateUserStatusOutput = z.infer<typeof UpdateUserStatusOutputSchema>;
 
-const sendEmail = ai.defineTool(
-  {
-    name: 'sendEmail',
-    description: 'Sends an email to a user.',
-    inputSchema: z.object({
-      to: z.string().describe("The recipient's email address."),
-      subject: z.string().describe('The subject of the email.'),
-      body: z.string().describe('The HTML body of the email.'),
-    }),
-    outputSchema: z.object({ success: z.boolean() }),
-  },
-  async (input) => {
-    console.log('--- Sending Email (Simulation) ---');
-    console.log(`To: ${input.to}`);
-    console.log(`Subject: ${input.subject}`);
-    console.log(`Body: ${input.body}`);
-    console.log('------------------------------------');
-    return { success: true };
-  }
-);
-
 
 export async function updateUserStatus(input: UpdateUserStatusInput): Promise<UpdateUserStatusOutput> {
   return updateUserStatusFlow(input);
 }
-
-
-const prompt = ai.definePrompt({
-  name: 'userStatusNotificationPrompt',
-  input: {
-    schema: z.object({
-      status: z.string(),
-      email: z.string(),
-    })
-  },
-  output: {
-    format: 'json',
-    schema: z.object({
-      subject: z.string(),
-      body: z.string(),
-    })
-  },
-  prompt: `Generate an email to notify a user about their account status change.
-The status is '{{{status}}}'.
-The email should be professional and informative.
-If the status is 'approved', welcome them to The PIER and provide a login link.
-If the status is 'rejected', inform them politely that their request could not be approved at this time.`,
-  tools: [sendEmail],
-});
 
 
 const updateUserStatusFlow = ai.defineFlow(
@@ -107,39 +32,36 @@ const updateUserStatusFlow = ai.defineFlow(
   },
   async (input) => {
     const { userId, status, email, role } = input;
-    
-    // This flow handles notifications and setting admin claims.
-    // The client-side code is responsible for updating the 'status' in the Firestore document.
+    const { auth, firestore } = initializeServerFirebase();
 
     try {
-      // If a user with the 'admin' role is approved, set their custom claim.
+      // Step 1: Update the user's status in the Firestore document.
+      const userRef = firestore.collection('users').doc(userId);
+      await userRef.update({ status: status });
+
+      // Step 2: If an 'admin' role is approved, set their custom claim.
       if (status === 'approved' && role === 'admin') {
-        const claimResult = await setAdminClaim({ userId });
-        if (!claimResult.success) {
-          return { success: false, message: 'Failed to set admin claim.' };
-        }
+        await auth.setCustomUserClaims(userId, { isAdmin: true });
+        console.log(`Successfully set custom claim { isAdmin: true } for user ${userId}`);
       }
 
-      // Generate the notification email content
-      const llmResponse = await prompt({
-        status,
-        email,
+      // Step 3: Log the administrative action.
+      const logDetails = `User '${email}' status updated to '${status}'.`;
+      await firestore.collection('actionLogs').add({
+        timestamp: new Date(),
+        adminId: 'admin', // In a real app, this would be the UID of the logged-in admin.
+        actionType: 'user_status_update',
+        details: logDetails,
       });
 
-      const emailContent = llmResponse.output;
+      // Step 4: Simulate sending a notification email.
+      console.log('--- Sending Email (Simulation) ---');
+      console.log(`To: ${email}`);
+      console.log(`Subject: Your Account Status has been updated`);
+      console.log(`Body: Hello, your account status has been updated to: ${status}.`);
+      console.log('------------------------------------');
 
-      if (!emailContent) {
-        return { success: false, message: 'Failed to generate email content.' };
-      }
-      
-      // Use the sendEmail tool
-      await sendEmail({
-        to: email,
-        subject: emailContent.subject,
-        body: emailContent.body,
-      });
-
-      return { success: true, message: `Notification sent for user status update to ${status}.` };
+      return { success: true, message: `User status updated and action logged successfully.` };
     } catch (error) {
       console.error('Error in updateUserStatusFlow: ', error);
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
