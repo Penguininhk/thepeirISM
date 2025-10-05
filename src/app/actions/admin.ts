@@ -1,12 +1,53 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { initializeServerFirebase, handleError } from '@/firebase/server-config';
+import * as admin from 'firebase-admin';
 import type { UserProfile } from '@/lib/data';
+
+// Isolate server initialization to prevent conflicts.
+// Memoization ensures this only runs once per server instance.
+let app: admin.app.App | null = null;
+function initializeAdminApp() {
+  if (app) {
+    return {
+      app,
+      auth: admin.auth(app),
+      firestore: admin.firestore(app),
+    };
+  }
+
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+
+  if (!privateKey || !clientEmail || !projectId) {
+    throw new Error('Firebase Admin credentials not found in environment variables.');
+  }
+  
+  const credentials = { privateKey, clientEmail, projectId };
+
+  app = admin.initializeApp({
+    credential: admin.credential.cert(credentials),
+  });
+
+  return {
+    app,
+    auth: admin.auth(app),
+    firestore: admin.firestore(app),
+  };
+}
+
+function handleError(error: any, action: string) {
+  console.error(`Error during ${action}:`, error);
+  const message = error instanceof Error ? error.message : 'An unknown error occurred.';
+  // Re-throwing is important for the client to catch the failure.
+  throw new Error(message);
+}
+
 
 export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | 'classIds'> & { password?: string }) {
   try {
-    const { auth, firestore } = initializeServerFirebase();
+    const { auth, firestore } = initializeAdminApp();
     const { email, password, firstName, lastName, role } = userData;
 
     if (!email || !password || !firstName || !lastName || !role) {
@@ -47,7 +88,7 @@ export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | '
 
 export async function updateUserStatus(userId: string, status: 'approved' | 'rejected', role: UserProfile['role']) {
   try {
-    const { auth, firestore } = initializeServerFirebase();
+    const { auth, firestore } = initializeAdminApp();
 
     await firestore.collection('users').doc(userId).update({ status });
 

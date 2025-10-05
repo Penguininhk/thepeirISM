@@ -5,23 +5,52 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import UserManagement from '@/components/admin/user-management';
 import ActionLogFeed from '@/components/admin/action-log-feed';
 import CreateUserDialog from '@/components/admin/create-user-dialog';
-import { initializeServerFirebase } from '@/firebase/server-config';
 import type { UserProfile, ActionLog } from '@/lib/data';
 import { Timestamp } from 'firebase-admin/firestore';
+import * as admin from 'firebase-admin';
 
-async function getUsers() {
-  const { firestore } = initializeServerFirebase();
+// Isolate server initialization to prevent conflicts.
+// Memoization ensures this only runs once per server instance.
+let app: admin.app.App | null = null;
+function initializeAdminApp() {
+  if (app) {
+    return {
+      app,
+      firestore: admin.firestore(app),
+    };
+  }
+
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+
+  if (!privateKey || !clientEmail || !projectId) {
+    throw new Error('Firebase Admin credentials not found in environment variables.');
+  }
+
+  app = admin.initializeApp({
+    credential: admin.credential.cert({ privateKey, clientEmail, projectId }),
+  });
+
+  return {
+    app,
+    firestore: admin.firestore(app),
+  };
+}
+
+
+async function getUsers(): Promise<UserProfile[]> {
+  const { firestore } = initializeAdminApp();
   const usersSnapshot = await firestore.collection('users').get();
   const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
   return usersList;
 }
 
-async function getActionLogs() {
-  const { firestore } = initializeServerFirebase();
+async function getActionLogs(): Promise<ActionLog[]> {
+  const { firestore } = initializeAdminApp();
   const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
   const logsList = logsSnapshot.docs.map(doc => {
     const data = doc.data();
-    // Firestore Timestamps need to be converted to a serializable format (ISO string)
     if (data.timestamp && data.timestamp instanceof Timestamp) {
       return {
         ...data,
@@ -29,7 +58,6 @@ async function getActionLogs() {
         timestamp: data.timestamp.toDate().toISOString(),
       } as ActionLog;
     }
-    // Handle cases where timestamp might be missing or not a Timestamp
     return { 
       id: doc.id, 
       ...data, 
