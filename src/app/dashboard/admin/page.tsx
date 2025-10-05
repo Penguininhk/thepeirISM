@@ -35,12 +35,36 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, History } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { listUsers } from '@/ai/flows/list-users-flow';
-import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
-import { updateUserStatus } from '@/ai/flows/update-user-status-flow';
-import { createUser } from '@/ai/flows/create-user-flow';
 
 type ActionLogWithDate = Omit<ActionLog, 'timestamp'> & { timestamp: string };
+
+async function fetchAdminData(action: string) {
+    const res = await fetch(`/api/admin?action=${action}`);
+    if (!res.ok) {
+        const errorBody = await res.text();
+        throw new Error(`Server responded with ${res.status}: ${errorBody}`);
+    }
+    // Handle cases where the response might be empty
+    const text = await res.text();
+    if (!text) {
+        return [];
+    }
+    return JSON.parse(text);
+}
+
+async function postAdminData(action: string, body: object) {
+    const res = await fetch(`/api/admin?action=${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+        const errorBody = await res.json();
+        throw new Error(errorBody.error || `Server responded with ${res.status}`);
+    }
+    return res.json();
+}
+
 
 export default function AdminDashboardPage() {
   const { toast } = useToast();
@@ -69,7 +93,7 @@ export default function AdminDashboardPage() {
     setLogsError(null);
 
     try {
-      const usersData = await listUsers();
+      const usersData = await fetchAdminData('list-users');
       setUsers(usersData);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
@@ -79,7 +103,7 @@ export default function AdminDashboardPage() {
     }
     
     try {
-      const logsData = await listActionLogs();
+      const logsData = await fetchAdminData('list-action-logs');
       setActionLogs(logsData);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
@@ -98,10 +122,10 @@ export default function AdminDashboardPage() {
     setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
 
     try {
-      await updateUserStatus({
+      await postAdminData('update-user-status', {
         userId: user.id,
         status: newStatus,
-        isAdmin: user.role === 'admin',
+        isAdmin: user.role === 'admin' && newStatus === 'approved',
       });
       
       toast({
@@ -126,7 +150,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
    
     try {
-        const createdUser = await createUser(newUser);
+        const createdUser = await postAdminData('create-user', newUser);
       
         toast({
             title: "User Created",
@@ -158,8 +182,8 @@ export default function AdminDashboardPage() {
   if (usersError || logsError) {
      return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
-        {usersError && <p className="text-red-500">Error loading data: {usersError}</p>}
-        {logsError && <p className="text-red-500">Error loading data: {logsError}</p>}
+        {usersError && <p className="text-red-500">{usersError}</p>}
+        {logsError && <p className="text-red-500">{logsError}</p>}
         <Button onClick={fetchData}>Retry</Button>
       </div>
     );

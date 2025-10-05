@@ -61,7 +61,7 @@ export type Class = {
 
 export type ActionLog = {
   id: string;
-  timestamp: string; // Serialized as ISO string
+  timestamp: any; // Allow for Firestore Timestamp on server, string on client
   adminId: string;
   actionType: 'user_status_update' | 'user_created';
   details: string;
