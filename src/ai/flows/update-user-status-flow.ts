@@ -10,6 +10,9 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { initializeServerFirebase } from '@/firebase/server-config';
+import { UpdateUserStatusInputSchema } from '@/lib/data';
+import type { UpdateUserStatusInput } from '@/lib/data';
+
 
 // In a real app, you would use the Firebase Admin SDK to set custom claims.
 // Since we can't use firebase-admin here, we will simulate this.
@@ -38,14 +41,6 @@ const setAdminClaim = ai.defineTool(
   }
 );
 
-
-const UpdateUserStatusInputSchema = z.object({
-  userId: z.string().describe('The ID of the user to update.'),
-  status: z.enum(['approved', 'rejected']).describe('The new status for the user.'),
-  email: z.string().email().describe('The email of the user to notify.'),
-  role: z.enum(['student', 'teacher', 'admin']).describe('The role of the user.'),
-});
-export type UpdateUserStatusInput = z.infer<typeof UpdateUserStatusInputSchema>;
 
 const UpdateUserStatusOutputSchema = z.object({
   success: z.boolean(),

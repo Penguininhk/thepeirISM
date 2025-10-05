@@ -1,4 +1,5 @@
 // This file contains mock data. It will be replaced by Firebase data services.
+import { z } from 'zod';
 
 export type UserProfile = {
   id: string;
@@ -65,6 +66,15 @@ export type ActionLog = {
   actionType: 'user_status_update' | 'user_created';
   details: string;
 };
+
+
+export const UpdateUserStatusInputSchema = z.object({
+  userId: z.string().describe('The ID of the user to update.'),
+  status: z.enum(['approved', 'rejected']).describe('The new status for the user.'),
+  email: z.string().email().describe('The email of the user to notify.'),
+  role: z.enum(['student', 'teacher', 'admin']).describe('The role of the user.'),
+});
+export type UpdateUserStatusInput = z.infer<typeof UpdateUserStatusInputSchema>;
 
 
 // The following data is kept for page structure reference and will be removed.

@@ -1,7 +1,8 @@
 import 'dotenv/config'; // Load environment variables
 import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
 import { listUsers } from '@/ai/flows/list-users-flow';
-import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
+import { updateUserStatus } from '@/ai/flows/update-user-status-flow';
+import type { UpdateUserStatusInput } from '@/lib/data';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
