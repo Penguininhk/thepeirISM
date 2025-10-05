@@ -63,17 +63,7 @@ const listActionLogsFlow = ai.defineFlow(
   async () => {
     // Run the getActionLogs tool to fetch the data.
     const logs = await getActionLogs();
-    // The tool returns data with ISO string timestamps.
-    // The client will need to parse these strings back into Date objects for formatting.
-    // We also need to map the Firestore Timestamps to a serializable format.
-    return logs.map(log => ({
-      ...log,
-      // The client-side ActionLog type expects a Timestamp object,
-      // so we convert it back here for type consistency, though it's not a real Timestamp.
-      // A better approach would be to have separate client/server types.
-      timestamp: {
-        toDate: () => new Date(log.timestamp)
-      }
-    }));
+    // The tool returns data with ISO string timestamps. The client is responsible for parsing.
+    return logs;
   }
 );

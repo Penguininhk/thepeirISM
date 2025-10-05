@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
       const docRef = await addDoc(collection(firestore, 'actionLogs'), newLog);
       
       // Manually add the new log to the local state to avoid a refetch
-      setActionLogs(prevLogs => [{ id: docRef.id, ...newLog } as ActionLog, ...prevLogs]);
+      setActionLogs(prevLogs => [{ id: docRef.id, ...newLog, timestamp: new Date().toISOString() } as ActionLog, ...prevLogs]);
 
     } catch (e) {
       console.error("Failed to log action:", e);
@@ -402,7 +402,7 @@ export default function AdminDashboardPage() {
                          <div>
                           <p className="text-sm">{log.details}</p>
                           <p className="text-xs text-muted-foreground">
-                            {log.timestamp ? `${formatDistanceToNow(log.timestamp.toDate())} ago` : 'just now'} by {log.adminId}
+                            {log.timestamp ? `${formatDistanceToNow(new Date(log.timestamp))} ago` : 'just now'} by {log.adminId}
                           </p>
                          </div>
                       </div>

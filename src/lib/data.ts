@@ -1,8 +1,5 @@
 // This file contains mock data. It will be replaced by Firebase data services.
 
-import { Timestamp } from "firebase/firestore";
-
-
 export type UserProfile = {
   id: string;
   firstName: string;
@@ -26,20 +23,20 @@ export type Announcement = {
   authorId: string;
   title: string;
   content: string;
-  createdAt: Timestamp;
-  updatedAt?: Timestamp;
+  createdAt: Date | string; // Use serializable types
+  updatedAt?: Date | string;
   classIds?: string[];
   schoolWide?: boolean;
 };
 
 export type Assignment = {
-  id: string;
+  id:string;
   courseId: string;
   title: string;
   description: string;
-  dueDate: Timestamp;
-  createdAt: Timestamp;
-  updatedAt?: Timestamp;
+  dueDate: Date | string;
+  createdAt: Date | string;
+  updatedAt?: Date | string;
   maxPoints: number;
 };
 
@@ -47,7 +44,7 @@ export type Submission = {
   id: string;
   assignmentId: string;
   studentId: string;
-  submissionDate: Timestamp;
+  submissionDate: Date | string;
   content: string; // URL to file or text content
   grade?: number;
   teacherFeedback?: string;
@@ -63,7 +60,7 @@ export type Class = {
 
 export type ActionLog = {
   id: string;
-  timestamp: Timestamp;
+  timestamp: string; // Serialized as ISO string
   adminId: string;
   actionType: 'user_status_update' | 'user_created';
   details: string;
@@ -104,5 +101,3 @@ export const classLists = [
 export const availableCourses = [
   { id: 'crs-201', name: 'Calculus I', code: 'MATH-301', description: 'An introduction to differential and integral calculus.', teacher: { name: 'Mr. David Chen'}, imageUrl: 'https://picsum.photos/seed/105/600/400' },
 ];
-
-    
