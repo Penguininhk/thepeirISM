@@ -6,10 +6,7 @@ import type { UserProfile, ActionLog } from '@/lib/data';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
-// This function must be defined within the Server Component that uses it
-// to avoid bundling issues with the 'firebase-admin' package.
 function initializeAdminApp() {
-  // Use a unique name for the admin app to avoid conflicts
   const appName = 'firebase-admin-app-for-server-actions';
   
   if (admin.apps.some(app => app?.name === appName)) {
@@ -21,20 +18,23 @@ function initializeAdminApp() {
   const projectId = process.env.FIREBASE_PROJECT_ID;
 
   if (!privateKey || !clientEmail || !projectId) {
-    throw new Error('Firebase Admin credentials not found in environment variables.');
+    throw new Error('Firebase Admin credentials not found in environment variables. Please ensure FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, and FIREBASE_PROJECT_ID are set.');
   }
   
-  const credentials = { privateKey, clientEmail, projectId };
+  const serviceAccount = {
+    projectId,
+    clientEmail,
+    privateKey,
+  };
 
   return admin.initializeApp({
-    credential: admin.credential.cert(credentials),
+    credential: admin.credential.cert(serviceAccount),
   }, appName);
 }
 
 function handleError(error: any, action: string) {
   console.error(`Error during ${action}:`, error);
   const message = error instanceof Error ? error.message : 'An unknown error occurred.';
-  // Re-throwing is important for the client to catch the failure.
   throw new Error(message);
 }
 
@@ -46,9 +46,8 @@ export async function getUsers(): Promise<UserProfile[]> {
     const usersSnapshot = await firestore.collection('users').get();
     return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
   } catch (error) {
-    console.error('Failed to fetch users:', error);
     handleError(error, 'get-users');
-    return []; // Return empty array on error
+    return []; // Should not be reached due to throw in handleError
   }
 }
 
@@ -66,9 +65,8 @@ export async function getActionLogs(): Promise<ActionLog[]> {
       } as ActionLog;
     });
   } catch (error) {
-    console.error('Failed to fetch action logs:', error);
     handleError(error, 'get-action-logs');
-    return []; // Return empty array on error
+    return []; // Should not be reached
   }
 }
 
@@ -95,13 +93,12 @@ export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | '
       lastName,
       email,
       role,
-      status: 'approved', // Directly approve user created by admin
+      status: 'approved',
       classIds: [],
     };
 
     await firestore.collection('users').doc(userRecord.uid).set(newUserProfile);
 
-    // Set custom claim if the user is an admin
     if (role === 'admin') {
       await auth.setCustomUserClaims(userRecord.uid, { admin: true });
     }
@@ -109,7 +106,7 @@ export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | '
     await firestore.collection('actionLogs').add({
       details: `New user '${email}' created with role '${role}'.`,
       actionType: 'user_created',
-      adminId: 'admin-system', // Placeholder for authenticated admin
+      adminId: 'admin-system',
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -130,17 +127,15 @@ export async function updateUserStatus(userId: string, status: 'approved' | 'rej
     await firestore.collection('users').doc(userId).update({ status });
 
     if (role === 'admin' && status === 'approved') {
-      // Ensure the user has the admin custom claim.
       await auth.setCustomUserClaims(userId, { admin: true });
     } else {
-      // If user is not an admin or is rejected, remove the claim.
        await auth.setCustomUserClaims(userId, { admin: false });
     }
 
     await firestore.collection('actionLogs').add({
       details: `User status for ${userId} updated to '${status}'.`,
       actionType: 'user_status_update',
-      adminId: 'admin-system', // Placeholder for authenticated admin
+      adminId: 'admin-system',
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
