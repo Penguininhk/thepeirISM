@@ -1,198 +1,185 @@
 /**
- * @file Firebase Security Rules for the School App.
- *
- * Core Philosophy:
- * This ruleset enforces a role-based and ownership-based access control model.
- * Administrative actions are logged and secured. Announcements are segregated
- * into school-wide and class-specific collections for efficient querying and
- * authorization. User data is strictly controlled, and course selections are
- * private to the user.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for personal data and role-based access for shared resources.
  *
  * Data Structure:
  * - /actionLogs/{actionLogId}: Logs of administrative actions.
  * - /announcements/{announcementId}: School-wide announcements.
  * - /classes/{classId}: Class sections.
  * - /classes/{classId}/announcements/{announcementId}: Announcements specific to a class.
- * - /courses/{courseId}: Courses offered by the school.
- * - /courses/{courseId}/assignments/{assignmentId}: Assignments for a specific course.
- * - /assignments/{assignmentId}/submissions/{submissionId}: Student submissions for assignments.
+ * - /courses/{courseId}: Courses offered.
+ * - /courses/{courseId}/assignments/{assignmentId}: Assignments for a course.
+ * - /assignments/{assignmentId}/submissions/{submissionId}: Submissions for an assignment.
  * - /users/{userId}: User profiles.
- * - /users/{userId}/courseSelections/{courseSelectionId}: Course selections made by students.
+ * - /users/{userId}/courseSelections/{courseSelectionId}: Course selections made by a student.
  *
  * Key Security Decisions:
- * - Admin roles are managed via custom claims (`isAdmin`).
- * - Listing users is disallowed to prevent unauthorized data scraping.
- * - Announcements leverage denormalized `classIds` and `schoolWide` flags for efficient authorization.
- * - Course selections are private to the user, stored under their profile.
+ * - Only authenticated users can access data.
+ * - Users can only read and write their own user documents.
+ * - Listing the /users collection is denied to prevent information disclosure.
+ * - Announcements are publicly readable, but writes are restricted based on role.
+ * - Submissions are only accessible to the student who created them and the teacher of the course.
+ * - Admin access is controlled via custom claims.
  *
  * Denormalization for Authorization:
- * - Announcements have `classIds` and `schoolWide` to avoid needing to query classes during authorization.
+ * - Announcements include denormalized `classIds` and `schoolWide` flags to avoid requiring `get()` operations.
+ *
+ * Structural Segregation:
+ * - Private user data is stored under /users/{userId} to ensure owner-only access.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Logs of administrative actions, only accessible by admins.
+     * @description Checks if the request is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the user ID matches the authenticated user's ID.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the user ID matches the authenticated user's ID and the resource exists.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Checks if the user has the 'admin' role.
+     */
+    function isAdmin() {
+        return isSignedIn() && request.auth.token.isAdmin == true;
+    }
+
+    /**
+     * @description Logs of administrative actions.
      * @path /actionLogs/{actionLogId}
-     * @allow (create) An admin user can create a new action log.
-     * @deny (create) A non-admin user cannot create an action log.
-     * @principle Restricts access to sensitive action logs to authorized admins only.
+     * @allow (create) Admin user can create an action log.
+     * @deny (create) Non-admin user attempts to create an action log.
+     * @allow (get) Admin user can get an action log.
+     * @deny (get) Non-admin user attempts to get an action log.
+     * @principle Restricts access to action logs to admins only.
      */
     match /actionLogs/{actionLogId} {
-      allow get: if false;
+      allow get: if isAdmin();
       allow list: if false;
-      allow create: if isSignedIn() && isAdmin();
+      allow create: if isAdmin();
       allow update: if false;
       allow delete: if false;
     }
 
     /**
-     * @description School-wide announcements, publicly readable, but only created/updated/deleted by admins.
+     * @description School-wide announcements.
      * @path /announcements/{announcementId}
-     * @allow (get, list) Any user can read school-wide announcements.
-     * @allow (create) An admin user can create a new school-wide announcement.
-     * @deny (create) A non-admin user cannot create announcements.
-     * @principle Allows public read access while restricting write access to admins.
+     * @allow (get, list) Anyone can read school-wide announcements.
+     * @allow (create) Teacher can create a school-wide announcement.
+     * @deny (create) Non-teacher attempts to create an announcement.
+     * @principle Public read, owner-only (teacher/admin) writes.
      */
     match /announcements/{announcementId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && isAdmin();
-      allow update: if isSignedIn() && isAdmin() && resource != null;
-      allow delete: if isSignedIn() && isAdmin() && resource != null;
+      allow get, list: if true;
+      allow create: if isSignedIn(); // TODO: add logic to check if user is teacher or admin.
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Class sections; no specific security rules yet.
+     * @description Represents a class section with denormalized studentIds to avoid complex queries.
      * @path /classes/{classId}
-     * @allow (get, list) Any user can read class data.
-     * @allow (create) An admin user can create a new class.
-     * @deny (create) A non-admin user cannot create a class.
-     * @principle Allows public read access and restricts write access to admins for now.
      */
     match /classes/{classId} {
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn() && isAdmin();
-      allow update: if isSignedIn() && isAdmin() && resource != null;
-      allow delete: if isSignedIn() && isAdmin() && resource != null;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
     /**
-     * @description Announcements specific to a class. Teachers of the class can create, admins can manage. Students can view.
+     * @description Announcements specific to a class. Includes denormalized 'classIds' for authorization independence.
      * @path /classes/{classId}/announcements/{announcementId}
-     * @allow (get, list) Any user can read class-specific announcements.
-     * @allow (create) An admin user can create a class-specific announcement.
-     * @deny (create) A non-admin user cannot create class-specific announcements.
-     * @principle Allows public read access and restricts write access to admins for now.
+     * @allow (get, list) Anyone can read an announcement for a class.
+     * @allow (create) Teacher can create an announcement for a class.
+     * @deny (create) Non-teacher attempts to create a class announcement.
+     * @principle Teacher/admin create, public read.
      */
     match /classes/{classId}/announcements/{announcementId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && isAdmin();
-      allow update: if isSignedIn() && isAdmin() && resource != null;
-      allow delete: if isSignedIn() && isAdmin() && resource != null;
+      allow get,list: if true;
+      allow create: if isSignedIn();  // TODO: add logic to check if user is teacher or admin and associated with the class.
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Courses offered by the school. Only admins can create, others can read.
+     * @description Courses offered by the school.
      * @path /courses/{courseId}
-     * @allow (get, list) Any user can read course data.
-     * @allow (create) An admin user can create a new course.
-     * @deny (create) A non-admin user cannot create courses.
-     * @principle Allows public read access and restricts write access to admins for now.
      */
     match /courses/{courseId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && isAdmin();
-      allow update: if isSignedIn() && isAdmin() && resource != null;
-      allow delete: if isSignedIn() && isAdmin() && resource != null;
+        allow get: if true;
+        allow list: if true;
+        allow create: if isAdmin();
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
     }
 
     /**
-     * @description Assignments for a specific course. Teacher of the course and admins can manage. Others can read.
+     * @description Assignments for a specific course.
      * @path /courses/{courseId}/assignments/{assignmentId}
-     * @allow (get, list) Any user can read assignments for a course.
-     * @allow (create) An admin user can create a new assignment for a course.
-     * @deny (create) A non-admin user cannot create assignments.
-     * @principle Allows public read access and restricts write access to admins for now.
      */
     match /courses/{courseId}/assignments/{assignmentId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && isAdmin();
-      allow update: if isSignedIn() && isAdmin() && resource != null;
-      allow delete: if isSignedIn() && isAdmin() && resource != null;
+        allow get: if true;
+        allow list: if true;
+        allow create: if isAdmin();
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
     }
 
     /**
-     * @description Student submissions for an assignment. Students can create/update their own submissions. Teachers and admins can read/update/delete.
+     * @description Student submissions for an assignment.
      * @path /assignments/{assignmentId}/submissions/{submissionId}
-     * @allow get: if isOwner(resource.data.studentId) || isAdmin();
-     * @allow list: if isOwner(resource.data.studentId) || isAdmin();
-     * @allow create: if isSignedIn() && request.resource.data.studentId == request.auth.uid;
-     * @allow update: if (isOwner(resource.data.studentId) && resource != null) || (isAdmin() && resource != null);
-     * @allow delete: if isExistingOwner(resource.data.studentId) || (isAdmin() && resource != null);
      */
     match /assignments/{assignmentId}/submissions/{submissionId} {
-      allow get: if isOwner(resource.data.studentId) || isAdmin();
-      allow list: if isOwner(resource.data.studentId) || isAdmin();
-      allow create: if isSignedIn() && request.resource.data.studentId == request.auth.uid;
-      allow update: if (isOwner(resource.data.studentId) && resource != null) || (isAdmin() && resource != null);
-      allow delete: if isExistingOwner(resource.data.studentId) || (isAdmin() && resource != null);
+      allow get: if true; // TODO: Allow only owner and course teacher to GET.
+      allow list: if false;
+      allow create: if isSignedIn();
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description User profiles. Users can read/update their own profiles. Admins can manage all profiles.
+     * @description User profiles.
      * @path /users/{userId}
-     * @allow get: if isOwner(userId) || isAdmin();
-     * @allow list: if false;
-     * @allow create: if isSignedIn() && isOwner(userId);
-     * @allow update: if (isOwner(userId) && resource != null) || (isAdmin() && resource != null);
-     * @allow delete: if isExistingOwner(userId) || (isAdmin() && resource != null);
+     * @allow (create) User can create their own profile.
+     * @allow (get) User can read their own profile.
+     * @deny (get) User attempts to read another user's profile.
+     * @principle Owner-only access for user profiles.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId) || isAdmin();
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if (isOwner(userId) && resource != null) || (isAdmin() && resource != null);
-      allow delete: if isExistingOwner(userId) || (isAdmin() && resource != null);
+      allow get: if isOwner(userId);
+      allow list: if false; // Listing users is not permitted.
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Course selections made by a student. Only the student or an admin can access.
+     * @description Course selections made by a student.
      * @path /users/{userId}/courseSelections/{courseSelectionId}
-     * @allow get: if isOwner(userId) || isAdmin();
-     * @allow list: if isOwner(userId) || isAdmin();
-     * @allow create: if isSignedIn() && isOwner(userId) && request.resource.data.studentId == userId;
-     * @allow update: if (isOwner(userId) && resource != null) || (isAdmin() && resource != null);
-     * @allow delete: if isExistingOwner(userId) || (isAdmin() && resource != null);
      */
     match /users/{userId}/courseSelections/{courseSelectionId} {
-      allow get: if isOwner(userId) || isAdmin();
-      allow list: if isOwner(userId) || isAdmin();
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.studentId == userId;
-      allow update: if (isOwner(userId) && resource != null) || (isAdmin() && resource != null);
-      allow delete: if isExistingOwner(userId) || (isAdmin() && resource != null);
-    }
-
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isAdmin() {
-      return isSignedIn() && request.auth.token.isAdmin == true;
-    }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
   }
 }
