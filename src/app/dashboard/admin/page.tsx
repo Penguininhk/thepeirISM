@@ -36,9 +36,19 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, History } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { listUsers } from '@/ai/flows/list-users-flow';
+import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
+import { updateUserStatus } from '@/ai/flows/update-user-status-flow';
+import { useAuth } from '@/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+
 
 export default function AdminDashboardPage() {
   const { toast } = useToast();
+  const auth = useAuth();
+  const firestore = useFirestore();
   
   const [isCreateUserOpen, setCreateUserOpen] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -61,12 +71,7 @@ export default function AdminDashboardPage() {
       setIsLoadingUsers(true);
       setUsersError(null);
       try {
-        const response = await fetch('/api/admin/list-users');
-        if (!response.ok) {
-           const errorData = await response.json().catch(() => ({ details: response.statusText }));
-          throw new Error(`Failed to fetch users: ${errorData.details || response.statusText}`);
-        }
-        const userList = await response.json();
+        const userList = await listUsers();
         setUsers(userList);
       } catch (e) {
         setUsersError(e as Error);
@@ -84,12 +89,7 @@ export default function AdminDashboardPage() {
       setIsLoadingLogs(true);
       setLogsError(null);
       try {
-        const response = await fetch('/api/admin/list-action-logs');
-         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ details: response.statusText }));
-          throw new Error(`Failed to fetch action logs: ${errorData.details || response.statusText}`);
-        }
-        const logsList = await response.json();
+        const logsList = await listActionLogs();
         setActionLogs(logsList);
       } catch (e) {
         setLogsError(e as Error);
@@ -106,7 +106,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     fetchUsers();
     fetchLogs();
-  }, [toast]);
+  }, []);
   
 
   const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
@@ -121,15 +121,10 @@ export default function AdminDashboardPage() {
         role: user.role,
       };
       
-      const response = await fetch('/api/admin/update-user-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(flowInput),
-      });
+      const result = await updateUserStatus(flowInput);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || 'Failed to trigger user update flow.');
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to trigger user update flow.');
       }
       
       toast({
@@ -154,28 +149,47 @@ export default function AdminDashboardPage() {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth || !firestore) {
+      toast({ variant: "destructive", title: "Error", description: "Firebase not initialized." });
+      return;
+    }
+    
+    // In a real app, you would want to create the user on the server-side for security.
+    // For this prototype, we'll do it on the client for simplicity.
+    // NOTE: This approach requires security rules that allow an authenticated admin to create users.
+    // This is a temporary solution to get the app working.
     try {
-      const response = await fetch('/api/admin/create-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
+       // We can't create an auth user on the server with the Admin SDK in a simple way
+       // that lets them log in on the client. So we do it here.
+      const userCredential = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
+      const user = userCredential.user;
+
+      const newUserProfile: UserProfile = {
+        id: user.uid,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        role: newUser.role,
+        status: 'approved',
+        classIds: [],
+      };
+
+      await setDoc(doc(firestore, "users", user.uid), newUserProfile);
+      
+      // Now, log the action on the server.
+      await updateUserStatus({
+        userId: user.uid,
+        email: newUser.email,
+        role: newUser.role,
+        status: 'approved', // This is just to log the creation action
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.details || 'Failed to create user.');
-      }
-
+      
       toast({
         title: "User Created",
         description: `Account for ${newUser.firstName} ${newUser.lastName} has been created and approved.`,
       });
 
-      // Optimistically add the new user to the UI
-      setUsers([...users, result.user]);
-      
-      // Refresh logs
+      setUsers([...users, newUserProfile]);
       fetchLogs();
 
       setCreateUserOpen(false);
