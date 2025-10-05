@@ -9,7 +9,7 @@ import { TeacherSidebar } from '@/components/teacher-sidebar';
 import { studentProfile, teacherProfile } from '@/lib/data';
 import { StudyBuddyBubble } from '@/components/study-buddy-bubble';
 
-type Role = 'student' | 'teacher';
+type Role = 'student' | 'teacher' | 'admin';
 
 export default function DashboardLayout({
   children,
@@ -24,10 +24,16 @@ export default function DashboardLayout({
       setRole('student');
     } else if (pathname.startsWith('/dashboard/teacher')) {
       setRole('teacher');
+    } else if (pathname.startsWith('/dashboard/admin')) {
+      setRole('admin');
     }
     // If it's a shared page like /dashboard/forums, the role will persist from the last page.
   }, [pathname]);
 
+  if (role === 'admin') {
+    return <>{children}</>
+  }
+  
   const user = role === 'student' ? studentProfile : teacherProfile;
 
   return (
