@@ -19,6 +19,7 @@ interface UserManagementProps {
 }
 
 export default function UserManagement({ initialUsers }: UserManagementProps) {
+  // Data is passed via props from a Server Component
   const pendingUsers = initialUsers.filter(u => u.status === 'pending');
   const otherUsers = initialUsers.filter(u => u.status !== 'pending');
 

@@ -10,6 +10,7 @@ interface ActionLogFeedProps {
 }
 
 export default function ActionLogFeed({ initialLogs }: ActionLogFeedProps) {
+  // Data is passed via props from a Server Component
   return (
     <Card>
       <CardHeader>

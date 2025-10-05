@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle } from 'lucide-react';
-import { createUser } from '@/app/actions/admin';
+import { createUser } from '@/app/actions/admin'; // Calling the server action
 
 export default function CreateUserDialog() {
   const { toast } = useToast();
@@ -40,6 +40,7 @@ export default function CreateUserDialog() {
     e.preventDefault();
    
     try {
+        // Calling a server action is like calling an async function
         await createUser(newUser);
       
         toast({
@@ -49,7 +50,7 @@ export default function CreateUserDialog() {
 
         setCreateUserOpen(false);
         setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
-        // The page will revalidate automatically via the server action
+        // The page will revalidate automatically via the revalidatePath in the server action
     } catch (err) {
        toast({ 
          variant: "destructive", 

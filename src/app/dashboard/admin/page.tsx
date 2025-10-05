@@ -9,15 +9,11 @@ import type { UserProfile, ActionLog } from '@/lib/data';
 import { Timestamp } from 'firebase-admin/firestore';
 import * as admin from 'firebase-admin';
 
-// Isolate server initialization to prevent conflicts.
-// Memoization ensures this only runs once per server instance.
-let app: admin.app.App | null = null;
+// This function must be defined within the Server Component that uses it
+// to avoid bundling issues with the 'firebase-admin' package.
 function initializeAdminApp() {
-  if (app) {
-    return {
-      app,
-      firestore: admin.firestore(app),
-    };
+  if (admin.apps.some(app => app?.name === 'admin-dashboard-page')) {
+    return admin.app('admin-dashboard-page').firestore();
   }
 
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
@@ -25,49 +21,49 @@ function initializeAdminApp() {
   const projectId = process.env.FIREBASE_PROJECT_ID;
 
   if (!privateKey || !clientEmail || !projectId) {
-    throw new Error('Firebase Admin credentials not found in environment variables.');
+    console.error('Firebase Admin credentials not found in environment variables.');
+    return null;
   }
 
-  app = admin.initializeApp({
+  return admin.initializeApp({
     credential: admin.credential.cert({ privateKey, clientEmail, projectId }),
-  });
-
-  return {
-    app,
-    firestore: admin.firestore(app),
-  };
+  }, 'admin-dashboard-page').firestore();
 }
 
 
 async function getUsers(): Promise<UserProfile[]> {
-  const { firestore } = initializeAdminApp();
-  const usersSnapshot = await firestore.collection('users').get();
-  const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
-  return usersList;
+  const firestore = initializeAdminApp();
+  if (!firestore) return [];
+  try {
+    const usersSnapshot = await firestore.collection('users').get();
+    return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    return []; // Return empty array on error
+  }
 }
 
 async function getActionLogs(): Promise<ActionLog[]> {
-  const { firestore } = initializeAdminApp();
-  const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
-  const logsList = logsSnapshot.docs.map(doc => {
-    const data = doc.data();
-    if (data.timestamp && data.timestamp instanceof Timestamp) {
+    const firestore = initializeAdminApp();
+    if (!firestore) return [];
+  try {
+    const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
+    return logsSnapshot.docs.map(doc => {
+      const data = doc.data();
       return {
         ...data,
         id: doc.id,
-        timestamp: data.timestamp.toDate().toISOString(),
+        timestamp: data.timestamp instanceof Timestamp ? data.timestamp.toDate().toISOString() : new Date().toISOString(),
       } as ActionLog;
-    }
-    return { 
-      id: doc.id, 
-      ...data, 
-      timestamp: new Date().toISOString() 
-    } as ActionLog;
-  });
-  return logsList;
+    });
+  } catch (error) {
+    console.error('Failed to fetch action logs:', error);
+    return []; // Return empty array on error
+  }
 }
 
 export default async function AdminDashboardPage() {
+  // Fetch data directly on the server
   const users = await getUsers();
   const actionLogs = await getActionLogs();
 
@@ -84,12 +80,14 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <React.Suspense fallback={<Card><CardHeader><CardTitle>Loading Users...</CardTitle></CardHeader></Card>}>
+            {/* UserManagement is a Client Component receiving server-fetched data */}
             <UserManagement initialUsers={users} />
           </React.Suspense>
         </div>
 
         <div className="lg:col-span-1">
            <React.Suspense fallback={<Card><CardHeader><CardTitle>Loading Log...</CardTitle></CardHeader></Card>}>
+            {/* ActionLogFeed is a Client Component receiving server-fetched data */}
             <ActionLogFeed initialLogs={actionLogs} />
            </React.Suspense>
         </div>
