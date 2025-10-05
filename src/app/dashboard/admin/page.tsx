@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore, useMemoFirebase } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -38,8 +38,6 @@ import { UserProfile, ActionLog } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
-import { listUsers } from '@/ai/flows/list-users-flow';
-import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
 import { PlusCircle, History } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
 import { formatDistanceToNow } from 'date-fns';
@@ -72,7 +70,11 @@ export default function AdminDashboardPage() {
       setIsLoadingUsers(true);
       setUsersError(null);
       try {
-        const userList = await listUsers();
+        const response = await fetch('/api/admin/list-users');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch users: ${response.statusText}`);
+        }
+        const userList = await response.json();
         setUsers(userList);
       } catch (e) {
         setUsersError(e as Error);
@@ -90,7 +92,11 @@ export default function AdminDashboardPage() {
       setIsLoadingLogs(true);
       setLogsError(null);
       try {
-        const logsList = await listActionLogs();
+        const response = await fetch('/api/admin/list-action-logs');
+         if (!response.ok) {
+          throw new Error(`Failed to fetch action logs: ${response.statusText}`);
+        }
+        const logsList = await response.json();
         setActionLogs(logsList);
       } catch (e) {
         setLogsError(e as Error);
