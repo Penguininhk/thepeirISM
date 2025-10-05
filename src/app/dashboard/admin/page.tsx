@@ -6,7 +6,6 @@ import CreateUserDialog from '@/components/admin/create-user-dialog';
 import { getUsers, getActionLogs } from '@/app/actions/admin';
 
 export default async function AdminDashboardPage() {
-  // Fetch data directly on the server by calling server actions
   const users = await getUsers();
   const actionLogs = await getActionLogs();
 
@@ -23,14 +22,12 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <React.Suspense fallback={<Card><CardHeader><CardTitle>Loading Users...</CardTitle></CardHeader></Card>}>
-            {/* UserManagement is a Client Component receiving server-fetched data */}
             <UserManagement initialUsers={users} />
           </React.Suspense>
         </div>
 
         <div className="lg:col-span-1">
            <React.Suspense fallback={<Card><CardHeader><CardTitle>Loading Log...</CardTitle></CardHeader></Card>}>
-            {/* ActionLogFeed is a Client Component receiving server-fetched data */}
             <ActionLogFeed initialLogs={actionLogs} />
            </React.Suspense>
         </div>
