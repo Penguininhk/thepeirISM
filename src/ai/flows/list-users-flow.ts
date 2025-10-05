@@ -50,7 +50,7 @@ const listUsersFlow = ai.defineFlow(
   },
   async () => {
     // Run the getUsers tool to fetch the data.
-    const users = await ai.runTool('getUsers');
+    const users = await getUsers();
     // The tool returns `any[]`, so we cast it to the expected `UserProfile[]`.
     return users as UserProfile[];
   }
