@@ -16,21 +16,28 @@ export default function StatusActionButtons({ userId, userRole }: StatusActionBu
   const { toast } = useToast();
 
   const handleUpdate = (newStatus: 'approved' | 'rejected') => {
-    startTransition(async () => {
-      try {
-        await updateUserStatus(userId, newStatus, userRole);
-        toast({
-          title: 'User Status Updated',
-          description: `User has been ${newStatus}.`,
-        });
-      } catch (e) {
+    startTransition(() => {
+      updateUserStatus(userId, newStatus, userRole).then((res) => {
+        if (res?.success) {
+           toast({
+            title: 'User Status Updated',
+            description: `User has been ${newStatus}.`,
+          });
+        } else {
+           toast({
+            variant: 'destructive',
+            title: 'Update Failed',
+            description: 'Could not update user status.',
+          });
+        }
+      }).catch((e) => {
         const errorMsg = e instanceof Error ? e.message : 'Could not update user status.';
         toast({
           variant: 'destructive',
           title: 'Update Failed',
           description: errorMsg,
         });
-      }
+      });
     });
   };
 

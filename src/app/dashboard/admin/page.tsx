@@ -6,7 +6,7 @@ import UserManagement from '@/components/admin/user-management';
 import ActionLogFeed from '@/components/admin/action-log-feed';
 import CreateUserDialog from '@/components/admin/create-user-dialog';
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
