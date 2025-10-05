@@ -20,7 +20,7 @@ export default function Home() {
           The Harbour School's official portal for students and faculty. Access your dashboard to stay updated with announcements, classwork, and more.
         </p>
 
-        <div className="mt-12 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="mt-12 grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
           <Link href="/login/student" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
@@ -30,9 +30,6 @@ export default function Home() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  View assignments, track attendance, and select courses.
-                </p>
                 <Button variant="link" className="mt-4 p-0">
                   Student Login
                 </Button>
@@ -49,11 +46,24 @@ export default function Home() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Manage classes, post announcements, and take attendance.
-                </p>
                 <Button variant="link" className="mt-4 p-0">
                   Teacher Login
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/login/admin" passHref>
+            <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-center gap-3">
+                  <ShieldCheck className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
+                  <span className="font-headline">Administrator</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button variant="link" className="mt-4 p-0">
+                  Admin Login
                 </Button>
               </CardContent>
             </Card>
