@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { teacherAssignments, assignmentSubmissions } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -37,8 +37,13 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const { toast } = useToast();
   
-  const assignment = teacherAssignments.find((a) => a.id === params.assignmentId);
-  const submissions = assignmentSubmissions.filter((s) => s.assignmentId === params.assignmentId);
+  const [assignment, setAssignment] = useState(teacherAssignments.find((a) => a.id === params.assignmentId));
+  const [submissions, setSubmissions] = useState(assignmentSubmissions.filter((s) => s.assignmentId === params.assignmentId));
+
+  useEffect(() => {
+    setAssignment(teacherAssignments.find((a) => a.id === params.assignmentId));
+    setSubmissions(assignmentSubmissions.filter((s) => s.assignmentId === params.assignmentId));
+  }, [params.assignmentId]);
 
   if (!assignment) {
     return <div>Assignment not found</div>;

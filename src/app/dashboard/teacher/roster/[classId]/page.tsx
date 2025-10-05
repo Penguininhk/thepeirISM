@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { classLists } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,7 +18,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function ClassRosterPage({ params }: { params: { classId: string } }) {
-  const classInfo = classLists.find((c) => c.id === params.classId);
+  const [classInfo, setClassInfo] = useState(classLists.find((c) => c.id === params.classId));
+
+  useEffect(() => {
+    setClassInfo(classLists.find((c) => c.id === params.classId));
+  }, [params.classId]);
 
   if (!classInfo) {
     return <div>Class not found</div>;

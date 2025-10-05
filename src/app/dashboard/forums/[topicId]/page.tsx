@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { forums, forumTopics } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -34,8 +35,13 @@ export default function ForumTopicPage({ params }: { params: { topicId: string }
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   
-  const forum = forums.find((f) => f.id === params.topicId);
-  const topics = forumTopics.filter((t) => t.forumId === params.topicId);
+  const [forum, setForum] = useState(forums.find((f) => f.id === params.topicId));
+  const [topics, setTopics] = useState(forumTopics.filter((t) => t.forumId === params.topicId));
+
+  useEffect(() => {
+    setForum(forums.find((f) => f.id === params.topicId));
+    setTopics(forumTopics.filter((t) => t.forumId === params.topicId));
+  }, [params.topicId]);
 
   if (!forum) {
     return <div>Forum not found</div>;
