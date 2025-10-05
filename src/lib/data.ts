@@ -12,7 +12,7 @@ export type Student = {
   email: string;
   role: 'student';
   avatarUrl: string;
-  attendance: { date: string; status: 'present' | 'late' | 'absent' }[];
+  attendance: { date: string; status: 'present' | 'late' | 'absent', course: { name: string } }[];
   courses: { id: string; name: string; code: string; teacher: { name: string } }[];
   assignments: {
     id: string;
@@ -88,11 +88,16 @@ export const studentProfile: Student = {
   role: 'student',
   avatarUrl: getImageUrl('user-avatar-1'),
   attendance: [
-    { date: '2024-05-20', status: 'present' },
-    { date: '2024-05-21', status: 'present' },
-    { date: '2024-05-22', status: 'late' },
-    { date: '2024-05-23', status: 'present' },
-    { date: '2024-05-24', status: 'absent' },
+    { date: '2024-05-20', status: 'present', course: { name: 'AP Marine Biology'} },
+    { date: '2024-05-21', status: 'present', course: { name: 'AP Calculus BC'} },
+    { date: '2024-05-22', status: 'late', course: { name: 'AP Studio Art: 2D'} },
+    { date: '2024-05-23', status: 'present', course: { name: 'AP World History'} },
+    { date: '2024-05-24', status: 'absent', course: { name: 'AP English Literature'} },
+    { date: '2024-05-20', status: 'present', course: { name: 'AP Calculus BC'} },
+    { date: '2024-05-21', status: 'present', course: { name: 'AP Marine Biology'} },
+    { date: '2024-05-22', status: 'present', course: { name: 'AP World History'} },
+    { date: '2024-05-23', status: 'late', course: { name: 'AP Calculus BC'} },
+    { date: '2024-05-24', status: 'present', course: { name: 'AP Marine Biology'} },
   ],
   courses: [
     { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { name: 'Dr. Evelyn Reed' } },

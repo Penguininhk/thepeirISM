@@ -1,3 +1,7 @@
+
+'use client';
+
+import * as React from 'react';
 import { studentProfile } from "@/lib/data";
 import {
   Table,
@@ -11,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function AttendancePage() {
   const presentDays = studentProfile.attendance.filter(a => a.status === 'present').length;
@@ -18,6 +23,15 @@ export default function AttendancePage() {
   const absentDays = studentProfile.attendance.filter(a => a.status === 'absent').length;
   const totalDays = studentProfile.attendance.length;
   const attendancePercentage = ((presentDays + lateDays) / totalDays * 100).toFixed(0);
+
+  const attendanceByCourse = studentProfile.courses.map(course => {
+    return {
+      courseName: course.name,
+      records: studentProfile.attendance.filter(a => a.course.name === course.name),
+    };
+  });
+  
+  const defaultTab = attendanceByCourse[0]?.courseName || "";
 
   return (
     <div className="space-y-6">
@@ -67,38 +81,49 @@ export default function AttendancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Attendance Log</CardTitle>
-          <CardDescription>Chronological record of your attendance status.</CardDescription>
+          <CardTitle>Attendance Log by Course</CardTitle>
+          <CardDescription>Chronological record of your attendance status for each class.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {studentProfile.attendance.map((record) => (
-                  <TableRow key={record.date}>
-                    <TableCell className="font-medium">{record.date}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        className={cn({
-                          "bg-green-500 text-white": record.status === "present",
-                          "bg-yellow-500 text-white": record.status === "late",
-                          "bg-red-500 text-white": record.status === "absent",
-                        })}
-                      >
-                        {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <Tabs defaultValue={defaultTab} className="w-full">
+            <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${attendanceByCourse.length}, minmax(0, 1fr))` }}>
+              {attendanceByCourse.map(({ courseName }) => (
+                <TabsTrigger key={courseName} value={courseName}>{courseName}</TabsTrigger>
+              ))}
+            </TabsList>
+            {attendanceByCourse.map(({ courseName, records }) => (
+              <TabsContent key={courseName} value={courseName} className="mt-4">
+                 <div className="overflow-hidden rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {records.map((record, index) => (
+                        <TableRow key={`${courseName}-attendance-${index}`}>
+                          <TableCell className="font-medium">{record.date}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge
+                              className={cn({
+                                "bg-green-500 text-white": record.status === "present",
+                                "bg-yellow-500 text-white": record.status === "late",
+                                "bg-red-500 text-white": record.status === "absent",
+                              })}
+                            >
+                              {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                 </div>
+              </TabsContent>
+            ))}
+          </Tabs>
         </CardContent>
       </Card>
     </div>
