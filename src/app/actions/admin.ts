@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import * as admin from 'firebase-admin';
-import type { UserProfile, ActionLog } from '@/lib/data';
+import type { UserProfile } from '@/lib/data';
 
 // This function initializes the Firebase Admin SDK.
 // It's designed to be idempotent, meaning it can be called multiple times without re-initializing.
@@ -44,45 +44,6 @@ function handleError(error: any, action: string) {
   // Re-throwing the error is important for the client-side to catch and display it.
   throw new Error(message);
 }
-
-// Server action to fetch all user profiles.
-export async function getUsers(): Promise<UserProfile[]> {
-  try {
-    const adminApp = initializeAdminApp();
-    const firestore = adminApp.firestore();
-    const usersSnapshot = await firestore.collection('users').get();
-    return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
-  } catch (error) {
-    handleError(error, 'get-users');
-    return []; // Return an empty array on error.
-  }
-}
-
-// Server action to fetch recent action logs.
-export async function getActionLogs(): Promise<ActionLog[]> {
-  try {
-    const adminApp = initializeAdminApp();
-    const firestore = adminApp.firestore();
-    const logsQuery = firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10);
-    const logsSnapshot = await logsQuery.get();
-    
-    return logsSnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        ...data,
-        id: doc.id,
-        // Convert Firestore Timestamp to a serializable ISO string for the client.
-        timestamp: data.timestamp instanceof admin.firestore.Timestamp 
-          ? data.timestamp.toDate().toISOString() 
-          : new Date().toISOString(),
-      } as ActionLog;
-    });
-  } catch (error) {
-    handleError(error, 'get-action-logs');
-    return []; // Return an empty array on error.
-  }
-}
-
 
 export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | 'classIds'> & { password?: string }) {
   try {
