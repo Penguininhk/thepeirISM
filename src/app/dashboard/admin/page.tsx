@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore, useMemoFirebase } from '@/firebase';
+import { useAuth, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
 import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
