@@ -7,79 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AppLogo from "@/components/app-logo";
-import { useAuth, useUser } from "@/firebase";
-import React, { useEffect, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { FirebaseError } from "firebase/app";
-import { doc, getDoc } from "firebase/firestore";
-import { useFirestore } from "@/firebase";
 
 export default function TeacherLoginPage() {
-  const auth = useAuth();
-  const firestore = useFirestore();
   const router = useRouter();
-  const { user, profile, isUserLoading } = useUser();
-  const [email, setEmail] = useState("e.reed@school.edu");
-  const [password, setPassword] = useState("password123");
-  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    if (!auth || !firestore) return;
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      const userDoc = await getDoc(doc(firestore, "users", user.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (userData.status === 'pending') {
-          setError("Your account is pending approval.");
-          await auth.signOut();
-        } else if (userData.status === 'rejected') {
-           setError("Your account has been rejected.");
-          await auth.signOut();
-        } else if (userData.role !== 'teacher') {
-          setError("You are not authorized to log in as a teacher.");
-          await auth.signOut();
-        }
-        // Approved teachers will be redirected by the useEffect
-      } else {
-        setError("No user profile found for this account.");
-        await auth.signOut();
-      }
-
-    } catch (err) {
-      if (err instanceof FirebaseError) {
-         if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-          setError("Invalid email or password. Please try again or sign up.");
-        } else {
-          setError(err.message);
-        }
-      } else {
-        setError("An unexpected error occurred during login.");
-      }
-    }
+    router.push('/dashboard/teacher');
   };
-  
-  useEffect(() => {
-    // Only redirect if user is loaded, logged in, and has the correct role for this page.
-    if (!isUserLoading && user && profile?.role === 'teacher') {
-      router.push('/dashboard/teacher');
-    }
-  }, [user, profile, isUserLoading, router]);
-
-  // Show loading state while determining auth/profile state,
-  // but only if the user isn't already logged in with the wrong role.
-  if (isUserLoading || (user && profile?.role === 'teacher')) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -94,15 +29,13 @@ export default function TeacherLoginPage() {
         <CardContent>
           <form onSubmit={handleLogin}>
             <div className="grid gap-4">
-              {error && <div className="rounded-md border border-red-400 bg-red-100 p-3 text-sm text-red-500">{error}</div>}
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="e.reed@school.edu"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="teacher@school.edu"
+                  defaultValue="e.reed@school.edu"
                   required
                 />
               </div>
@@ -119,8 +52,7 @@ export default function TeacherLoginPage() {
                 <Input 
                   id="password" 
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} 
+                  defaultValue="password123"
                   required 
                 />
               </div>
@@ -130,12 +62,6 @@ export default function TeacherLoginPage() {
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{" "}
-            <Link href="/signup/teacher" className="underline">
-              Sign up
-            </Link>
-          </div>
-          <div className="mt-2 text-center text-sm">
             Not a teacher?{" "}
             <Link href="/login/student" className="underline">
               Login as a student
