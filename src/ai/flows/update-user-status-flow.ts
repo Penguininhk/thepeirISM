@@ -9,8 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase';
+import { initializeServerFirebase } from '@/firebase/server-config';
 
 // In a real app, you would use the Firebase Admin SDK to set custom claims.
 // Since we can't use firebase-admin here, we will simulate this.
@@ -27,9 +26,15 @@ const setAdminClaim = ai.defineTool(
     outputSchema: z.object({ success: z.boolean() }),
   },
   async ({ userId }) => {
-    console.log(`--- SIMULATING: Setting custom claim { isAdmin: true } for user ${userId} ---`);
-    // In a real app, this would interact with the Firebase Admin SDK.
-    return { success: true };
+    const { auth } = initializeServerFirebase();
+    try {
+      await auth.setCustomUserClaims(userId, { isAdmin: true });
+      console.log(`Successfully set custom claim { isAdmin: true } for user ${userId}`);
+      return { success: true };
+    } catch (error) {
+      console.error(`--- FAILED: Setting custom claim for user ${userId} ---`, error);
+      return { success: false };
+    }
   }
 );
 
@@ -108,13 +113,13 @@ const updateUserStatusFlow = ai.defineFlow(
   async (input) => {
     const { userId, status, email, role } = input;
     
-    // Client-side code already handles the Firestore update.
     // This flow handles notifications and setting admin claims.
+    // The client-side code is responsible for updating the 'status' in the Firestore document.
 
     try {
       // If a user with the 'admin' role is approved, set their custom claim.
       if (status === 'approved' && role === 'admin') {
-        const claimResult = await ai.runTool('setAdminClaim', { userId });
+        const claimResult = await setAdminClaim({ userId });
         if (!claimResult.success) {
           return { success: false, message: 'Failed to set admin claim.' };
         }
@@ -133,7 +138,7 @@ const updateUserStatusFlow = ai.defineFlow(
       }
       
       // Use the sendEmail tool
-      await ai.runTool('sendEmail', {
+      await sendEmail({
         to: email,
         subject: emailContent.subject,
         body: emailContent.body,

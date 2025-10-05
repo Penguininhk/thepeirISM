@@ -8,8 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { initializeFirebase } from '@/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { initializeServerFirebase } from '@/firebase/server-config';
 import { UserProfile } from '@/lib/data';
 
 // Define a tool that can fetch all users.
@@ -23,9 +22,14 @@ const getUsers = ai.defineTool(
   },
   async () => {
     // We must initialize a server-side instance of Firebase here.
-    const { firestore } = initializeFirebase();
-    const usersCol = collection(firestore, 'users');
-    const userSnapshot = await getDocs(usersCol);
+    const { firestore } = initializeServerFirebase();
+    const usersCol = firestore.collection('users');
+    const userSnapshot = await usersCol.get();
+
+    if (userSnapshot.empty) {
+      return [];
+    }
+
     const userList = userSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     return userList;
   }

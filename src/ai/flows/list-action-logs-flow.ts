@@ -8,8 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { initializeFirebase } from '@/firebase';
-import { collection, getDocs, orderBy, query, limit } from 'firebase/firestore';
+import { initializeServerFirebase } from '@/firebase/server-config';
 import { ActionLog } from '@/lib/data';
 
 // Define a tool that can fetch all action logs.
@@ -22,10 +21,15 @@ const getActionLogs = ai.defineTool(
     outputSchema: z.array(z.any()), // We'll cast this to ActionLog[] later.
   },
   async () => {
-    const { firestore } = initializeFirebase();
-    const logsCol = collection(firestore, 'actionLogs');
-    const logsQuery = query(logsCol, orderBy('timestamp', 'desc'), limit(10));
-    const logsSnapshot = await getDocs(logsQuery);
+    const { firestore } = initializeServerFirebase();
+    const logsCol = firestore.collection('actionLogs');
+    const logsQuery = logsCol.orderBy('timestamp', 'desc').limit(10);
+    const logsSnapshot = await logsQuery.get();
+
+    if (logsSnapshot.empty) {
+      return [];
+    }
+    
     const logsList = logsSnapshot.docs.map(doc => {
       const data = doc.data();
       // Firestore timestamps need to be converted to a serializable format.
