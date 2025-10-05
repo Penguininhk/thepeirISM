@@ -37,7 +37,7 @@ import { Label } from '@/components/ui/label';
 import { UserProfile, ActionLog } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
+import { UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
 import { PlusCircle, History } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
 import { formatDistanceToNow } from 'date-fns';
@@ -139,6 +139,10 @@ export default function AdminDashboardPage() {
     if (!firestore) return;
 
     try {
+      // Optimistically update the local state for a better UX
+      setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
+
+      // Update the status in Firestore
       const userRef = doc(firestore, 'users', user.id);
       await updateDoc(userRef, { status: newStatus });
       
@@ -148,15 +152,25 @@ export default function AdminDashboardPage() {
         email: user.email,
         role: user.role,
       };
+      
+      // Call the API route to trigger the server-side flow
+      const response = await fetch('/api/admin/update-user-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(flowInput),
+      });
 
-      await updateUserStatus(flowInput);
+      if (!response.ok) {
+        // If the API call fails, revert the optimistic update
+        setUsers(users.map(u => u.id === user.id ? {...u, status: user.status} : u));
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Failed to trigger user update flow.');
+      }
       
       toast({
         title: 'User Status Updated',
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
-
-      setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
       
       const logDetails = `User '${user.firstName} ${user.lastName}' (${user.email}) was ${newStatus}.`;
       await logAction('user_status_update', logDetails);
@@ -166,10 +180,11 @@ export default function AdminDashboardPage() {
       toast({
         variant: 'destructive',
         title: 'Update Failed',
-        description: 'Could not update the user status.',
+        description: (e as Error).message || 'Could not update the user status.',
       });
     }
   };
+
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();

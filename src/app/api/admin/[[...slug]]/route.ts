@@ -1,5 +1,6 @@
 import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
 import { listUsers } from '@/ai/flows/list-users-flow';
+import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -22,7 +23,41 @@ export async function GET(
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });
     }
   } catch (error) {
-    console.error(`Error in /api/admin/${slug}:`, error);
+    console.error(`Error in GET /api/admin/${slug}:`, error);
+    const errorMessage =
+      error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json(
+      { error: 'Internal Server Error', details: errorMessage },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { slug: string[] } }
+) {
+  const slug = params.slug?.[0];
+
+  try {
+    switch (slug) {
+      case 'update-user-status':
+        const body: UpdateUserStatusInput = await request.json();
+        const result = await updateUserStatus(body);
+        if (result.success) {
+          return NextResponse.json(result);
+        } else {
+          return NextResponse.json(
+            { error: 'Flow Execution Error', details: result.message },
+            { status: 500 }
+          );
+        }
+
+      default:
+        return NextResponse.json({ error: 'Not Found' }, { status: 404 });
+    }
+  } catch (error) {
+    console.error(`Error in POST /api/admin/${slug}:`, error);
     const errorMessage =
       error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
