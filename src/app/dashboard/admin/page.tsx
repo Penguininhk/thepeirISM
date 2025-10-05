@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
-import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
+import { useAuth, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -39,6 +39,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
 import { listUsers } from '@/ai/flows/list-users-flow';
+import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
 import { PlusCircle, History } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
 import { formatDistanceToNow } from 'date-fns';
@@ -59,46 +60,68 @@ export default function AdminDashboardPage() {
   });
   
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [usersError, setUsersError] = useState<Error | null>(null);
+  
+  const [actionLogs, setActionLogs] = useState<ActionLog[]>([]);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(true);
+  const [logsError, setLogsError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      setIsLoading(true);
-      setError(null);
+      setIsLoadingUsers(true);
+      setUsersError(null);
       try {
         const userList = await listUsers();
         setUsers(userList);
       } catch (e) {
-        setError(e as Error);
+        setUsersError(e as Error);
         toast({
           variant: 'destructive',
           title: 'Failed to load users',
           description: (e as Error).message,
         });
       } finally {
-        setIsLoading(false);
+        setIsLoadingUsers(false);
       }
     };
-    fetchUsers();
-  }, [toast]);
-  
-  const actionLogsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, 'actionLogs'), orderBy('timestamp', 'desc'), limit(10));
-  }, [firestore]);
 
-  const { data: actionLogs } = useCollection<ActionLog>(actionLogsQuery);
+    const fetchLogs = async () => {
+      setIsLoadingLogs(true);
+      setLogsError(null);
+      try {
+        const logsList = await listActionLogs();
+        setActionLogs(logsList);
+      } catch (e) {
+        setLogsError(e as Error);
+        toast({
+          variant: 'destructive',
+          title: 'Failed to load action logs',
+          description: (e as Error).message,
+        });
+      } finally {
+        setIsLoadingLogs(false);
+      }
+    };
+    
+    fetchUsers();
+    fetchLogs();
+  }, [toast]);
   
   const logAction = async (actionType: ActionLog['actionType'], details: string) => {
     if (!firestore) return;
     try {
-      await addDoc(collection(firestore, 'actionLogs'), {
+      const newLog = {
         timestamp: serverTimestamp(),
         adminId: 'admin', // In a real app, this would be the logged-in admin's ID
         actionType,
         details,
-      });
+      };
+      const docRef = await addDoc(collection(firestore, 'actionLogs'), newLog);
+      
+      // Manually add the new log to the local state to avoid a refetch
+      setActionLogs(prevLogs => [{ id: docRef.id, ...newLog } as ActionLog, ...prevLogs]);
+
     } catch (e) {
       console.error("Failed to log action:", e);
       // Optional: show a toast that logging failed, but don't block main action
@@ -192,7 +215,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoadingUsers || isLoadingLogs) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <p>Loading user data...</p>
@@ -200,10 +223,10 @@ export default function AdminDashboardPage() {
     );
   }
   
-  if (error) {
+  if (usersError || logsError) {
      return (
       <div className="flex h-screen w-full items-center justify-center">
-        <p className="text-red-500">Error loading users: {error.message}</p>
+        <p className="text-red-500">Error loading data: {usersError?.message || logsError?.message}</p>
       </div>
     );
   }
