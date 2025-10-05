@@ -2,17 +2,20 @@
 
 import { revalidatePath } from 'next/cache';
 import * as admin from 'firebase-admin';
-import type { UserProfile } from '@/lib/data';
+import type { UserProfile, ActionLog } from '@/lib/data';
 
+// This function initializes the Firebase Admin SDK.
+// It's designed to be idempotent, meaning it can be called multiple times without re-initializing.
 function initializeAdminApp() {
   const appName = 'firebase-admin-app-for-server-actions';
   
-  // Check if the app is already initialized
+  // Check if the app is already initialized to prevent errors.
   if (admin.apps.some(app => app?.name === appName)) {
     return admin.app(appName);
   }
 
-  // This is the only way to safely parse the private key from an env var
+  // These credentials should be stored securely as environment variables.
+  // The private key needs special handling to parse newlines correctly.
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -21,25 +24,65 @@ function initializeAdminApp() {
     throw new Error('Firebase Admin credentials not found in environment variables. Please ensure FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, and FIREBASE_PROJECT_ID are set.');
   }
   
-  // Construct the full service account object
+  // Construct the full service account object from the environment variables.
   const serviceAccount = {
     projectId,
     clientEmail,
     privateKey,
   };
 
-  // Initialize the app with the service account and a unique name
+  // Initialize the app with the service account and a unique name.
   return admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   }, appName);
 }
 
+// A generic error handler to avoid repetitive try/catch blocks.
 function handleError(error: any, action: string) {
   console.error(`Error during ${action}:`, error);
   const message = error instanceof Error ? error.message : 'An unknown error occurred.';
-  // Re-throwing the error is important for the client to catch it
+  // Re-throwing the error is important for the client-side to catch and display it.
   throw new Error(message);
 }
+
+// Server action to fetch all user profiles.
+export async function getUsers(): Promise<UserProfile[]> {
+  try {
+    const adminApp = initializeAdminApp();
+    const firestore = adminApp.firestore();
+    const usersSnapshot = await firestore.collection('users').get();
+    return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
+  } catch (error) {
+    handleError(error, 'get-users');
+    return []; // Return an empty array on error.
+  }
+}
+
+// Server action to fetch recent action logs.
+export async function getActionLogs(): Promise<ActionLog[]> {
+  try {
+    const adminApp = initializeAdminApp();
+    const firestore = adminApp.firestore();
+    const logsQuery = firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10);
+    const logsSnapshot = await logsQuery.get();
+    
+    return logsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        // Convert Firestore Timestamp to a serializable ISO string for the client.
+        timestamp: data.timestamp instanceof admin.firestore.Timestamp 
+          ? data.timestamp.toDate().toISOString() 
+          : new Date().toISOString(),
+      } as ActionLog;
+    });
+  } catch (error) {
+    handleError(error, 'get-action-logs');
+    return []; // Return an empty array on error.
+  }
+}
+
 
 export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | 'classIds'> & { password?: string }) {
   try {
