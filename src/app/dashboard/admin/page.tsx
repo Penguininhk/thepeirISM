@@ -35,14 +35,11 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, History } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { useAuth } from '@/firebase';
 
-
-type ActionLogWithDate = Omit<ActionLog, 'timestamp'> & { timestamp: Date };
+type ActionLogWithDate = Omit<ActionLog, 'timestamp'> & { timestamp: string };
 
 export default function AdminDashboardPage() {
   const { toast } = useToast();
-  const { user: adminUser } = useAuth();
   
   const [isCreateUserOpen, setCreateUserOpen] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -50,7 +47,7 @@ export default function AdminDashboardPage() {
     lastName: '',
     email: '',
     password: 'password123',
-    role: 'student' as 'student' | 'teacher',
+    role: 'student' as 'student' | 'teacher' | 'admin',
   });
   
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -67,44 +64,34 @@ export default function AdminDashboardPage() {
     setUsersError(null);
     setLogsError(null);
 
-    // Fetch Users
     try {
-      const response = await fetch('/api/admin?action=list-users');
-      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      setUsers(data);
+      // Fetch Users
+      const usersResponse = await fetch('/api/admin?action=list-users');
+      if (!usersResponse.ok) {
+        const errorData = await usersResponse.json().catch(() => ({ error: `Server responded with ${usersResponse.status}` }));
+        throw new Error(errorData.error);
+      }
+      const usersData = await usersResponse.json();
+      setUsers(usersData);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
-      setUsersError(errorMsg);
-      toast({
-        variant: 'destructive',
-        title: 'Failed to load users',
-        description: errorMsg,
-      });
+      setUsersError(`Failed to fetch users: ${errorMsg}`);
     } finally {
       setIsLoadingUsers(false);
     }
     
-    // Fetch Action Logs
     try {
-      const response = await fetch('/api/admin?action=list-action-logs');
-      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      const logsList = data.map((log: any) => ({
-        ...log,
-        timestamp: new Date(log.timestamp),
-      }));
-      setActionLogs(logsList);
+      // Fetch Action Logs
+      const logsResponse = await fetch('/api/admin?action=list-action-logs');
+      if (!logsResponse.ok) {
+        const errorData = await logsResponse.json().catch(() => ({ error: `Server responded with ${logsResponse.status}` }));
+        throw new Error(errorData.error);
+      }
+      const logsData = await logsResponse.json();
+      setActionLogs(logsData);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
-      setLogsError(errorMsg);
-      toast({
-        variant: 'destructive',
-        title: 'Failed to load action logs',
-        description: errorMsg,
-      });
+      setLogsError(`Failed to fetch action log: ${errorMsg}`);
     } finally {
       setIsLoadingLogs(false);
     }
@@ -113,28 +100,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     fetchData();
   }, []);
-  
-  const logAction = async (details: string, actionType: 'user_status_update' | 'user_created') => {
-     try {
-        await fetch('/api/admin?action=log-action', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                details,
-                actionType,
-                adminId: adminUser?.email || 'admin',
-            }),
-        });
-    } catch (error) {
-        console.error("Failed to log action:", error);
-        toast({
-            variant: "destructive",
-            title: "Logging Failed",
-            description: "Could not save the action to the log."
-        });
-    }
-  };
-
 
   const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
     const originalUsers = users;
@@ -152,20 +117,17 @@ export default function AdminDashboardPage() {
       });
 
       if (!response.ok) throw new Error('Server responded with an error.');
-      
-      await logAction(`User '${user.email}' status updated to '${newStatus}'.`, 'user_status_update');
 
       toast({
         title: 'User Status Updated',
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
       
-      fetchData(); // Refresh data
+      fetchData(); // Refresh all data
 
     } catch (e) {
       setUsers(originalUsers);
       const errorMsg = e instanceof Error ? e.message : 'Could not update user status.';
-      console.error('Failed to update user status:', e);
       toast({
         variant: 'destructive',
         title: 'Update Failed',
@@ -173,7 +135,6 @@ export default function AdminDashboardPage() {
       });
     }
   };
-
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,8 +152,6 @@ export default function AdminDashboardPage() {
         }
 
         const createdUser = await response.json();
-        
-        await logAction(`New user '${newUser.email}' created with role '${newUser.role}'.`, 'user_created');
       
         toast({
             title: "User Created",
@@ -202,8 +161,7 @@ export default function AdminDashboardPage() {
         setUsers([...users, createdUser]);
         setCreateUserOpen(false);
         setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
-        fetchData();
-
+        fetchData(); // Refresh all data
 
     } catch (err) {
        toast({ 
@@ -224,8 +182,10 @@ export default function AdminDashboardPage() {
   
   if (usersError || logsError) {
      return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <p className="text-red-500">Error loading data: {usersError || logsError}</p>
+      <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
+        {usersError && <p className="text-red-500">Error loading data: {usersError}</p>}
+        {logsError && <p className="text-red-500">Error loading data: {logsError}</p>}
+        <Button onClick={fetchData}>Retry</Button>
       </div>
     );
   }
@@ -276,13 +236,14 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="role">Role</Label>
-                  <Select value={newUser.role} onValueChange={(value: 'student' | 'teacher') => setNewUser({...newUser, role: value})}>
+                  <Select value={newUser.role} onValueChange={(value: 'student' | 'teacher' | 'admin') => setNewUser({...newUser, role: value})}>
                     <SelectTrigger id="role">
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="student">Student</SelectItem>
                       <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -401,7 +362,7 @@ export default function AdminDashboardPage() {
                          <div>
                           <p className="text-sm">{log.details}</p>
                           <p className="text-xs text-muted-foreground">
-                            {log.timestamp ? `${formatDistanceToNow(log.timestamp)} ago` : 'just now'} by {log.adminId}
+                            {log.timestamp ? `${formatDistanceToNow(new Date(log.timestamp))} ago` : 'just now'} by {log.adminId}
                           </p>
                          </div>
                       </div>

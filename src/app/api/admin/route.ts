@@ -28,11 +28,15 @@ export async function GET(request: NextRequest) {
         const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
         const logsList = logsSnapshot.docs.map(doc => {
           const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            timestamp: (data.timestamp as Timestamp).toDate().toISOString(),
-          };
+          // Ensure timestamp is serialized correctly
+          if (data.timestamp && data.timestamp instanceof Timestamp) {
+            return {
+              id: doc.id,
+              ...data,
+              timestamp: data.timestamp.toDate().toISOString(),
+            };
+          }
+          return { id: doc.id, ...data };
         });
         return NextResponse.json(logsList);
 
@@ -74,6 +78,14 @@ export async function POST(request: NextRequest) {
         };
         await firestore.collection('users').doc(userRecord.uid).set(newUserProfile);
 
+        // Log the creation action
+        await firestore.collection('actionLogs').add({
+            details: `New user '${email}' created with role '${role}'.`,
+            actionType: 'user_created',
+            adminId: 'admin-system', // Or get from authenticated admin user
+            timestamp: new Date(),
+        });
+        
         return NextResponse.json(newUserProfile);
 
       case 'update-user-status':
@@ -82,23 +94,21 @@ export async function POST(request: NextRequest) {
         const userRef = firestore.collection('users').doc(userId);
         await userRef.update({ status });
         
+        // Only set the custom claim if isAdmin is explicitly true
         if (isAdmin) {
              await auth.setCustomUserClaims(userId, { admin: true });
         }
+
+         // Log the status update action
+        await firestore.collection('actionLogs').add({
+            details: `User status for ${userId} updated to '${status}'.`,
+            actionType: 'user_status_update',
+            adminId: 'admin-system',
+            timestamp: new Date(),
+        });
         
         return NextResponse.json({ success: true, userId, status });
         
-      case 'log-action':
-        const { details, actionType, adminId } = body;
-        const logEntry = {
-            details,
-            actionType,
-            adminId,
-            timestamp: new Date(),
-        };
-        await firestore.collection('actionLogs').add(logEntry);
-        return NextResponse.json({ success: true });
-
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
