@@ -1,10 +1,10 @@
 // IMPORTANT: This file is for SERVER-SIDE code and should only be imported in other server-side files.
 // It uses the Firebase Admin SDK, which requires sensitive credentials.
 
-import * as admin from 'firebase-admin';
-
 // Load environment variables from .env.local
 import 'dotenv/config';
+
+import * as admin from 'firebase-admin';
 
 // Memoization variable to ensure Firebase is initialized only once.
 let app: admin.app.App | null = null;
