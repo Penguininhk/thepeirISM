@@ -4,7 +4,7 @@
 import { studentProfile } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileUp, BookCheck, Clock } from "lucide-react";
+import { FileUp, BookCheck, Clock, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -80,18 +80,14 @@ export default function ClassworkPage() {
                       <div>
                         {assignment.status === 'pending' && (
                           <Button variant="outline" className="w-full">
-                            <FileUp className="mr-2 h-4 w-4" />
-                            Submit Assignment
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Open in Classroom
                           </Button>
                         )}
-                        {assignment.status === 'submitted' && (
-                           <Button variant="secondary" disabled className="w-full">
-                            Awaiting Grade
-                          </Button>
-                        )}
-                        {assignment.status === 'graded' && (
+                        {(assignment.status === 'submitted' || assignment.status === 'graded') && (
                            <Button variant="ghost" className="w-full">
-                            View Submission
+                             <ExternalLink className="mr-2 h-4 w-4" />
+                            View in Classroom
                           </Button>
                         )}
                       </div>
