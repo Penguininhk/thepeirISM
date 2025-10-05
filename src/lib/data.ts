@@ -1,3 +1,4 @@
+
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -62,6 +63,8 @@ export type Course = {
   description: string;
   teacher: { name: string };
   imageUrl: string;
+  block: string;
+  term: number;
 };
 
 // --- MOCK DATA ---
@@ -73,8 +76,8 @@ export const teacherProfile: Teacher = {
   role: 'teacher',
   avatarUrl: getImageUrl('user-avatar-2'),
   courses: [
-    { id: 'crs-101', name: 'Marine Biology' },
-    { id: 'crs-102', name: 'Creative Writing' },
+    { id: 'crs-101', name: 'AP Marine Biology' },
+    { id: 'crs-102', name: 'AP English Literature' },
   ],
 };
 
@@ -92,15 +95,15 @@ export const studentProfile: Student = {
     { date: '2024-05-24', status: 'absent' },
   ],
   courses: [
-    { id: 'crs-101', name: 'Marine Biology', code: 'SCI-301', teacher: { name: 'Dr. Evelyn Reed' } },
-    { id: 'crs-201', name: 'Calculus I', code: 'MATH-301', teacher: { name: 'Mr. David Chen' } },
-    { id: 'crs-401', name: 'Digital Art', code: 'ART-210', teacher: { name: 'Ms. Chloe Kim' } },
+    { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { name: 'Dr. Evelyn Reed' } },
+    { id: 'crs-201', name: 'AP Calculus BC', code: 'MATH-301', teacher: { name: 'Mr. David Chen' } },
+    { id: 'crs-401', name: 'AP Studio Art: 2D', code: 'ART-210', teacher: { name: 'Ms. Chloe Kim' } },
   ],
   assignments: [
-    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { name: 'Marine Biology' }, dueDate: '2024-06-05', status: 'graded', grade: 'A-' },
-    { id: 'asg-002', title: 'Derivative Practice Problems', course: { name: 'Calculus I' }, dueDate: '2024-06-08', status: 'submitted' },
-    { id: 'asg-003', title: 'Final Project Proposal', course: { name: 'Digital Art' }, dueDate: '2024-06-12', status: 'pending' },
-    { id: 'asg-004', title: 'Poetry Analysis', course: { name: 'Creative Writing' }, dueDate: '2024-06-15', status: 'pending' },
+    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-05', status: 'graded', grade: 'A-' },
+    { id: 'asg-002', title: 'Derivative Practice Problems', course: { name: 'AP Calculus BC' }, dueDate: '2024-06-08', status: 'submitted' },
+    { id: 'asg-003', title: 'Final Project Proposal', course: { name: 'AP Studio Art: 2D' }, dueDate: '2024-06-12', status: 'pending' },
+    { id: 'asg-004', title: 'Poetry Analysis', course: { name: 'AP English Literature' }, dueDate: '2024-06-15', status: 'pending' },
   ],
 };
 
@@ -121,8 +124,8 @@ export const announcements: Announcement[] = [
   },
   {
     id: 'ann-003',
-    title: 'Marine Biology Mid-term Reminder',
-    content: 'This is a reminder that the Marine Biology mid-term exam is next Wednesday. It will cover all topics from the beginning of the semester up to the chapter on deep-sea ecosystems. A study guide has been posted.',
+    title: 'AP Marine Biology Mid-term Reminder',
+    content: 'This is a reminder that the AP Marine Biology mid-term exam is next Wednesday. It will cover all topics from the beginning of the semester up to the chapter on deep-sea ecosystems. A study guide has been posted.',
     author: { name: 'Dr. Evelyn Reed', id: 'usr-teach-001' },
     date: '2024-05-22T14:00:00Z',
     classId: 'crs-101',
@@ -132,7 +135,7 @@ export const announcements: Announcement[] = [
 export const classLists: ClassInfo[] = [
   {
     id: 'cl-101',
-    course: { name: 'Marine Biology', code: 'SCI-301', teacher: { id: 'usr-teach-001' } },
+    course: { name: 'AP Marine Biology', code: 'SCI-301', teacher: { id: 'usr-teach-001' } },
     students: [
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
       { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
@@ -141,7 +144,7 @@ export const classLists: ClassInfo[] = [
   },
   {
     id: 'cl-102',
-    course: { name: 'Creative Writing', code: 'ENG-205', teacher: { id: 'usr-teach-001' } },
+    course: { name: 'AP English Literature', code: 'ENG-205', teacher: { id: 'usr-teach-001' } },
     students: [
       { id: 'usr-stud-004', name: 'Diana Prince', avatarUrl: getImageUrl('user-avatar-4') },
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
@@ -151,10 +154,34 @@ export const classLists: ClassInfo[] = [
 ];
 
 export const availableCourses: Course[] = [
-    { id: 'crs-101', name: 'Marine Biology', code: 'SCI-301', description: 'Explore the wonders of marine ecosystems, from coral reefs to the deep sea.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-marine-biology') },
-    { id: 'crs-201', name: 'Calculus I', code: 'MATH-301', description: 'An introduction to differential and integral calculus, focusing on limits and derivatives.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus') },
-    { id: 'crs-102', name: 'Creative Writing', code: 'ENG-205', description: 'Develop your voice and craft compelling narratives, poetry, and prose.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-creative-writing') },
-    { id: 'crs-301', name: 'World History: 1500-Present', code: 'HIST-202', description: 'Survey major global events and transformations from the early modern period to today.', teacher: { name: 'Mr. Samuel Greene'}, imageUrl: getImageUrl('course-world-history') },
-    { id: 'crs-401', name: 'Digital Art & Design', code: 'ART-210', description: 'Learn the fundamentals of digital illustration and graphic design using modern tools.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art') },
-    { id: 'crs-501', name: 'Introduction to Robotics', code: 'TECH-110', description: 'Build and program your first robot. No prior experience required!', teacher: { name: 'Ms. Inoue Tanaka'}, imageUrl: getImageUrl('course-robotics') },
+    // Term 1
+    { id: 'crs-101-t1', name: 'AP Marine Biology', code: 'SCI-301', description: 'Explore marine ecosystems.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-marine-biology'), block: 'A', term: 1 },
+    { id: 'crs-201-t1', name: 'AP Calculus BC', code: 'MATH-301', description: 'Advanced calculus concepts.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
+    { id: 'crs-401-t1', name: 'AP Studio Art: 2D', code: 'ART-210', description: 'Develop your artistic portfolio.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art'), block: 'C', term: 1 },
+    { id: 'crs-301-t1', name: 'AP World History', code: 'HIST-202', description: 'Survey major global events.', teacher: { name: 'Mr. Samuel Greene'}, imageUrl: getImageUrl('course-world-history'), block: 'D', term: 1 },
+    { id: 'crs-501-t1', name: 'Intro to Robotics', code: 'TECH-110', description: 'Build and program robots.', teacher: { name: 'Ms. Inoue Tanaka'}, imageUrl: getImageUrl('course-robotics'), block: 'E', term: 1 },
+    { id: 'crs-102-t1', name: 'AP English Literature', code: 'ENG-401', description: 'Analyze classic literature.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-creative-writing'), block: 'F', term: 1 },
+
+    // Term 2
+    { id: 'crs-103-t2', name: 'Genetics', code: 'SCI-302', description: 'The study of heredity.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-marine-biology'), block: 'A', term: 2 },
+    { id: 'crs-202-t2', name: 'Linear Algebra', code: 'MATH-302', description: 'Matrices, vectors, and spaces.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 2 },
+    { id: 'crs-402-t2', name: '3D Modeling', code: 'ART-211', description: 'Create three-dimensional art.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art'), block: 'C', term: 2 },
+    { id: 'crs-302-t2', name: 'AP European History', code: 'HIST-301', description: 'Renaissance to modern Europe.', teacher: { name: 'Mr. Samuel Greene'}, imageUrl: getImageUrl('course-world-history'), block: 'D', term: 2 },
+    { id: 'crs-502-t2', name: 'Advanced Robotics', code: 'TECH-210', description: 'Advanced robotic systems.', teacher: { name: 'Ms. Inoue Tanaka'}, imageUrl: getImageUrl('course-robotics'), block: 'E', term: 2 },
+    { id: 'crs-104-t2', name: 'Creative Non-Fiction', code: 'ENG-402', description: 'Writing compelling true stories.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-creative-writing'), block: 'F', term: 2 },
+    
+    // Term 3
+    { id: 'crs-105-t3', name: 'Environmental Science', code: 'SCI-303', description: 'Humans and the environment.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-marine-biology'), block: 'A', term: 3 },
+    { id: 'crs-203-t3', name: 'Statistics', code: 'MATH-303', description: 'The science of data.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 3 },
+    { id: 'crs-403-t3', name: 'Animation', code: 'ART-212', description: 'Bring your creations to life.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art'), block: 'C', term: 3 },
+    { id: 'crs-303-t3', name: 'AP US Government', code: 'HIST-302', description: 'Study of the US political system.', teacher: { name: 'Mr. Samuel Greene'}, imageUrl: getImageUrl('course-world-history'), block: 'D', term: 3 },
+    { id: 'crs-503-t3', name: 'AI & Machine Learning', code: 'TECH-310', description: 'The future of technology.', teacher: { name: 'Ms. Inoue Tanaka'}, imageUrl: getImageUrl('course-robotics'), block: 'E', term: 3 },
+    { id: 'crs-106-t3', name: 'Shakespeare', code: 'ENG-403', description: 'A deep dive into the Bard.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-creative-writing'), block: 'F', term: 3 },
+    
+    // Add more courses to ensure choices
+    { id: 'crs-alt-A1', name: 'Oceanography', code: 'SCI-304', description: 'Study of the oceans.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-marine-biology'), block: 'A', term: 1 },
+    { id: 'crs-alt-A2', name: 'Astrophysics', code: 'SCI-401', description: 'The physics of the universe.', teacher: { name: 'Dr. Evelyn Reed'}, imageUrl: getImageUrl('course-marine-biology'), block: 'A', term: 1 },
+    { id: 'crs-alt-B1', name: 'Number Theory', code: 'MATH-401', description: 'The properties of integers.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
+    { id: 'crs-alt-B2', name: 'Game Theory', code: 'MATH-402', description: 'The study of strategic decision making.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
+    { id: 'crs-alt-C1', name: 'Photography', code: 'ART-101', description: 'Learn the art of the camera.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art'), block: 'C', term: 1 }
 ];
