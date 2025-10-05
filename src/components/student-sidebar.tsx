@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenCheck, CalendarCheck, LayoutDashboard, ListPlus, Megaphone } from "lucide-react";
+import { BookOpenCheck, CalendarCheck, LayoutDashboard, ListPlus, Megaphone, BrainCircuit } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +22,7 @@ export function StudentSidebar() {
     { href: "/dashboard/student/classwork", label: "Classwork", icon: BookOpenCheck },
     { href: "/dashboard/student/attendance", label: "Attendance", icon: CalendarCheck },
     { href: "/dashboard/student/courses", label: "Course Selection", icon: ListPlus },
+    { href: "/dashboard/student/study-buddy", label: "AI Study Buddy", icon: BrainCircuit },
   ];
 
   return (
