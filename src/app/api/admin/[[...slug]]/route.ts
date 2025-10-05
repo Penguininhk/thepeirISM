@@ -12,13 +12,13 @@ function handleError(error: any, action: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const { pathname } = new URL(request.url);
-  const slug = pathname.split('/').pop();
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
   
   try {
     const { firestore } = initializeServerFirebase();
 
-    switch (slug) {
+    switch (action) {
       case 'list-users':
         const usersSnapshot = await firestore.collection('users').get();
         const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -43,20 +43,20 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    return handleError(error, `GET ${slug}`);
+    return handleError(error, `GET ${action}`);
   }
 }
 
 
 export async function POST(request: NextRequest) {
-  const { pathname } = new URL(request.url);
-  const slug = pathname.split('/').pop();
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
 
   try {
     const { auth, firestore } = initializeServerFirebase();
     const body = await request.json();
 
-    switch (slug) {
+    switch (action) {
       case 'create-user':
         const { email, password, firstName, lastName, role } = body;
         
@@ -109,6 +109,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    return handleError(error, `POST ${slug}`);
+    return handleError(error, `POST ${action}`);
   }
 }

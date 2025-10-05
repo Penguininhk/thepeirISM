@@ -65,7 +65,7 @@ export default function AdminDashboardPage() {
     setLogsError(null);
 
     try {
-      const usersResponse = await fetch('/api/admin/list-users');
+      const usersResponse = await fetch('/api/admin?action=list-users');
       if (!usersResponse.ok) {
         const errorData = await usersResponse.json().catch(() => ({ error: `Server responded with ${usersResponse.status}` }));
         throw new Error(errorData.error);
@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
     }
     
     try {
-      const logsResponse = await fetch('/api/admin/list-action-logs');
+      const logsResponse = await fetch('/api/admin?action=list-action-logs');
       if (!logsResponse.ok) {
         const errorData = await logsResponse.json().catch(() => ({ error: `Server responded with ${logsResponse.status}` }));
         throw new Error(errorData.error);
@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
     setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
 
     try {
-      const response = await fetch('/api/admin/update-user-status', {
+      const response = await fetch('/api/admin?action=update-user-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -138,7 +138,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
    
     try {
-        const response = await fetch('/api/admin/create-user', {
+        const response = await fetch('/api/admin?action=create-user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newUser),
