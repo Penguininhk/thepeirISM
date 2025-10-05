@@ -30,8 +30,7 @@ export function TeacherSidebar() {
             <h2 className="text-lg font-semibold tracking-tight text-sidebar-primary font-headline">
               The PIER
             </h2>
-            <p className="text-xs text-sidebar-foreground">Teacher Portal</p>
-          </div>
+            <p className="text-xs text-sidebar-foreground">Teacher Portal</p>          </div>
         </div>
       </SidebarHeader>
       <SidebarContent>

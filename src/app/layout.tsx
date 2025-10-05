@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'The PIER - Harbour School Portal',
+  title: 'The Harbour School Portal',
   description: 'The official portal for students and teachers of The Harbour School, Hong Kong.',
 };
 
