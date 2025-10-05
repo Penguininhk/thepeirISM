@@ -2,46 +2,33 @@
 
 import { revalidatePath } from 'next/cache';
 import * as admin from 'firebase-admin';
-import type { UserProfile } from '@/lib/data';
+import type { UserProfile, ActionLog } from '@/lib/data';
+import { Timestamp } from 'firebase-admin/firestore';
 
-// Isolate server initialization to prevent conflicts.
-// Memoization ensures this only runs once per server instance.
-let app: admin.app.App | null = null;
+
+// This function must be defined within the Server Component that uses it
+// to avoid bundling issues with the 'firebase-admin' package.
 function initializeAdminApp() {
-  if (app) {
-    return {
-      app,
-      auth: admin.auth(app),
-      firestore: admin.firestore(app),
-    };
+  // Use a unique name for the admin app to avoid conflicts
+  const appName = 'firebase-admin-app-for-server-actions';
+  
+  if (admin.apps.some(app => app?.name === appName)) {
+    return admin.app(appName);
   }
 
-  // Use a try-catch block to handle cases where the app is already initialized in a different context
-  try {
-     app = admin.app('admin-app-server-actions');
-  } catch (e) {
-    // If app doesn't exist, create it
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const projectId = process.env.FIREBASE_PROJECT_ID;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
 
-    if (!privateKey || !clientEmail || !projectId) {
-      throw new Error('Firebase Admin credentials not found in environment variables.');
-    }
-    
-    const credentials = { privateKey, clientEmail, projectId };
-
-    app = admin.initializeApp({
-      credential: admin.credential.cert(credentials),
-    }, 'admin-app-server-actions'); // Use a unique app name
+  if (!privateKey || !clientEmail || !projectId) {
+    throw new Error('Firebase Admin credentials not found in environment variables.');
   }
+  
+  const credentials = { privateKey, clientEmail, projectId };
 
-
-  return {
-    app,
-    auth: admin.auth(app),
-    firestore: admin.firestore(app),
-  };
+  return admin.initializeApp({
+    credential: admin.credential.cert(credentials),
+  }, appName);
 }
 
 function handleError(error: any, action: string) {
@@ -52,9 +39,45 @@ function handleError(error: any, action: string) {
 }
 
 
+export async function getUsers(): Promise<UserProfile[]> {
+  try {
+    const app = initializeAdminApp();
+    const firestore = app.firestore();
+    const usersSnapshot = await firestore.collection('users').get();
+    return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as UserProfile[];
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    handleError(error, 'get-users');
+    return []; // Return empty array on error
+  }
+}
+
+export async function getActionLogs(): Promise<ActionLog[]> {
+  try {
+    const app = initializeAdminApp();
+    const firestore = app.firestore();
+    const logsSnapshot = await firestore.collection('actionLogs').orderBy('timestamp', 'desc').limit(10).get();
+    return logsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        timestamp: data.timestamp instanceof Timestamp ? data.timestamp.toDate().toISOString() : new Date().toISOString(),
+      } as ActionLog;
+    });
+  } catch (error) {
+    console.error('Failed to fetch action logs:', error);
+    handleError(error, 'get-action-logs');
+    return []; // Return empty array on error
+  }
+}
+
+
 export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | 'classIds'> & { password?: string }) {
   try {
-    const { auth, firestore } = initializeAdminApp();
+    const app = initializeAdminApp();
+    const auth = app.auth();
+    const firestore = app.firestore();
     const { email, password, firstName, lastName, role } = userData;
 
     if (!email || !password || !firstName || !lastName || !role) {
@@ -100,7 +123,9 @@ export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | '
 
 export async function updateUserStatus(userId: string, status: 'approved' | 'rejected', role: UserProfile['role']) {
   try {
-    const { auth, firestore } = initializeAdminApp();
+    const app = initializeAdminApp();
+    const auth = app.auth();
+    const firestore = app.firestore();
 
     await firestore.collection('users').doc(userId).update({ status });
 
