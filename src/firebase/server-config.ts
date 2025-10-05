@@ -52,3 +52,11 @@ export function initializeServerFirebase() {
     firestore: admin.firestore(app),
   };
 }
+
+
+// Helper function for consistent error handling in server actions
+export function handleError(error: any, action: string) {
+  console.error(`Error during ${action}:`, error);
+  const message = error instanceof Error ? error.message : 'An unknown error occurred.';
+  throw new Error(message);
+}

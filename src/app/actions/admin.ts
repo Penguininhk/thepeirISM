@@ -1,15 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { initializeServerFirebase } from '@/firebase/server-config';
+import { initializeServerFirebase, handleError } from '@/firebase/server-config';
 import type { UserProfile } from '@/lib/data';
-
-// Helper function for consistent error handling
-function handleError(error: any, action: string) {
-  console.error(`Error during ${action}:`, error);
-  const message = error instanceof Error ? error.message : 'An unknown error occurred.';
-  throw new Error(message);
-}
 
 export async function createUser(userData: Omit<UserProfile, 'id' | 'status' | 'classIds'> & { password?: string }) {
   try {
