@@ -11,8 +11,10 @@ import { useAuth } from "@/firebase";
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
-import { doc, setDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { useFirestore } from "@/firebase";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+
 
 export default function TeacherSignUpPage() {
   const auth = useAuth();
@@ -34,8 +36,7 @@ export default function TeacherSignUpPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Create a user profile in Firestore
-      await setDoc(doc(firestore, "users", user.uid), {
+      const userProfileData = {
         id: user.uid,
         firstName,
         lastName,
@@ -43,7 +44,12 @@ export default function TeacherSignUpPage() {
         role: "teacher",
         status: "pending", // Set status to pending for approval
         classIds: [],
-      });
+      };
+
+      const userDocRef = doc(firestore, "users", user.uid);
+
+      // Create a user profile in Firestore using the non-blocking function
+      setDocumentNonBlocking(userDocRef, userProfileData, { merge: false });
       
       setSuccess(true);
       
