@@ -70,6 +70,27 @@ export type Course = {
   term: number;
 };
 
+export type Forum = {
+  id: string;
+  title: string;
+  description: string;
+  threadCount: number;
+  postCount: number;
+};
+
+export type ForumTopic = {
+  id: string;
+  forumId: string;
+  title: string;
+  author: { id: string, name: string, avatarUrl: string };
+  replyCount: number;
+  lastPost: {
+    author: { id: string, name: string };
+    timestamp: string; // ISO 8601
+  }
+};
+
+
 // --- MOCK DATA ---
 
 export const teacherProfile: Teacher = {
@@ -206,4 +227,58 @@ export const availableCourses: Course[] = [
     { id: 'crs-alt-B1', name: 'Number Theory', code: 'MATH-401', description: 'The properties of integers.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
     { id: 'crs-alt-B2', name: 'Game Theory', code: 'MATH-402', description: 'The study of strategic decision making.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
     { id: 'crs-alt-C1', name: 'Photography', code: 'ART-101', description: 'Learn the art of the camera.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art'), block: 'C', term: 1 }
+];
+
+export const forums: Forum[] = [
+  { id: "gen-discuss", title: "General Discussion", description: "A place to chat about school life, events, and more.", threadCount: 1, postCount: 2 },
+  { id: "event-planning", title: "Event Planning", description: "Organize and plan upcoming school events and activities.", threadCount: 1, postCount: 2 },
+  { id: "tech-support", title: "Tech Support", description: "Get help with portal issues, software, or hardware problems.", threadCount: 1, postCount: 2 },
+  { id: "course-sci-301", title: "Class Help: AP Marine Biology", description: "Discussion and study group for AP Marine Biology.", threadCount: 1, postCount: 2 },
+];
+
+export const forumTopics: ForumTopic[] = [
+  { 
+    id: "thread-001",
+    forumId: "gen-discuss",
+    title: "Thoughts on the new lunch menu?",
+    author: { id: "usr-stud-001", name: "Alice Johnson", avatarUrl: getImageUrl('user-avatar-1') },
+    replyCount: 1,
+    lastPost: {
+      author: { id: "usr-teach-001", name: "Dr. Evelyn Reed" },
+      timestamp: "2024-05-28T14:00:00Z",
+    }
+  },
+  { 
+    id: "thread-002",
+    forumId: "event-planning",
+    title: "Brainstorming for the End-of-Year party",
+    author: { id: "usr-teach-001", name: "Dr. Evelyn Reed", avatarUrl: getImageUrl('user-avatar-2') },
+    replyCount: 1,
+    lastPost: {
+      author: { id: "usr-stud-001", name: "Alice Johnson" },
+      timestamp: "2024-05-29T11:20:00Z",
+    }
+  },
+  { 
+    id: "thread-003",
+    forumId: "tech-support",
+    title: "My laptop won't connect to the school WiFi",
+    author: { id: "usr-stud-002", name: "Bob Williams", avatarUrl: getImageUrl('user-avatar-3') },
+    replyCount: 1,
+    lastPost: {
+      author: { id: "usr-admin-001", name: "Admin" },
+      timestamp: "2024-05-27T18:00:00Z",
+    }
+  },
+  { 
+    id: "thread-004",
+    forumId: "course-sci-301",
+    title: "Study group for the upcoming midterm?",
+    author: { id: "usr-stud-001", name: "Alice Johnson", avatarUrl: getImageUrl('user-avatar-1') },
+    replyCount: 1,
+    lastPost: {
+      author: { id: "usr-stud-003", name: "Charlie Brown" },
+      timestamp: "2024-05-29T09:00:00Z",
+    }
+  },
 ];

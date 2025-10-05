@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarPlus, LayoutDashboard, Megaphone, School } from "lucide-react";
+import { CalendarPlus, LayoutDashboard, Megaphone, MessageSquare, School } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,7 @@ export function TeacherSidebar() {
   const menuItems = [
     { href: "/dashboard/teacher", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/teacher/announcements", label: "Announcements", icon: Megaphone },
+    { href: "/dashboard/forums", label: "Forums", icon: MessageSquare },
   ];
 
   return (
