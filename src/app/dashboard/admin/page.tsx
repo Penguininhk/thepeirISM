@@ -72,7 +72,8 @@ export default function AdminDashboardPage() {
       try {
         const response = await fetch('/api/admin/list-users');
         if (!response.ok) {
-          throw new Error(`Failed to fetch users: ${response.statusText}`);
+           const errorData = await response.json().catch(() => ({ details: response.statusText }));
+          throw new Error(`Failed to fetch users: ${errorData.details || response.statusText}`);
         }
         const userList = await response.json();
         setUsers(userList);
@@ -94,7 +95,8 @@ export default function AdminDashboardPage() {
       try {
         const response = await fetch('/api/admin/list-action-logs');
          if (!response.ok) {
-          throw new Error(`Failed to fetch action logs: ${response.statusText}`);
+          const errorData = await response.json().catch(() => ({ details: response.statusText }));
+          throw new Error(`Failed to fetch action logs: ${errorData.details || response.statusText}`);
         }
         const logsList = await response.json();
         setActionLogs(logsList);

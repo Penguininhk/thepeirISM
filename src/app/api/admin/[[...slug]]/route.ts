@@ -1,3 +1,4 @@
+import 'dotenv/config'; // Load environment variables
 import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
 import { listUsers } from '@/ai/flows/list-users-flow';
 import { updateUserStatus, UpdateUserStatusInput } from '@/ai/flows/update-user-status-flow';
