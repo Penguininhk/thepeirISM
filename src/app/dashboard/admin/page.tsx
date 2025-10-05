@@ -1,15 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { useState } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -26,45 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UserProfile, ActionLog } from '@/lib/data';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, History } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-
-type ActionLogWithDate = Omit<ActionLog, 'timestamp'> & { timestamp: string };
-
-async function fetchAdminData(action: string) {
-    const res = await fetch(`/api/admin?action=${action}`);
-    if (!res.ok) {
-        const errorBody = await res.text();
-        throw new Error(`Server responded with ${res.status}: ${errorBody}`);
-    }
-    // Handle cases where the response might be empty
-    const text = await res.text();
-    if (!text) {
-        return [];
-    }
-    return JSON.parse(text);
-}
-
-async function postAdminData(action: string, body: object) {
-    const res = await fetch(`/api/admin?action=${action}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-        const errorBody = await res.json();
-        throw new Error(errorBody.error || `Server responded with ${res.status}`);
-    }
-    return res.json();
-}
-
+import { PlusCircle } from 'lucide-react';
+import { createUser } from '@/app/actions/admin';
+import UserManagement from '@/components/admin/user-management';
+import ActionLogFeed from '@/components/admin/action-log-feed';
 
 export default function AdminDashboardPage() {
   const { toast } = useToast();
@@ -78,90 +39,20 @@ export default function AdminDashboardPage() {
     role: 'student' as 'student' | 'teacher' | 'admin',
   });
   
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
-  const [usersError, setUsersError] = useState<string | null>(null);
-  
-  const [actionLogs, setActionLogs] = useState<ActionLogWithDate[]>([]);
-  const [isLoadingLogs, setIsLoadingLogs] = useState(true);
-  const [logsError, setLogsError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    setIsLoadingUsers(true);
-    setIsLoadingLogs(true);
-    setUsersError(null);
-    setLogsError(null);
-
-    try {
-      const usersData = await fetchAdminData('list-users');
-      setUsers(usersData);
-    } catch (e) {
-      const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
-      setUsersError(`Failed to fetch users: ${errorMsg}`);
-    } finally {
-      setIsLoadingUsers(false);
-    }
-    
-    try {
-      const logsData = await fetchAdminData('list-action-logs');
-      setActionLogs(logsData);
-    } catch (e) {
-      const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
-      setLogsError(`Failed to fetch action log: ${errorMsg}`);
-    } finally {
-      setIsLoadingLogs(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
-    const originalUsers = users;
-    setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
-
-    try {
-      await postAdminData('update-user-status', {
-        userId: user.id,
-        status: newStatus,
-        isAdmin: user.role === 'admin' && newStatus === 'approved',
-      });
-      
-      toast({
-        title: 'User Status Updated',
-        description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
-      });
-      
-      fetchData(); // Refresh all data
-
-    } catch (e) {
-      setUsers(originalUsers);
-      const errorMsg = e instanceof Error ? e.message : 'Could not update user status.';
-      toast({
-        variant: 'destructive',
-        title: 'Update Failed',
-        description: errorMsg,
-      });
-    }
-  };
-
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
    
     try {
-        const createdUser = await postAdminData('create-user', newUser);
+        await createUser(newUser);
       
         toast({
             title: "User Created",
             description: `Account for ${newUser.firstName} ${newUser.lastName} has been created.`,
         });
 
-        setUsers([...users, createdUser]);
         setCreateUserOpen(false);
         setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
-        fetchData(); // Refresh all data
-
+        // The page will revalidate automatically via the server action
     } catch (err) {
        toast({ 
          variant: "destructive", 
@@ -170,27 +61,6 @@ export default function AdminDashboardPage() {
        });
     }
   };
-
-  if (isLoadingUsers || isLoadingLogs) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <p>Loading user data...</p>
-      </div>
-    );
-  }
-  
-  if (usersError || logsError) {
-     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
-        {usersError && <p className="text-red-500">{usersError}</p>}
-        {logsError && <p className="text-red-500">{logsError}</p>}
-        <Button onClick={fetchData}>Retry</Button>
-      </div>
-    );
-  }
-
-  const pendingUsers = users.filter(u => u.status === 'pending');
-  const otherUsers = users.filter(u => u.status !== 'pending');
 
   return (
     <div className="space-y-6">
@@ -258,120 +128,15 @@ export default function AdminDashboardPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pending Approvals</CardTitle>
-              <CardDescription>Review and approve or reject new account requests.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {pendingUsers.length > 0 ? (
-                <div className="overflow-hidden rounded-lg border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pendingUsers.map(user => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>
-                            <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
-                          </TableCell>
-                          <TableCell className="text-right space-x-2">
-                            <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(user, 'approved')}>Approve</Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(user, 'rejected')}>Reject</Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">No pending requests.</p>
-              )}
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>All Users</CardTitle>
-              <CardDescription>A list of all registered users in the system.</CardDescription>
-            </CardHeader>
-            <CardContent>
-               <div className="overflow-hidden rounded-lg border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {otherUsers.map(user => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                           <TableCell>
-                            <Badge variant={user.role === 'student' ? 'secondary' : 'outline'}>{user.role}</Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                             <Badge
-                              className={cn({
-                                "bg-green-500 text-white": user.status === "approved",
-                                "bg-red-500 text-white": user.status === "rejected",
-                              })}
-                            >
-                              {user.status}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-            </CardContent>
-          </Card>
+          <React.Suspense fallback={<Card><CardHeader><CardTitle>Loading Users...</CardTitle></CardHeader></Card>}>
+            <UserManagement />
+          </React.Suspense>
         </div>
 
         <div className="lg:col-span-1">
-           <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5" />
-                  Action Log
-                </CardTitle>
-                <CardDescription>A log of recent administrative actions.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {actionLogs && actionLogs.length > 0 ? (
-                    actionLogs.map(log => (
-                      <div key={log.id} className="flex items-start gap-3">
-                         <div className="flex-shrink-0 pt-1">
-                           <div className="h-2 w-2 rounded-full bg-accent" />
-                         </div>
-                         <div>
-                          <p className="text-sm">{log.details}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {log.timestamp ? `${formatDistanceToNow(new Date(log.timestamp))} ago` : 'just now'} by {log.adminId}
-                          </p>
-                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-center text-muted-foreground py-4">No actions logged yet.</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+           <React.Suspense fallback={<Card><CardHeader><CardTitle>Loading Log...</CardTitle></CardHeader></Card>}>
+            <ActionLogFeed />
+           </React.Suspense>
         </div>
       </div>
     </div>
