@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { classLists } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -18,11 +19,15 @@ import { Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
-import { use } from 'react';
 
-export default function TakeAttendancePage({ params }: { params: Promise<{ classId: string }> }) {
-  const { classId } = use(params);
+export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
+  const [classId, setClassId] = useState(params.classId);
   const { toast } = useToast();
+  
+  useEffect(() => {
+    setClassId(params.classId);
+  }, [params.classId]);
+
   const classInfo = classLists.find(cl => cl.id === classId);
 
   if (!classInfo) {
