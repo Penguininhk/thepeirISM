@@ -98,12 +98,16 @@ export const studentProfile: Student = {
     { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { name: 'Dr. Evelyn Reed' } },
     { id: 'crs-201', name: 'AP Calculus BC', code: 'MATH-301', teacher: { name: 'Mr. David Chen' } },
     { id: 'crs-401', name: 'AP Studio Art: 2D', code: 'ART-210', teacher: { name: 'Ms. Chloe Kim' } },
+    { id: 'crs-301', name: 'AP World History', code: 'HIST-202', teacher: { name: 'Mr. Samuel Greene'} },
+    { id: 'crs-102', name: 'AP English Literature', code: 'ENG-401', teacher: { name: 'Dr. Evelyn Reed'} },
   ],
   assignments: [
     { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-05', status: 'graded', grade: { letter: 'A-', percentage: 92 } },
     { id: 'asg-002', title: 'Derivative Practice Problems', course: { name: 'AP Calculus BC' }, dueDate: '2024-06-08', status: 'submitted' },
     { id: 'asg-003', title: 'Final Project Proposal', course: { name: 'AP Studio Art: 2D' }, dueDate: '2024-06-12', status: 'pending' },
-    { id: 'asg-004', title: 'Poetry Analysis', course: { name: 'AP English Literature' }, dueDate: '2024-06-15', status: 'pending' },
+    { id: 'asg-004', title: 'Poetry Analysis: The Romantics', course: { name: 'AP English Literature' }, dueDate: '2024-06-15', status: 'pending' },
+    { id: 'asg-005', title: 'DBQ: The Silk Road', course: { name: 'AP World History' }, dueDate: '2024-06-10', status: 'submitted' },
+    { id: 'asg-006', title: 'Whale Migration Patterns Quiz', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-18', status: 'pending' },
   ],
 };
 
