@@ -20,7 +20,7 @@ export type Student = {
     course: { name: string };
     dueDate: string;
     status: 'pending' | 'submitted' | 'graded';
-    grade?: string;
+    grade?: { letter: string; percentage: number };
   }[];
 };
 
@@ -100,7 +100,7 @@ export const studentProfile: Student = {
     { id: 'crs-401', name: 'AP Studio Art: 2D', code: 'ART-210', teacher: { name: 'Ms. Chloe Kim' } },
   ],
   assignments: [
-    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-05', status: 'graded', grade: 'A-' },
+    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-05', status: 'graded', grade: { letter: 'A-', percentage: 92 } },
     { id: 'asg-002', title: 'Derivative Practice Problems', course: { name: 'AP Calculus BC' }, dueDate: '2024-06-08', status: 'submitted' },
     { id: 'asg-003', title: 'Final Project Proposal', course: { name: 'AP Studio Art: 2D' }, dueDate: '2024-06-12', status: 'pending' },
     { id: 'asg-004', title: 'Poetry Analysis', course: { name: 'AP English Literature' }, dueDate: '2024-06-15', status: 'pending' },

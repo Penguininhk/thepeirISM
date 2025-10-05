@@ -59,7 +59,7 @@ export default function ClassworkPage() {
                       <CardDescription>Due: {assignment.dueDate}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col justify-between">
-                      <div className="flex items-center space-x-2 mb-4">
+                      <div className="flex items-center justify-between mb-4">
                         <Badge
                           variant={
                             assignment.status === 'graded' ? 'default' :
@@ -70,9 +70,10 @@ export default function ClassworkPage() {
                           {statusInfo.icon}
                           <span className="ml-1.5">{statusInfo.text}</span>
                         </Badge>
-                        {assignment.status === 'graded' && (
-                          <div className="font-bold text-lg rounded-md bg-primary/10 px-3 py-1 text-primary">
-                            {assignment.grade}
+                        {assignment.status === 'graded' && assignment.grade && (
+                          <div className="flex items-baseline gap-2">
+                             <span className="font-bold text-lg text-primary">{assignment.grade.percentage}%</span>
+                             <span className="text-sm font-medium text-muted-foreground">({assignment.grade.letter})</span>
                           </div>
                         )}
                       </div>
