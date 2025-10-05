@@ -94,6 +94,42 @@ export async function POST(
         console.log('------------------------------------');
 
         return NextResponse.json({ success: true, message: `User status updated and action logged successfully.` });
+      
+      case 'create-user':
+        const newUserBody = await request.json();
+        const { firstName, lastName, email: newUserEmail, password, role: newUserRole } = newUserBody;
+
+        // Step 1: Create user in Firebase Auth
+        const userRecord = await auth.createUser({
+          email: newUserEmail,
+          password: password,
+          displayName: `${firstName} ${lastName}`,
+        });
+
+        // Step 2: Create user profile in Firestore
+        const newUserProfile = {
+          id: userRecord.uid,
+          firstName,
+          lastName,
+          email: newUserEmail,
+          role: newUserRole,
+          status: 'approved',
+          classIds: [],
+        };
+        await firestore.collection('users').doc(userRecord.uid).set(newUserProfile);
+
+         // Step 3: Log the action
+        const createLogDetails = `New ${newUserRole} account created for '${firstName} ${lastName}' (${newUserEmail}).`;
+        await firestore.collection('actionLogs').add({
+          timestamp: new Date(),
+          adminId: 'admin',
+          actionType: 'user_created',
+          details: createLogDetails,
+        });
+        
+        // Return success response with the new user profile (excluding sensitive data)
+        return NextResponse.json({ success: true, user: newUserProfile });
+
 
       default:
         return NextResponse.json({ error: 'Not Found' }, { status: 404 });

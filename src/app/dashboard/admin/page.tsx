@@ -2,9 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore } from '@/firebase';
-import { collection, doc, setDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Table,
@@ -38,13 +35,9 @@ import { UserProfile, ActionLog, UpdateUserStatusInput } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, History } from 'lucide-react';
-import { FirebaseError } from 'firebase/app';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function AdminDashboardPage() {
-  const router = useRouter();
-  const firestore = useFirestore();
-  const auth = useAuth();
   const { toast } = useToast();
   
   const [isCreateUserOpen, setCreateUserOpen] = useState(false);
@@ -64,8 +57,7 @@ export default function AdminDashboardPage() {
   const [isLoadingLogs, setIsLoadingLogs] = useState(true);
   const [logsError, setLogsError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+  const fetchUsers = async () => {
       setIsLoadingUsers(true);
       setUsersError(null);
       try {
@@ -110,32 +102,14 @@ export default function AdminDashboardPage() {
         setIsLoadingLogs(false);
       }
     };
-    
+
+  useEffect(() => {
     fetchUsers();
     fetchLogs();
   }, [toast]);
   
-  const logAction = async (actionType: ActionLog['actionType'], details: string) => {
-    if (!firestore) return;
-    try {
-      const newLog = {
-        timestamp: new Date().toISOString(),
-        adminId: 'admin', // In a real app, this would be the logged-in admin's ID
-        actionType,
-        details,
-      };
-      // The server flow now handles logging, but we can optimistically update UI
-      setActionLogs(prevLogs => [{ id: String(Date.now()), ...newLog }, ...prevLogs]);
-
-    } catch (e) {
-      console.error("Failed to optimistically log action:", e);
-      // Optional: show a toast that logging failed, but don't block main action
-    }
-  };
-
 
   const handleUpdateStatus = async (user: UserProfile, newStatus: 'approved' | 'rejected') => {
-    // Optimistically update the local state for a better UX
     const originalUsers = users;
     setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
 
@@ -147,7 +121,6 @@ export default function AdminDashboardPage() {
         role: user.role,
       };
       
-      // Call the API route to trigger the server-side flow
       const response = await fetch('/api/admin/update-user-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -164,12 +137,10 @@ export default function AdminDashboardPage() {
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
       });
       
-      // Optimistically add to the log view
-      const logDetails = `User '${user.firstName} ${user.lastName}' (${user.email}) was ${newStatus}.`;
-      await logAction('user_status_update', logDetails);
+      // Refresh logs after action
+      fetchLogs();
 
     } catch (e) {
-      // If the API call fails, revert the optimistic update
       setUsers(originalUsers);
       console.error('Failed to update user status:', e);
       toast({
@@ -183,51 +154,39 @@ export default function AdminDashboardPage() {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth || !firestore) return;
-
     try {
-      // We create a temporary auth instance to create the user without signing out the admin
-      const tempAuth = auth;
-      const userCredential = await createUserWithEmailAndPassword(tempAuth, newUser.email, newUser.password);
-      const user = userCredential.user;
+      const response = await fetch('/api/admin/create-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser),
+      });
 
-      const newUserProfile: UserProfile = {
-        id: user.uid,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email,
-        role: newUser.role,
-        status: "approved",
-        classIds: [],
-      };
+      const result = await response.json();
 
-      await setDoc(doc(firestore, "users", user.uid), newUserProfile);
-      
+      if (!response.ok) {
+        throw new Error(result.details || 'Failed to create user.');
+      }
+
       toast({
         title: "User Created",
         description: `Account for ${newUser.firstName} ${newUser.lastName} has been created and approved.`,
       });
 
-      setUsers([...users, newUserProfile]);
-
-      const logDetails = `New ${newUser.role} account created for '${newUser.firstName} ${newUser.lastName}' (${newUser.email}).`;
-      await logAction('user_created', logDetails);
+      // Optimistically add the new user to the UI
+      setUsers([...users, result.user]);
+      
+      // Refresh logs
+      fetchLogs();
 
       setCreateUserOpen(false);
       setNewUser({ firstName: '', lastName: '', email: '', password: 'password123', role: 'student' });
 
     } catch (err) {
-       if (err instanceof FirebaseError) {
-        if (err.code === 'auth/email-already-in-use') {
-          toast({ variant: "destructive", title: "Creation Failed", description: "This email is already in use." });
-        } else if (err.code === 'auth/weak-password') {
-          toast({ variant: "destructive", title: "Creation Failed", description: "The password is too weak." });
-        } else {
-           toast({ variant: "destructive", title: "Creation Failed", description: err.message });
-        }
-      } else {
-        toast({ variant: "destructive", title: "Creation Failed", description: "An unexpected error occurred." });
-      }
+       toast({ 
+         variant: "destructive", 
+         title: "Creation Failed", 
+         description: (err as Error).message || "An unexpected error occurred." 
+       });
     }
   };
 
