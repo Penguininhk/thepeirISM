@@ -35,6 +35,10 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, History } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { listUsers } from '@/ai/flows/list-users-flow';
+import { listActionLogs } from '@/ai/flows/list-action-logs-flow';
+import { updateUserStatus } from '@/ai/flows/update-user-status-flow';
+import { createUser } from '@/ai/flows/create-user-flow';
 
 type ActionLogWithDate = Omit<ActionLog, 'timestamp'> & { timestamp: string };
 
@@ -65,12 +69,7 @@ export default function AdminDashboardPage() {
     setLogsError(null);
 
     try {
-      const usersResponse = await fetch('/api/admin?action=list-users');
-      if (!usersResponse.ok) {
-        const errorData = await usersResponse.json().catch(() => ({ error: `Server responded with ${usersResponse.status}` }));
-        throw new Error(errorData.error);
-      }
-      const usersData = await usersResponse.json();
+      const usersData = await listUsers();
       setUsers(usersData);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
@@ -80,12 +79,7 @@ export default function AdminDashboardPage() {
     }
     
     try {
-      const logsResponse = await fetch('/api/admin?action=list-action-logs');
-      if (!logsResponse.ok) {
-        const errorData = await logsResponse.json().catch(() => ({ error: `Server responded with ${logsResponse.status}` }));
-        throw new Error(errorData.error);
-      }
-      const logsData = await logsResponse.json();
+      const logsData = await listActionLogs();
       setActionLogs(logsData);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'An unknown error occurred.';
@@ -104,18 +98,12 @@ export default function AdminDashboardPage() {
     setUsers(users.map(u => u.id === user.id ? {...u, status: newStatus} : u));
 
     try {
-      const response = await fetch('/api/admin?action=update-user-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            userId: user.id, 
-            status: newStatus,
-            isAdmin: user.role === 'admin',
-        }),
+      await updateUserStatus({
+        userId: user.id,
+        status: newStatus,
+        isAdmin: user.role === 'admin',
       });
-
-      if (!response.ok) throw new Error('Server responded with an error.');
-
+      
       toast({
         title: 'User Status Updated',
         description: `User ${user.firstName} ${user.lastName} has been ${newStatus}.`,
@@ -138,18 +126,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
    
     try {
-        const response = await fetch('/api/admin?action=create-user', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newUser),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create user on server.');
-        }
-
-        const createdUser = await response.json();
+        const createdUser = await createUser(newUser);
       
         toast({
             title: "User Created",
