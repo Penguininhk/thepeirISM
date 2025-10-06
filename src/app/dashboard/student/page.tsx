@@ -83,7 +83,7 @@ export default function StudentDashboard() {
                   <TableRow key={ass.id}>
                     <TableCell className="font-medium">{ass.title}</TableCell>
                     <TableCell>{ass.course.name}</TableCell>
-                    <TableCell className="text-right">{ass.dueDate}</TableCell>
+                    <TableCell className="text-right">{format(new Date(ass.dueDate), 'MMM d')}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -111,7 +111,7 @@ export default function StudentDashboard() {
               <span className="font-bold text-primary">{attendancePercentage}%</span>
             </div>
             <Progress value={Number(attendancePercentage)} className="mt-2 h-2" />
-             <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
+             <Button variant="outline" size="sm" className="w-full mt-4" asChild>
                 <Link href="/dashboard/student/attendance">
                   View Detailed Record <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

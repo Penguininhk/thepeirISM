@@ -52,7 +52,7 @@ export type ClassInfo = {
     id: string;
     name: string;
     code: string;
-    teacher: { id: string; };
+    teacher: { id: string; name: string; };
   };
   students: {
     id: string;
@@ -162,24 +162,16 @@ const adminUser = {
   name: 'Admin User',
 }
 
-export const teacherProfile: Teacher = {
-  id: 'usr-teach-001',
-  name: 'Dr. Evelyn Reed',
-  email: 'e.reed@school.edu',
-  role: 'teacher',
-  status: 'approved',
-  avatarUrl: getImageUrl('user-avatar-2'),
-  courses: [
-    { id: 'crs-101', name: 'AP Marine Biology' },
-    { id: 'crs-102', name: 'AP English Literature' },
-  ],
-};
+const teachersCollection: Teacher[] = [
+  { id: 'usr-teach-001', name: 'Dr. Evelyn Reed', email: 'e.reed@school.edu', role: 'teacher', status: 'approved', avatarUrl: getImageUrl('user-avatar-2'), courses: [{ id: 'crs-101', name: 'AP Marine Biology' },{ id: 'crs-102', name: 'AP English Literature' }] },
+  { id: 'usr-teach-002', name: 'Mr. David Chen', role: 'teacher', email: 'd.chen@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d', courses: [{id: 'crs-201', name: 'AP Calculus BC'}] },
+  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', role: 'teacher', email: 'c.kim@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d', courses: [{id: 'crs-401', name: 'AP Studio Art: 2D'}] },
+  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', role: 'teacher', email: 's.greene@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d', courses: [{id: 'crs-301', name: 'AP World History'}] },
+  { id: 'usr-teach-005', name: 'Ms. Inoue Tanaka', role: 'teacher', email: 'i.tanaka@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026710d', courses: [{id: 'crs-501', name: 'Intro to Robotics'}] },
+];
 
-const otherTeachers: User[] = [
-  { id: 'usr-teach-002', name: 'Mr. David Chen', role: 'teacher', email: 'd.chen@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d' },
-  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', role: 'teacher', email: 'c.kim@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d' },
-  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', role: 'teacher', email: 's.greene@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d' },
-]
+export const teacherProfile: Teacher = teachersCollection[0];
+const otherTeachers = teachersCollection.slice(1);
 
 const studentCourses = [
   { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { name: 'Dr. Evelyn Reed' }, block: 'A' },
@@ -232,13 +224,13 @@ const otherStudents: User[] = [
   { id: 'usr-stud-003', name: 'Charlie Brown', role: 'student', email: 'charlie@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
   { id: 'usr-stud-004', name: 'Diana Prince', role: 'student', email: 'diana@school.edu', status: 'rejected', avatarUrl: getImageUrl('user-avatar-4') },
   { id: 'usr-stud-005', name: 'Eve Adams', role: 'student', email: 'eve@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
+  { id: 'usr-stud-006', name: 'Frank Green', role: 'student', email: 'frank@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
 ];
 
 export const users: User[] = [
   studentProfile,
-  teacherProfile,
   ...otherStudents,
-  ...otherTeachers,
+  ...teachersCollection,
 ];
 
 export const announcements: Announcement[] = [
@@ -253,7 +245,7 @@ export const announcements: Announcement[] = [
     id: 'ann-002',
     title: 'Library Closure for Maintenance',
     content: 'Please be advised that the school library will be closed this Friday for system upgrades and maintenance. Make sure to check out any books you need before then. The online catalog will also be temporarily unavailable.',
-    author: { name: 'School Administration', id: 'usr-admin-001' },
+    author: { name: 'Admin User', id: 'usr-admin-001' },
     date: '2024-05-20T09:00:00Z',
   },
   {
@@ -269,7 +261,7 @@ export const announcements: Announcement[] = [
 export const classLists: ClassInfo[] = [
   {
     id: 'cl-101',
-    course: { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { id: 'usr-teach-001' } },
+    course: { id: 'crs-101', name: 'AP Marine Biology', code: 'SCI-301', teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' } },
     students: [
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
       { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
@@ -279,10 +271,32 @@ export const classLists: ClassInfo[] = [
   },
   {
     id: 'cl-102',
-    course: { id: 'crs-102', name: 'AP English Literature', code: 'ENG-401', teacher: { id: 'usr-teach-001' } },
+    course: { id: 'crs-102', name: 'AP English Literature', code: 'ENG-401', teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' } },
     students: [
       { id: 'usr-stud-004', name: 'Diana Prince', avatarUrl: getImageUrl('user-avatar-4') },
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
+      { id: 'usr-stud-005', name: 'Eve Adams', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
+    ],
+  },
+   {
+    id: 'cl-201',
+    course: { id: 'crs-201', name: 'AP Calculus BC', code: 'MATH-301', teacher: { id: 'usr-teach-002', name: 'Mr. David Chen' } },
+    students: [
+      { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
+      { id: 'usr-stud-003', name: 'Charlie Brown', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
+    ],
+  },
+   {
+    id: 'cl-401',
+    course: { id: 'crs-401', name: 'AP Studio Art: 2D', code: 'ART-210', teacher: { id: 'usr-teach-003', name: 'Ms. Chloe Kim' } },
+    students: [
+      { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
+    ],
+  },
+  {
+    id: 'cl-301',
+    course: { id: 'crs-301', name: 'AP World History', code: 'HIST-202', teacher: { id: 'usr-teach-004', name: 'Mr. Samuel Greene' } },
+    students: [
       { id: 'usr-stud-005', name: 'Eve Adams', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
     ],
   },
