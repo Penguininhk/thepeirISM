@@ -13,7 +13,7 @@ export default function TeacherLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/dashboard/teacher');
+    router.replace('/dashboard/teacher');
   };
 
   return (

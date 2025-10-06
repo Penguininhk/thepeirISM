@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/dashboard/admin');
+    router.replace('/dashboard/admin');
   };
 
   return (
