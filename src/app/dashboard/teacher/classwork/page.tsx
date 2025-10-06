@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from "react";
@@ -61,7 +62,7 @@ export default function TeacherClassworkPage() {
                   <Card key={assignment.id} className="flex flex-col">
                     <CardHeader>
                       <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                      <CardDescription>Due: {format(new Date(assignment.dueDate), 'MMM d, yyyy')}</CardDescription>
+                      <CardDescription>Due: {format(assignment.dueDate, 'MMM d, yyyy')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col justify-between">
                        <div className="space-y-2 mb-4">
