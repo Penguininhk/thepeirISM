@@ -3,7 +3,7 @@ import { announcements } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Megaphone, School } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 
 export default function AnnouncementsPage() {
@@ -30,7 +30,7 @@ export default function AnnouncementsPage() {
               <CardHeader>
                 <CardTitle>{ann.title}</CardTitle>
                 <CardDescription>
-                  Posted on {format(parseISO(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
+                  Posted on {format(new Date(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -56,7 +56,7 @@ export default function AnnouncementsPage() {
               <CardHeader>
                 <CardTitle>{ann.title}</CardTitle>
                 <CardDescription>
-                  Posted on {format(parseISO(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
+                  Posted on {format(new Date(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
                 </CardDescription>
               </CardHeader>
               <CardContent>

@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -69,7 +69,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
 
       <div>
         <h1 className="text-3xl font-bold font-headline">{assignment.title}</h1>
-        <p className="text-muted-foreground">Due: {format(parseISO(assignment.dueDate), 'MMMM d, yyyy')} - Max Points: {assignment.maxPoints}</p>
+        <p className="text-muted-foreground">Due: {format(new Date(assignment.dueDate), 'MMMM d, yyyy')} - Max Points: {assignment.maxPoints}</p>
       </div>
 
       <Card>
@@ -101,7 +101,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
                         <span className="font-medium">{sub.student.name}</span>
                       </div>
                     </TableCell>
-                    <TableCell>{format(parseISO(sub.submittedAt), 'MMM d, h:mm a')}</TableCell>
+                    <TableCell>{format(new Date(sub.submittedAt), 'MMM d, h:mm a')}</TableCell>
                     <TableCell>
                        <Badge variant={sub.status === 'graded' ? 'default' : 'secondary'}>
                         {sub.status === 'graded' ? <BookCheck className="mr-2 h-4 w-4"/> : <Clock className="mr-2 h-4 w-4"/>}

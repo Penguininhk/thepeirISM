@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { studentProfile, announcements } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -13,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 export default function StudentDashboard() {
   const upcomingAssignments = studentProfile.assignments
@@ -47,7 +48,7 @@ export default function StudentDashboard() {
                     <h3 className="font-semibold">{ann.title}</h3>
                     <p className="text-sm text-muted-foreground">{ann.content.substring(0, 100)}...</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {format(parseISO(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
+                      {format(new Date(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
                     </p>
                   </div>
                 </li>

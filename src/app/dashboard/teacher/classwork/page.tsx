@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Users, ClipboardCheck, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import {
   Dialog,
   DialogContent,
@@ -147,7 +147,7 @@ export default function TeacherClassworkPage() {
                   <Card key={assignment.id} className="flex flex-col">
                     <CardHeader>
                       <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                      <CardDescription>Due: {format(parseISO(assignment.dueDate), 'MMM d, yyyy')}</CardDescription>
+                      <CardDescription>Due: {format(new Date(assignment.dueDate), 'MMM d, yyyy')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col justify-between">
                        <div className="space-y-2 mb-4">

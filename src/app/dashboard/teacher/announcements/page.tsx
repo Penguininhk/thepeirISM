@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from "react";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { PlusCircle, School } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import {
   Dialog,
   DialogContent,
@@ -118,7 +119,7 @@ export default function TeacherAnnouncementsPage() {
                 )}
               </div>
               <CardDescription>
-                Posted on {format(parseISO(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
+                Posted on {format(new Date(ann.date), 'MMMM d, yyyy')} by {ann.author.name}
               </CardDescription>
             </CardHeader>
             <CardContent>
