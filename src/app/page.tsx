@@ -12,7 +12,7 @@ export default function Home() {
       </div>
       
       <main className="flex w-full max-w-4xl flex-col items-center text-center">
-        <AppLogo className="mb-8 h-16 w-16" />
+        <AppLogo className="mb-8 h-24 w-24" />
         <h1 className="text-4xl font-bold tracking-tight text-primary md:text-6xl font-headline">
           Welcome to The PIER
         </h1>
