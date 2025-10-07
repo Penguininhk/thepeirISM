@@ -18,11 +18,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function ClassRosterPage({ params }: { params: { classId: string } }) {
-  const [classInfo, setClassInfo] = useState(classLists.find((c) => c.id === params.classId));
+  const [classInfo, setClassInfo] = useState(undefined);
 
   useEffect(() => {
-    setClassInfo(classLists.find((c) => c.id === params.classId));
-  }, [params.classId]);
+    const { classId } = params;
+    setClassInfo(classLists.find((c) => c.id === classId));
+  }, [params]);
 
   if (!classInfo) {
     return <div>Class not found</div>;

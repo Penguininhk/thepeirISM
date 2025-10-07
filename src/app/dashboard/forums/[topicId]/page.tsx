@@ -35,13 +35,14 @@ export default function ForumTopicPage({ params }: { params: { topicId: string }
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   
-  const [forum, setForum] = useState(forums.find((f) => f.id === params.topicId));
-  const [topics, setTopics] = useState(forumTopics.filter((t) => t.forumId === params.topicId));
+  const [forum, setForum] = useState(undefined);
+  const [topics, setTopics] = useState([]);
 
   useEffect(() => {
-    setForum(forums.find((f) => f.id === params.topicId));
-    setTopics(forumTopics.filter((t) => t.forumId === params.topicId));
-  }, [params.topicId]);
+    const { topicId } = params;
+    setForum(forums.find((f) => f.id === topicId));
+    setTopics(forumTopics.filter((t) => t.forumId === topicId));
+  }, [params]);
 
   if (!forum) {
     return <div>Forum not found</div>;

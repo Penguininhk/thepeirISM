@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -21,14 +22,13 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 
 export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
-  const [classId, setClassId] = useState(params.classId);
+  const [classInfo, setClassInfo] = useState(undefined);
   const { toast } = useToast();
   
   useEffect(() => {
-    setClassId(params.classId);
-  }, [params.classId]);
-
-  const classInfo = classLists.find(cl => cl.id === classId);
+    const { classId } = params;
+    setClassInfo(classLists.find(cl => cl.id === classId));
+  }, [params]);
 
   if (!classInfo) {
     return (
