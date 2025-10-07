@@ -23,7 +23,7 @@ export default function Home() {
         <h2 className="mt-12 text-center text-lg font-semibold text-foreground/90">
             Sign In Options
         </h2>
-        <div className="mt-6 grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="mt-6 grid w-full max-w-lg grid-cols-1 gap-6 md:grid-cols-2">
           <Link href="/login/student" passHref>
             <Card className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader>
