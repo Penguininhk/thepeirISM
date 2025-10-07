@@ -31,14 +31,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from '@/components/ui/textarea';
-import type { Submission } from '@/lib/data';
+import type { Submission, Assignment } from '@/lib/data';
 
 export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const { toast } = useToast();
   
-  const [assignment, setAssignment] = useState(teacherAssignments.find((a) => a.id === params.assignmentId));
-  const [submissions, setSubmissions] = useState(assignmentSubmissions.filter((s) => s.assignmentId === params.assignmentId));
+  const [assignment, setAssignment] = useState<Assignment | undefined>(undefined);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
 
   useEffect(() => {
     setAssignment(teacherAssignments.find((a) => a.id === params.assignmentId));
