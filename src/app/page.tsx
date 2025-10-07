@@ -40,8 +40,8 @@ export default function Home() {
         </h2>
         <div className="mt-6 grid w-full max-w-lg grid-cols-1 gap-6 md:grid-cols-2">
           <Link href="/login/student" passHref>
-            <Card className="group relative overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
-              <CardHeader className="relative z-10">
+            <Card className="group relative flex flex-col overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
+              <CardHeader className="relative z-10 flex-grow">
                 <CardTitle className="flex items-center justify-center gap-3">
                   <User className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
                   <span className="font-headline">Student</span>
@@ -52,8 +52,8 @@ export default function Home() {
                   Student Login
                 </Button>
               </CardContent>
-               <div className="absolute bottom-0 left-0 w-full h-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <svg className="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+               <div className="relative w-full h-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-auto">
+                <svg className="waves-svg absolute bottom-0 left-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                   viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
                   <g className="waves">
                     <use xlinkHref="#gentle-wave" x="48" y="0" fill="hsl(var(--accent) / 0.1)" />
@@ -67,8 +67,8 @@ export default function Home() {
           </Link>
 
           <Link href="/login/teacher" passHref>
-            <Card className="group relative overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
-              <CardHeader className="relative z-10">
+            <Card className="group relative flex flex-col overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
+              <CardHeader className="relative z-10 flex-grow">
                 <CardTitle className="flex items-center justify-center gap-3">
                   <School className="h-6 w-6 text-primary transition-colors group-hover:text-accent" />
                   <span className="font-headline">Teacher</span>
@@ -79,8 +79,8 @@ export default function Home() {
                   Teacher Login
                 </Button>
               </CardContent>
-              <div className="absolute bottom-0 left-0 w-full h-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <svg className="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+              <div className="relative w-full h-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-auto">
+                <svg className="waves-svg absolute bottom-0 left-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                   viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
                   <g className="waves">
                     <use xlinkHref="#gentle-wave" x="48" y="0" fill="hsl(var(--accent) / 0.1)" />
