@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -21,6 +22,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,6 +60,75 @@ export default function AdminCoursesPage() {
     setNewCourseOpen(false);
     setEditingCourse(null);
   }
+  
+  const handleDeleteCourse = (courseName: string) => {
+    toast({
+      title: "Course Deleted",
+      description: `${courseName} has been removed from the catalog.`,
+      variant: "destructive"
+    });
+  };
+
+  const EditCourseDialog = ({ course, onOpenChange, onSave }: { course: Course, onOpenChange: (open: boolean) => void, onSave: () => void}) => (
+    <Dialog open={!!course} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[525px]">
+        <DialogHeader>
+          <DialogTitle>Edit Course</DialogTitle>
+          <DialogDescription>
+            Update the details for {course.name}.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">Course Name</Label>
+            <Input id="name" defaultValue={course.name} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="code" className="text-right">Course Code</Label>
+            <Input id="code" defaultValue={course.code} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="description" className="text-right pt-2">Description</Label>
+            <Textarea id="description" defaultValue={course.description} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="teacher" className="text-right">Teacher</Label>
+              <Select defaultValue={teachers.find(t => t.name === course.teacher.name)?.id}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a teacher" />
+              </SelectTrigger>
+              <SelectContent>
+                {teachers.map(t => (
+                  <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Block & Term</Label>
+              <div className="col-span-3 grid grid-cols-2 gap-2">
+                <Select defaultValue={course.block}>
+                  <SelectTrigger><SelectValue placeholder="Block" /></SelectTrigger>
+                  <SelectContent>
+                    {blocks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Select defaultValue={String(course.term)}>
+                  <SelectTrigger><SelectValue placeholder="Term" /></SelectTrigger>
+                  <SelectContent>
+                    {terms.map(t => <SelectItem key={t} value={String(t)}>Term {t}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button type="submit" onClick={onSave}>Save Changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
     <div className="space-y-6">
@@ -138,7 +214,7 @@ export default function AdminCoursesPage() {
                   <TableHead>Teacher</TableHead>
                   <TableHead>Block</TableHead>
                   <TableHead>Term</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -150,9 +226,24 @@ export default function AdminCoursesPage() {
                     <TableCell>{course.block}</TableCell>
                     <TableCell>{course.term}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                       <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Course Actions</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onSelect={() => setEditingCourse(course)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => handleDeleteCourse(course.name)} className="text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -161,6 +252,14 @@ export default function AdminCoursesPage() {
           </div>
         </CardContent>
       </Card>
+      
+      {editingCourse && (
+        <EditCourseDialog 
+          course={editingCourse}
+          onOpenChange={(open) => !open && setEditingCourse(null)}
+          onSave={handleSaveCourse}
+        />
+      )}
     </div>
   );
 }
