@@ -47,11 +47,6 @@ export default function Home() {
                   <span className="font-headline">Student</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="relative z-10">
-                <Button variant="link" className="mt-4 p-0">
-                  Student Login
-                </Button>
-              </CardContent>
                <div className="relative w-full h-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-auto">
                 <svg className="waves-svg absolute bottom-0 left-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                   viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
@@ -74,11 +69,6 @@ export default function Home() {
                   <span className="font-headline">Teacher</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="relative z-10">
-                <Button variant="link" className="mt-4 p-0">
-                  Teacher Login
-                </Button>
-              </CardContent>
               <div className="relative w-full h-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-auto">
                 <svg className="waves-svg absolute bottom-0 left-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                   viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
