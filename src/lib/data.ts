@@ -138,7 +138,7 @@ export type ActionLog = {
     name: string;
     id: string;
   };
-  actionType: 'user_status_update' | 'user_created';
+  actionType: 'user_status_update' | 'user_created' | 'user_deleted' | 'course_created' | 'course_deleted';
   details: string;
 };
 
@@ -170,7 +170,15 @@ const teachersCollection: Teacher[] = [
   { id: 'usr-teach-005', name: 'Ms. Inoue Tanaka', role: 'teacher', email: 'i.tanaka@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026710d', courses: [{id: 'crs-501', name: 'Intro to Robotics'}] },
 ];
 
-export const teacherProfile: Teacher = teachersCollection[0];
+export const teacherProfile: Teacher = { 
+  ...teachersCollection[0],
+  courses: [
+    ...teachersCollection[0].courses,
+    { id: 'crs-201', name: 'AP Calculus BC' },
+    { id: 'crs-401', name: 'AP Studio Art: 2D' },
+    { id: 'crs-301', name: 'AP World History' }
+  ]
+};
 const otherTeachers = teachersCollection.slice(1);
 
 const studentCourses = [
@@ -479,12 +487,19 @@ export const actionLogs: ActionLog[] = [
     actionType: 'user_created',
     details: "Created new student account 'Bob Williams'.",
   },
-    {
+  {
     id: 'log-004',
     timestamp: '2024-05-27T09:00:00Z',
     admin: adminUser,
-    actionType: 'user_status_update',
-    details: "Approved 'Alice Johnson' registration.",
+    actionType: 'course_deleted',
+    details: "Deleted course 'Intro to Philosophy'.",
+  },
+  {
+    id: 'log-005',
+    timestamp: '2024-05-26T16:45:00Z',
+    admin: adminUser,
+    actionType: 'user_deleted',
+    details: "Deleted user account 'old.student@school.edu'.",
   },
 ];
 
