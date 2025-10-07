@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { teacherAssignments, assignmentSubmissions } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -34,6 +34,9 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Submission, Assignment } from '@/lib/data';
 
 export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
+  const resolvedParams = use(Promise.resolve(params));
+  const { assignmentId } = resolvedParams;
+
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const { toast } = useToast();
   
@@ -41,12 +44,11 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
   const [submissions, setSubmissions] = useState<Submission[]>([]);
 
   useEffect(() => {
-    const { assignmentId } = params;
     if (assignmentId) {
       setAssignment(teacherAssignments.find((a) => a.id === assignmentId));
       setSubmissions(assignmentSubmissions.filter((s) => s.assignmentId === assignmentId));
     }
-  }, [params]);
+  }, [assignmentId]);
 
   if (!assignment) {
     return <div>Loading assignment...</div>;

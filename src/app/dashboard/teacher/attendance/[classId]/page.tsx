@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { classLists } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -22,13 +22,17 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 
 export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
+  const resolvedParams = use(Promise.resolve(params));
+  const { classId } = resolvedParams;
+
   const [classInfo, setClassInfo] = useState(undefined);
   const { toast } = useToast();
   
   useEffect(() => {
-    const { classId } = params;
-    setClassInfo(classLists.find(cl => cl.id === classId));
-  }, [params]);
+    if (classId) {
+      setClassInfo(classLists.find(cl => cl.id === classId));
+    }
+  }, [classId]);
 
   if (!classInfo) {
     return (
