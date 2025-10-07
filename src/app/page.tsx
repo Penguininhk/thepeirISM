@@ -8,24 +8,6 @@ import AppLogo from "@/components/app-logo";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-full h-48">
-          <svg className="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-            viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
-            <defs>
-              <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-            </defs>
-            <g className="waves">
-              <use xlinkHref="#gentle-wave" x="48" y="0" fill="hsl(var(--primary) / 0.1)" />
-              <use xlinkHref="#gentle-wave" x="48" y="3" fill="hsl(var(--primary) / 0.15)" />
-              <use xlinkHref="#gentle-wave" x="48" y="5" fill="hsl(var(--primary) / 0.05)" />
-              <use xlinkHref="#gentle-wave" x="48" y="7" fill="hsl(var(--primary) / 0.2)" />
-            </g>
-          </svg>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,hsl(var(--background)),transparent)]"></div>
-      </div>
-      
       <main className="flex w-full max-w-4xl flex-col items-center text-center">
         <AppLogo className="mb-8 h-40 w-40" />
         <h1 className="text-4xl font-bold tracking-tight text-primary md:text-6xl font-headline">
