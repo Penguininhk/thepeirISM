@@ -31,7 +31,7 @@ export default function AdminDashboardLayout({
           </div>
           <UserNav user={adminUser} />
         </header>
-        <main className="flex-1 p-4 sm:p-6 bg-muted/30">{children}</main>
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
