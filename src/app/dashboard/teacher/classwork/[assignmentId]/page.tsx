@@ -34,6 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Submission, Assignment } from '@/lib/data';
 
 export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
+  const { assignmentId } = params;
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const { toast } = useToast();
   
@@ -41,9 +42,9 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
   const [submissions, setSubmissions] = useState<Submission[]>([]);
 
   useEffect(() => {
-    setAssignment(teacherAssignments.find((a) => a.id === params.assignmentId));
-    setSubmissions(assignmentSubmissions.filter((s) => s.assignmentId === params.assignmentId));
-  }, [params.assignmentId]);
+    setAssignment(teacherAssignments.find((a) => a.id === assignmentId));
+    setSubmissions(assignmentSubmissions.filter((s) => s.assignmentId === assignmentId));
+  }, [assignmentId]);
 
   if (!assignment) {
     return <div>Assignment not found</div>;
