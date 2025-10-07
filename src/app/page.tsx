@@ -7,8 +7,22 @@ import AppLogo from "@/components/app-logo";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background">
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#DDE6ED,transparent)]"></div>
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background overflow-hidden">
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,hsl(var(--background)),transparent)]"></div>
+        <div className="absolute bottom-0 left-0 w-full h-48">
+          <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <defs>
+              <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{stopColor: 'hsl(var(--background))', stopOpacity: 0.1}} />
+                <stop offset="100%" style={{stopColor: 'hsl(var(--background))', stopOpacity: 0.8}} />
+              </linearGradient>
+            </defs>
+            <path 
+              fill="url(#wave-gradient)"
+              d="M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,186.7C672,192,768,160,864,144C960,128,1056,128,1152,149.3C1248,171,1344,213,1392,234.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            ></path>
+          </svg>
+        </div>
       </div>
       
       <main className="flex w-full max-w-4xl flex-col items-center text-center">
