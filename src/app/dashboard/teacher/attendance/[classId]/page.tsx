@@ -22,7 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 
 export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
-  const resolvedParams = use(Promise.resolve(params));
+  const resolvedParams = use(params);
   const { classId } = resolvedParams;
 
   const [classInfo, setClassInfo] = useState(undefined);

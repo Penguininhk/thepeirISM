@@ -32,7 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ForumTopicPage({ params }: { params: { topicId: string } }) {
-  const resolvedParams = use(Promise.resolve(params));
+  const resolvedParams = use(params);
   const { topicId } = resolvedParams;
 
   const [open, setOpen] = useState(false);

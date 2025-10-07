@@ -34,7 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Submission, Assignment } from '@/lib/data';
 
 export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
-  const resolvedParams = use(Promise.resolve(params));
+  const resolvedParams = use(params);
   const { assignmentId } = resolvedParams;
 
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);

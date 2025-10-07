@@ -18,7 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function ClassRosterPage({ params }: { params: { classId: string } }) {
-  const resolvedParams = use(Promise.resolve(params));
+  const resolvedParams = use(params);
   const { classId } = resolvedParams;
 
   const [classInfo, setClassInfo] = useState(undefined);
