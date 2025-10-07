@@ -96,34 +96,36 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
               </TableHeader>
               <TableBody>
                 {submissions.map((sub) => (
-                  <TableRow key={sub.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={sub.student.avatarUrl} alt={sub.student.name} />
-                          <AvatarFallback>{getInitials(sub.student.name)}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium">{sub.student.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{format(new Date(sub.submittedAt), 'MMM d, h:mm a')}</TableCell>
-                    <TableCell>
-                       <Badge variant={sub.status === 'graded' ? 'default' : 'secondary'}>
-                        {sub.status === 'graded' ? <BookCheck className="mr-2 h-4 w-4"/> : <Clock className="mr-2 h-4 w-4"/>}
-                        {sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {sub.grade ? `${sub.grade} / ${assignment.maxPoints}` : '--'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <DialogTrigger asChild>
-                          <Button variant="outline" onClick={() => setSelectedSubmission(sub)}>
-                           {sub.status === 'graded' ? 'Edit Grade' : 'Grade'}
-                          </Button>
-                       </DialogTrigger>
-                    </TableCell>
-                  </TableRow>
+                  <Dialog key={sub.id} onOpenChange={(isOpen) => !isOpen && setSelectedSubmission(null)}>
+                    <TableRow>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={sub.student.avatarUrl} alt={sub.student.name} />
+                            <AvatarFallback>{getInitials(sub.student.name)}</AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">{sub.student.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{format(new Date(sub.submittedAt), 'MMM d, h:mm a')}</TableCell>
+                      <TableCell>
+                         <Badge variant={sub.status === 'graded' ? 'default' : 'secondary'}>
+                          {sub.status === 'graded' ? <BookCheck className="mr-2 h-4 w-4"/> : <Clock className="mr-2 h-4 w-4"/>}
+                          {sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        {sub.grade ? `${sub.grade} / ${assignment.maxPoints}` : '--'}
+                      </TableCell>
+                      <TableCell className="text-right">
+                         <DialogTrigger asChild>
+                            <Button variant="outline" onClick={() => setSelectedSubmission(sub)}>
+                             {sub.status === 'graded' ? 'Edit Grade' : 'Grade'}
+                            </Button>
+                         </DialogTrigger>
+                      </TableCell>
+                    </TableRow>
+                  </Dialog>
                 ))}
               </TableBody>
             </Table>
