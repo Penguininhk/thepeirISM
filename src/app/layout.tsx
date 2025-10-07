@@ -24,10 +24,10 @@ export default function RootLayout({
                 <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
               </defs>
               <g className="waves">
-                <use href="#gentle-wave" x="48" y="0" fill="hsl(var(--primary) / 0.02)" />
-                <use href="#gentle-wave" x="48" y="3" fill="hsl(var(--primary) / 0.03)" />
-                <use href="#gentle-wave" x="48" y="5" fill="hsl(var(--primary) / 0.01)" />
-                <use href="#gentle-wave" x="48" y="7" fill="hsl(var(--primary) / 0.04)" />
+                <use href="#gentle-wave" x="48" y="0" fill="hsl(var(--primary) / 0.05)" />
+                <use href="#gentle-wave" x="48" y="3" fill="hsl(var(--primary) / 0.06)" />
+                <use href="#gentle-wave" x="48" y="5" fill="hsl(var(--primary) / 0.04)" />
+                <use href="#gentle-wave" x="48" y="7" fill="hsl(var(--primary) / 0.07)" />
               </g>
             </svg>
           </div>
