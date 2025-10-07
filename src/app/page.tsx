@@ -9,15 +9,21 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="absolute inset-0 -z-10 h-full w-full bg-background overflow-hidden">
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,hsl(var(--background)),transparent)]"></div>
         <div className="absolute bottom-0 left-0 w-full h-48">
-          <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <path 
-              fill="hsl(var(--primary) / 0.1)"
-              d="M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,186.7C672,192,768,160,864,144C960,128,1056,128,1152,149.3C1248,171,1344,213,1392,234.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            ></path>
+          <svg className="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+            viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+            <defs>
+              <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g className="waves">
+              <use xlinkHref="#gentle-wave" x="48" y="0" fill="hsl(var(--primary) / 0.1)" />
+              <use xlinkHref="#gentle-wave" x="48" y="3" fill="hsl(var(--primary) / 0.15)" />
+              <use xlinkHref="#gentle-wave" x="48" y="5" fill="hsl(var(--primary) / 0.05)" />
+              <use xlinkHref="#gentle-wave" x="48" y="7" fill="hsl(var(--primary) / 0.2)" />
+            </g>
           </svg>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,hsl(var(--background)),transparent)]"></div>
       </div>
       
       <main className="flex w-full max-w-4xl flex-col items-center text-center">
