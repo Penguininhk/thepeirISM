@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,8 +12,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User as UserIcon, Shield } from "lucide-react";
+import { LogOut, Settings, User as UserIcon, Shield, Globe, Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import type { Student, Teacher } from "@/lib/data";
 
 type AdminUser = {
@@ -29,6 +35,9 @@ interface UserNavProps {
 }
 
 export function UserNav({ user }: UserNavProps) {
+  const { toast } = useToast();
+  const [language, setLanguage] = useState('en');
+
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -38,6 +47,14 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   const is_admin = user.role === 'admin';
+
+  const handleLanguageChange = (lang: string) => {
+    setLanguage(lang);
+    toast({
+      title: "Language Changed",
+      description: `Language set to ${lang === 'en' ? 'English' : '中文 (繁體)'}.`,
+    });
+  }
 
   return (
     <DropdownMenu>
@@ -64,6 +81,26 @@ export function UserNav({ user }: UserNavProps) {
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Globe className="mr-2 h-4 w-4" />
+              <span>Language</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
+                  <span className="flex items-center">
+                    English {language === 'en' && <Check className="ml-2 h-4 w-4" />}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleLanguageChange('zh-HK')}>
+                   <span className="flex items-center">
+                    中文 (繁體) {language === 'zh-HK' && <Check className="ml-2 h-4 w-4" />}
+                  </span>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>

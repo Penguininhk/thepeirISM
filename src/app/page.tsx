@@ -73,7 +73,7 @@ export default function Home() {
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} The Harbour School. Hong Kong.</p>
+        <p>&copy; {new Date().getFullYear()} Adriel Tan, Hong Kong.</p>
         <p className="mt-1">
             <Link href="/login/admin" className="underline hover:text-primary">
                 Administrator Login
