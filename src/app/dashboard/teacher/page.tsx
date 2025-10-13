@@ -1,12 +1,24 @@
 
+'use client'
+
 import Link from "next/link";
 import { classLists, announcements, teacherProfile } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bell, CalendarPlus, PlusCircle, Users, BookMarked } from "lucide-react";
+import { ArrowRight, Bell, CalendarPlus, PlusCircle, Users, BookMarked, Copy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function TeacherDashboard() {
   const myAnnouncements = announcements.filter(ann => ann.author.id === teacherProfile.id);
+  const { toast } = useToast();
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Code Copied!",
+      description: "The class join code has been copied to your clipboard.",
+    });
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
@@ -26,21 +38,34 @@ export default function TeacherDashboard() {
                   <CardTitle className="text-lg">{cl.course.name}</CardTitle>
                   <CardDescription>{cl.course.code}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-grow space-y-2">
-                  <div className="flex items-center text-muted-foreground">
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>{cl.students.length} students</span>
+                <CardContent className="flex-grow space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center text-muted-foreground">
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>{cl.students.length} students</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-muted-foreground">Join Code:</span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-mono text-sm font-semibold bg-muted px-2 py-1 rounded-md">{cl.joinCode}</span>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleCopyCode(cl.joinCode)}>
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                   <Button asChild className="w-full" variant="outline">
-                    <Link href={`/dashboard/teacher/roster/${cl.id}`}>
-                      <Users className="mr-2 h-4 w-4" /> View Roster
-                    </Link>
-                  </Button>
-                  <Button asChild className="w-full" variant="outline">
-                    <Link href={`/dashboard/teacher/attendance/${cl.id}`}>
-                      <CalendarPlus className="mr-2 h-4 w-4" /> Take Attendance
-                    </Link>
-                  </Button>
+                   <div className="flex flex-col gap-2">
+                      <Button asChild className="w-full" variant="outline">
+                        <Link href={`/dashboard/teacher/roster/${cl.id}`}>
+                          <Users className="mr-2 h-4 w-4" /> View Roster
+                        </Link>
+                      </Button>
+                      <Button asChild className="w-full" variant="outline">
+                        <Link href={`/dashboard/teacher/attendance/${cl.id}`}>
+                          <CalendarPlus className="mr-2 h-4 w-4" /> Take Attendance
+                        </Link>
+                      </Button>
+                   </div>
                 </CardContent>
               </Card>
             ))}

@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "ActionLog": {
@@ -279,13 +280,18 @@
           "items": {
             "type": "string"
           }
+        },
+        "joinCode": {
+          "type": "string",
+          "description": "A unique code for students to join the class."
         }
       },
       "required": [
         "id",
         "courseId",
         "name",
-        "schedule"
+        "schedule",
+        "joinCode"
       ]
     },
     "User": {

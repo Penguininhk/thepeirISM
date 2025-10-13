@@ -60,6 +60,7 @@ export type ClassInfo = {
     name: string;
     avatarUrl: string;
   }[];
+  joinCode: string;
 };
 
 export type Course = {
@@ -277,6 +278,7 @@ export const classLists: ClassInfo[] = [
       { id: 'usr-stud-003', name: 'Charlie Brown', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
       { id: 'usr-stud-006', name: 'Frank Green', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
     ],
+    joinCode: 'AB12CD',
   },
   {
     id: 'cl-102',
@@ -286,6 +288,7 @@ export const classLists: ClassInfo[] = [
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
       { id: 'usr-stud-005', name: 'Eve Adams', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
     ],
+    joinCode: 'EF34GH',
   },
    {
     id: 'cl-201',
@@ -294,6 +297,7 @@ export const classLists: ClassInfo[] = [
       { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
       { id: 'usr-stud-003', name: 'Charlie Brown', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
     ],
+    joinCode: 'IJ56KL',
   },
    {
     id: 'cl-401',
@@ -301,6 +305,7 @@ export const classLists: ClassInfo[] = [
     students: [
       { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
     ],
+    joinCode: 'MN78OP',
   },
   {
     id: 'cl-301',
@@ -308,6 +313,7 @@ export const classLists: ClassInfo[] = [
     students: [
       { id: 'usr-stud-005', name: 'Eve Adams', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
     ],
+    joinCode: 'QR90ST',
   },
 ];
 

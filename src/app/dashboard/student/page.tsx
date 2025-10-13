@@ -3,7 +3,7 @@ import Link from "next/link";
 import { studentProfile, announcements } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import { Input } from "@/components/ui/input";
 
 export default function StudentDashboard() {
   const upcomingAssignments = studentProfile.assignments
@@ -98,6 +99,19 @@ export default function StudentDashboard() {
       </div>
 
       <div className="space-y-6">
+        <Card>
+           <CardHeader>
+            <CardTitle className="font-headline">Join a Class</CardTitle>
+            <CardDescription>Enter a class code from your teacher to enroll.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex space-x-2">
+                <Input type="text" placeholder="Class code" />
+                <Button><PlusCircle className="mr-2 h-4 w-4" /> Join</Button>
+            </div>
+          </CardContent>
+        </Card>
+        
         <Card>
           <CardHeader>
              <CardTitle className="flex items-center gap-2 font-headline">
