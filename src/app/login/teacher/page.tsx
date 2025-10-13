@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -34,8 +35,8 @@ export default function TeacherLoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="teacher@school.edu"
-                  defaultValue="e.reed@school.edu"
+                  placeholder="teacher@theharbourschool.edu.hk"
+                  defaultValue="e.reed@theharbourschool.edu.hk"
                   required
                 />
               </div>

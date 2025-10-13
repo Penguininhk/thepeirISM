@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -9,7 +10,7 @@ import { AdminSidebar } from '@/components/admin/admin-sidebar';
 const adminUser = {
   id: 'usr-admin-001',
   name: 'Admin User',
-  email: 'admin@school.edu',
+  email: 'admin@theharbourschool.edu.hk',
   role: 'admin' as const,
   avatarUrl: '',
   status: 'approved' as const,

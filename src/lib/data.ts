@@ -1,3 +1,4 @@
+
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -163,11 +164,11 @@ const adminUser = {
 }
 
 const teachersCollection: Teacher[] = [
-  { id: 'usr-teach-001', name: 'Dr. Evelyn Reed', email: 'e.reed@school.edu', role: 'teacher', status: 'approved', avatarUrl: getImageUrl('user-avatar-2'), courses: [{ id: 'crs-101', name: 'AP Marine Biology' },{ id: 'crs-102', name: 'AP English Literature' }] },
-  { id: 'usr-teach-002', name: 'Mr. David Chen', role: 'teacher', email: 'd.chen@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d', courses: [{id: 'crs-201', name: 'AP Calculus BC'}] },
-  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', role: 'teacher', email: 'c.kim@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d', courses: [{id: 'crs-401', name: 'AP Studio Art: 2D'}] },
-  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', role: 'teacher', email: 's.greene@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d', courses: [{id: 'crs-301', name: 'AP World History'}] },
-  { id: 'usr-teach-005', name: 'Ms. Inoue Tanaka', role: 'teacher', email: 'i.tanaka@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026710d', courses: [{id: 'crs-501', name: 'Intro to Robotics'}] },
+  { id: 'usr-teach-001', name: 'Dr. Evelyn Reed', email: 'e.reed@theharbourschool.edu.hk', role: 'teacher', status: 'approved', avatarUrl: getImageUrl('user-avatar-2'), courses: [{ id: 'crs-101', name: 'AP Marine Biology' },{ id: 'crs-102', name: 'AP English Literature' }] },
+  { id: 'usr-teach-002', name: 'Mr. David Chen', role: 'teacher', email: 'd.chen@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026707d', courses: [{id: 'crs-201', name: 'AP Calculus BC'}] },
+  { id: 'usr-teach-003', name: 'Ms. Chloe Kim', role: 'teacher', email: 'c.kim@theharbourschool.edu.hk', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026708d', courses: [{id: 'crs-401', name: 'AP Studio Art: 2D'}] },
+  { id: 'usr-teach-004', name: 'Mr. Samuel Greene', role: 'teacher', email: 's.greene@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026709d', courses: [{id: 'crs-301', name: 'AP World History'}] },
+  { id: 'usr-teach-005', name: 'Ms. Inoue Tanaka', role: 'teacher', email: 'i.tanaka@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026710d', courses: [{id: 'crs-501', name: 'Intro to Robotics'}] },
 ];
 
 export const teacherProfile: Teacher = { 
@@ -192,7 +193,7 @@ const studentCourses = [
 export const studentProfile: Student = {
   id: 'usr-stud-001',
   name: 'Alice Johnson',
-  email: 'alice@school.edu',
+  email: 'alice@theharbourschool.edu.hk',
   role: 'student',
   status: 'approved',
   avatarUrl: getImageUrl('user-avatar-1'),
@@ -228,11 +229,11 @@ export const studentProfile: Student = {
 };
 
 const otherStudents: User[] = [
-  { id: 'usr-stud-002', name: 'Bob Williams', role: 'student', email: 'bob@school.edu', status: 'approved', avatarUrl: getImageUrl('user-avatar-3') },
-  { id: 'usr-stud-003', name: 'Charlie Brown', role: 'student', email: 'charlie@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
-  { id: 'usr-stud-004', name: 'Diana Prince', role: 'student', email: 'diana@school.edu', status: 'rejected', avatarUrl: getImageUrl('user-avatar-4') },
-  { id: 'usr-stud-005', name: 'Eve Adams', role: 'student', email: 'eve@school.edu', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
-  { id: 'usr-stud-006', name: 'Frank Green', role: 'student', email: 'frank@school.edu', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
+  { id: 'usr-stud-002', name: 'Bob Williams', role: 'student', email: 'bob@theharbourschool.edu.hk', status: 'approved', avatarUrl: getImageUrl('user-avatar-3') },
+  { id: 'usr-stud-003', name: 'Charlie Brown', role: 'student', email: 'charlie@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
+  { id: 'usr-stud-004', name: 'Diana Prince', role: 'student', email: 'diana@theharbourschool.edu.hk', status: 'rejected', avatarUrl: getImageUrl('user-avatar-4') },
+  { id: 'usr-stud-005', name: 'Eve Adams', role: 'student', email: 'eve@theharbourschool.edu.hk', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
+  { id: 'usr-stud-006', name: 'Frank Green', role: 'student', email: 'frank@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
 ];
 
 export const users: User[] = [
@@ -499,7 +500,7 @@ export const actionLogs: ActionLog[] = [
     timestamp: '2024-05-26T16:45:00Z',
     admin: adminUser,
     actionType: 'user_deleted',
-    details: "Deleted user account 'old.student@school.edu'.",
+    details: "Deleted user account 'old.student@theharbourschool.edu.hk'.",
   },
 ];
 
