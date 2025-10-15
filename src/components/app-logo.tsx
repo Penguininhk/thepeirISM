@@ -1,15 +1,37 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 const AppLogo = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-    <div className={cn("relative rounded-full overflow-hidden", className)} {...props}>
-        <Image
-            src="https://cdn.discordapp.com/attachments/986847691483017248/1425056874889482353/oXbFTfm.gif?ex=68e63323&is=68e4e1a3&hm=dc9607ebcfd087fe3a421310f303b3b0df5a7d7b40adad68f3cd83cad2a41fe0&"
-            alt="The Harbour School Logo"
-            unoptimized
-            fill
-            className="object-contain"
-        />
+    <div className={cn("relative", className)} {...props}>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 100 100"
+            className="h-full w-full"
+            aria-label="The Harbour School Logo"
+        >
+            <circle cx="50" cy="50" r="48" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" strokeWidth="2" />
+            <path
+                d="M25 60 Q35 40, 50 60 T75 60"
+                stroke="hsl(var(--primary-foreground))"
+                strokeWidth="5"
+                fill="none"
+                strokeLinecap="round"
+            />
+            <path
+                d="M30 75 Q40 55, 50 75 T70 75"
+                stroke="hsl(var(--primary-foreground))"
+                strokeWidth="5"
+                fill="none"
+                strokeLinecap="round"
+            />
+            <path
+                d="M35 90 Q45 70, 50 90 T65 90"
+                stroke="hsl(var(--primary-foreground))"
+                strokeWidth="5"
+                fill="none"
+                strokeLinecap="round"
+            />
+             <circle cx="50" cy="30" r="12" fill="hsl(var(--accent))" />
+        </svg>
     </div>
 );
 
