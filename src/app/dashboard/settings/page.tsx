@@ -1,17 +1,19 @@
 
 'use client';
 
+import { useRouter } from "next/navigation";
 import { studentProfile } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera } from "lucide-react";
+import { Camera, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
     const { toast } = useToast();
+    const router = useRouter();
 
     const getInitials = (name: string) => {
         const names = name.split(' ');
@@ -37,6 +39,10 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
+        <Button variant="outline" size="sm" className="mb-4" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+        </Button>
       <div>
         <h1 className="text-3xl font-bold font-headline">Account Settings</h1>
         <p className="text-muted-foreground">Manage your account and profile information.</p>
@@ -54,12 +60,15 @@ export default function SettingsPage() {
                         <AvatarImage src={studentProfile.avatarUrl} alt={studentProfile.name} />
                         <AvatarFallback>{getInitials(studentProfile.name)}</AvatarFallback>
                     </Avatar>
-                    <Button variant="outline" size="icon" className="absolute -bottom-2 -right-2 rounded-full h-8 w-8">
-                        <Camera className="h-4 w-4" />
-                        <span className="sr-only">Change picture</span>
-                    </Button>
+                     <Label htmlFor="picture-upload" className="absolute -bottom-2 -right-2">
+                        <div className="inline-flex items-center justify-center rounded-full h-8 w-8 bg-primary text-primary-foreground cursor-pointer hover:bg-primary/90">
+                           <Camera className="h-4 w-4" />
+                           <span className="sr-only">Change picture</span>
+                        </div>
+                     </Label>
+                    <Input id="picture-upload" type="file" className="sr-only" />
                  </div>
-                 <Button>Upload New Picture</Button>
+                 <p className="text-sm text-muted-foreground">Click the camera icon to upload a new picture.</p>
             </div>
         </CardContent>
       </Card>
