@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Megaphone, BookOpen, Shield, FileText } from "lucide-react";
+import { LayoutDashboard, Users, Megaphone, BookOpen, Shield, FileText, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -24,6 +24,7 @@ export function AdminSidebar() {
     { href: "/dashboard/admin/courses", label: "Courses", icon: BookOpen },
     { href: "/dashboard/admin/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/admin/logs", label: "Action Logs", icon: Shield },
+    { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
   return (
