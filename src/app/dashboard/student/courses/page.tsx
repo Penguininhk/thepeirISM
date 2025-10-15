@@ -2,6 +2,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import { availableCourses } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -14,24 +15,20 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import type { Course } from "@/lib/data";
 
 const blocks = ["A", "B", "C", "D", "E", "F"];
 const terms = ["Term 1", "Term 2", "Term 3"];
 
 export default function CourseSelectionPage() {
-  const { toast } = useToast();
+  const router = useRouter();
 
   const getCoursesByBlockAndTerm = (block: string, term: number): Course[] => {
     return availableCourses.filter(course => course.block === block && course.term === term);
   };
   
   const handleSubmit = () => {
-    toast({
-      title: "Course selections submitted!",
-      description: "Your choices have been recorded for the upcoming school year.",
-    });
+    router.push('/dashboard/student/courses/confirm');
   };
 
   return (
@@ -63,7 +60,7 @@ export default function CourseSelectionPage() {
                       {blockCourses.length > 0 ? (
                         <div className="grid gap-4 md:grid-cols-3">
                           {[1, 2, 3].map(choice => (
-                             <div>
+                             <div key={choice}>
                               <label className="text-sm font-medium text-muted-foreground">Choice {choice}</label>
                               <Select>
                                 <SelectTrigger>
