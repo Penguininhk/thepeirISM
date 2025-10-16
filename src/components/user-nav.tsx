@@ -17,7 +17,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User as UserIcon, Shield, Globe, Check } from "lucide-react";
+import { LogOut, Settings, User as UserIcon, Shield, Globe, Check, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Student, Teacher } from "@/lib/data";
 
@@ -59,11 +59,15 @@ export function UserNav({ user }: UserNavProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={user.avatarUrl} alt={user.name} />
-            <AvatarFallback>{is_admin ? <Shield/> : getInitials(user.name)}</AvatarFallback>
-          </Avatar>
+        <Button variant="ghost" className="relative h-9 rounded-full px-2">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.avatarUrl} alt={user.name} />
+              <AvatarFallback>{is_admin ? <Shield/> : getInitials(user.name)}</AvatarFallback>
+            </Avatar>
+            <span className="hidden sm:inline-block text-sm font-medium">{user.name}</span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
