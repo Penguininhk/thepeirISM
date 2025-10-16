@@ -16,22 +16,17 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, CheckCircle, FlaskConical, Landmark } from "lucide-react";
 import type { Course } from "@/lib/data";
-import { useToast } from '@/hooks/use-toast';
 
 export default function MiddleSchoolCourseSelectionPage() {
   const router = useRouter();
-  const { toast } = useToast();
 
   const scienceCourses = middleSchoolCourses.filter(c => c.category === 'Science');
   const socialStudiesCourses = middleSchoolCourses.filter(c => c.category === 'Social Studies');
 
   const handleSubmit = () => {
-    // In a real app, you'd save this data.
-    toast({
-      title: "Middle School Selections Saved!",
-      description: "Your course choices have been recorded for the upcoming school year.",
-    });
-    router.push('/dashboard/student/courses');
+    // In a real app, you'd save this data to a state management solution
+    // to be displayed on the confirmation page.
+    router.push('/dashboard/student/courses/middle/confirm');
   };
 
   const CourseCategorySelection = ({ title, icon, courses, numChoices }: { title: string; icon: React.ReactNode; courses: Course[], numChoices: number }) => (
@@ -95,7 +90,7 @@ export default function MiddleSchoolCourseSelectionPage() {
       <div className="flex justify-end mt-6">
         <Button size="lg" onClick={handleSubmit}>
           <CheckCircle className="mr-2 h-5 w-5" />
-          Submit Selections
+          Review Selections
         </Button>
       </div>
     </div>
