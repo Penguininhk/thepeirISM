@@ -17,7 +17,7 @@ export default function CourseSelectionHubPage() {
 
       <div className="grid gap-8 md:grid-cols-2">
         <Link href="/dashboard/student/courses/high-school">
-          <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col">
+          <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col h-full">
             <div className="relative h-48 w-full">
               <Image 
                 src={getImageUrl('course-calculus')} 
@@ -46,7 +46,7 @@ export default function CourseSelectionHubPage() {
         </Link>
         
         <Link href="/dashboard/student/courses/middle">
-           <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col">
+           <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col h-full">
              <div className="relative h-48 w-full">
               <Image 
                 src={getImageUrl('course-life-science')}

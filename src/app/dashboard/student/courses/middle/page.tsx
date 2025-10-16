@@ -40,7 +40,7 @@ export default function MiddleSchoolCourseSelectionPage() {
         <CardTitle className="flex items-center gap-3">
           {icon} {title}
         </CardTitle>
-        <CardDescription>Select {numChoices} course(s) from the options below. Order from most to least preferred.</CardDescription>
+        <CardDescription>Select {numChoices} courses from the options below. Order from most to least preferred.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {Array.from({ length: numChoices }, (_, i) => (
@@ -48,7 +48,7 @@ export default function MiddleSchoolCourseSelectionPage() {
             <label className="text-sm font-medium text-muted-foreground">Choice {i + 1}</label>
             <Select>
               <SelectTrigger>
-                <SelectValue placeholder={`Select your ${i === 0 ? '1st' : i === 1 ? '2nd' : '3rd'} choice`} />
+                <SelectValue placeholder={`Select your ${i === 0 ? '1st' : '2nd'} choice`} />
               </SelectTrigger>
               <SelectContent>
                 {courses.map(course => (
@@ -101,4 +101,3 @@ export default function MiddleSchoolCourseSelectionPage() {
     </div>
   );
 }
-
