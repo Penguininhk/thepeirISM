@@ -61,11 +61,11 @@ export function UserNav({ user }: UserNavProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 rounded-full px-2">
           <div className="flex items-center gap-2">
+            <span className="hidden sm:inline-block text-sm font-medium">{user.name}</span>
             <Avatar className="h-8 w-8">
               <AvatarImage src={user.avatarUrl} alt={user.name} />
               <AvatarFallback>{is_admin ? <Shield/> : getInitials(user.name)}</AvatarFallback>
             </Avatar>
-            <span className="hidden sm:inline-block text-sm font-medium">{user.name}</span>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </div>
         </Button>
