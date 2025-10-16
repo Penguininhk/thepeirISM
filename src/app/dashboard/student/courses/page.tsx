@@ -45,7 +45,7 @@ export default function CourseSelectionHubPage() {
           </Card>
         </Link>
         
-        <Link href="/dashboard/student/courses/middle-school">
+        <Link href="/dashboard/student/courses/middle">
            <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col">
              <div className="relative h-48 w-full">
               <Image 
