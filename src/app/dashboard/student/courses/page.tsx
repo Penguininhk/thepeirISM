@@ -17,12 +17,12 @@ export default function CourseSelectionHubPage() {
 
       <div className="grid gap-8 md:grid-cols-2">
         <Link href="/dashboard/student/courses/high-school">
-          <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+          <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col">
             <div className="relative h-48 w-full">
               <Image 
                 src={getImageUrl('course-calculus')} 
                 alt="High School" 
-                layout="fill" 
+                fill={true}
                 objectFit="cover"
                 data-ai-hint="chalkboard equations"
               />
@@ -37,7 +37,7 @@ export default function CourseSelectionHubPage() {
               <CardTitle>High School Selection</CardTitle>
               <CardDescription>Select trimester-based courses for grades 9-12.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow flex flex-col justify-end">
               <div className="flex items-center justify-end text-sm font-semibold text-primary group-hover:text-accent">
                 Proceed to Selection <ArrowRight className="ml-2 h-4 w-4" />
               </div>
@@ -46,12 +46,12 @@ export default function CourseSelectionHubPage() {
         </Link>
         
         <Link href="/dashboard/student/courses/middle-school">
-           <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+           <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col">
              <div className="relative h-48 w-full">
               <Image 
                 src={getImageUrl('course-life-science')}
                 alt="Middle School" 
-                layout="fill" 
+                fill={true}
                 objectFit="cover"
                 data-ai-hint="microscope"
               />
@@ -66,7 +66,7 @@ export default function CourseSelectionHubPage() {
               <CardTitle>Middle School Selection</CardTitle>
               <CardDescription>Select your Science and Social Studies courses for the year.</CardDescription>
             </CardHeader>
-             <CardContent>
+             <CardContent className="flex-grow flex flex-col justify-end">
               <div className="flex items-center justify-end text-sm font-semibold text-primary group-hover:text-accent">
                 Proceed to Selection <ArrowRight className="ml-2 h-4 w-4" />
               </div>
