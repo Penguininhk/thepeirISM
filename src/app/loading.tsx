@@ -2,7 +2,7 @@ import AppLogo from '@/components/app-logo';
 
 export default function Loading() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm p-4">
       <div className="relative flex w-full max-w-4xl flex-col items-center text-center">
         <AppLogo className="mb-8 h-40 w-40" />
         <h1 className="text-2xl font-semibold tracking-tight text-primary md:text-4xl font-headline animate-pulse">
@@ -11,6 +11,10 @@ export default function Loading() {
         <p className="mt-4 max-w-xl text-lg text-foreground/80">
           Please wait while we get things ready for you.
         </p>
+        <div className="mt-4 text-sm text-muted-foreground p-4 bg-card/50 rounded-lg">
+            <p className="font-semibold">Tip:</p>
+            <p>You can use the AI Study Buddy on any page to get help with your courses!</p>
+        </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-40 overflow-hidden">
         <svg
