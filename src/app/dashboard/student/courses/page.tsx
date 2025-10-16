@@ -1,99 +1,78 @@
 
-'use client';
+import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { ArrowRight, School, GraduationCap } from "lucide-react";
+import Image from "next/image";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { availableCourses } from "@/lib/data";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle } from "lucide-react";
-import type { Course } from "@/lib/data";
+const getImageUrl = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || 'https://picsum.photos/seed/placeholder/600/400';
 
-const blocks = ["A", "B", "C", "D", "E", "F"];
-const terms = ["Term 1", "Term 2", "Term 3"];
-
-export default function CourseSelectionPage() {
-  const router = useRouter();
-
-  const getCoursesByBlockAndTerm = (block: string, term: number): Course[] => {
-    return availableCourses.filter(course => course.block === block && course.term === term);
-  };
-  
-  const handleSubmit = () => {
-    router.push('/dashboard/student/courses/confirm');
-  };
-
+export default function CourseSelectionHubPage() {
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold font-headline">Course Selection</h1>
-        <p className="text-muted-foreground">Select your course preferences for each block and term.</p>
+        <p className="text-muted-foreground">Choose the appropriate division to select your courses.</p>
       </div>
 
-      <Tabs defaultValue="Term 1" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          {terms.map(term => (
-            <TabsTrigger key={term} value={term}>{term}</TabsTrigger>
-          ))}
-        </TabsList>
-        {terms.map((term, termIndex) => (
-          <TabsContent key={term} value={term}>
-            <Card>
-              <CardHeader>
-                <CardTitle>{term} Course Choices</CardTitle>
-                <CardDescription>Select a 1st, 2nd, and 3rd choice for each block.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {blocks.map(block => {
-                  const blockCourses = getCoursesByBlockAndTerm(block, termIndex + 1);
-                  return (
-                    <div key={block} className="p-4 border rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3">Block {block}</h3>
-                      {blockCourses.length > 0 ? (
-                        <div className="grid gap-4 md:grid-cols-3">
-                          {[1, 2, 3].map(choice => (
-                             <div key={choice}>
-                              <label className="text-sm font-medium text-muted-foreground">Choice {choice}</label>
-                              <Select>
-                                <SelectTrigger>
-                                  <SelectValue placeholder={`Select ${choice === 1 ? '1st' : choice === 2 ? '2nd' : '3rd'} choice`} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {blockCourses.map(course => (
-                                    <SelectItem key={course.id} value={course.id}>
-                                      {course.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No courses available for this block in {term}.</p>
-                      )}
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
-      </Tabs>
-      
-      <div className="flex justify-end mt-6">
-        <Button size="lg" onClick={handleSubmit}>
-          <CheckCircle className="mr-2 h-5 w-5" />
-          Submit All Selections
-        </Button>
+      <div className="grid gap-8 md:grid-cols-2">
+        <Link href="/dashboard/student/courses/high-school">
+          <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+            <div className="relative h-48 w-full">
+              <Image 
+                src={getImageUrl('course-calculus')} 
+                alt="High School" 
+                layout="fill" 
+                objectFit="cover"
+                data-ai-hint="chalkboard equations"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <GraduationCap /> High School
+                </h2>
+              </div>
+            </div>
+            <CardHeader>
+              <CardTitle>High School Selection</CardTitle>
+              <CardDescription>Select trimester-based courses for grades 9-12.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-end text-sm font-semibold text-primary group-hover:text-accent">
+                Proceed to Selection <ArrowRight className="ml-2 h-4 w-4" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+        
+        <Link href="/dashboard/student/courses/middle-school">
+           <Card className="group overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+             <div className="relative h-48 w-full">
+              <Image 
+                src={getImageUrl('course-life-science')}
+                alt="Middle School" 
+                layout="fill" 
+                objectFit="cover"
+                data-ai-hint="microscope"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                 <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <School /> Middle School
+                </h2>
+              </div>
+            </div>
+            <CardHeader>
+              <CardTitle>Middle School Selection</CardTitle>
+              <CardDescription>Select your Science and Social Studies courses for the year.</CardDescription>
+            </CardHeader>
+             <CardContent>
+              <div className="flex items-center justify-end text-sm font-semibold text-primary group-hover:text-accent">
+                Proceed to Selection <ArrowRight className="ml-2 h-4 w-4" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );

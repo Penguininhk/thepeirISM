@@ -1,4 +1,3 @@
-
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -70,8 +69,9 @@ export type Course = {
   description: string;
   teacher: { name: string };
   imageUrl: string;
-  block: string;
-  term: number;
+  block?: string;
+  term?: number;
+  category?: 'Science' | 'Social Studies';
 };
 
 export type Forum = {
@@ -315,6 +315,15 @@ export const classLists: ClassInfo[] = [
     ],
     joinCode: 'QR90ST',
   },
+];
+
+export const middleSchoolCourses: Course[] = [
+    { id: 'ms-sci-01', name: 'Life Science', code: 'MS-SCI-01', description: 'Study of living organisms.', teacher: { name: 'Dr. Evelyn Reed' }, imageUrl: getImageUrl('course-life-science'), category: 'Science' },
+    { id: 'ms-sci-02', name: 'Earth Science', code: 'MS-SCI-02', description: 'Study of the Earth and its processes.', teacher: { name: 'Dr. Evelyn Reed' }, imageUrl: getImageUrl('course-life-science'), category: 'Science' },
+    { id: 'ms-sci-03', name: 'Physical Science', code: 'MS-SCI-03', description: 'Introduction to physics and chemistry.', teacher: { name: 'Dr. Evelyn Reed' }, imageUrl: getImageUrl('course-life-science'), category: 'Science' },
+    { id: 'ms-ss-01', name: 'Ancient Civilizations', code: 'MS-SS-01', description: 'A survey of early human history.', teacher: { name: 'Mr. Samuel Greene' }, imageUrl: getImageUrl('course-ancient-civilizations'), category: 'Social Studies' },
+    { id: 'ms-ss-02', name: 'World Geography', code: 'MS-SS-02', description: 'Exploring the world and its cultures.', teacher: { name: 'Mr. Samuel Greene' }, imageUrl: getImageUrl('course-ancient-civilizations'), category: 'Social Studies' },
+    { id: 'ms-ss-03', name: 'Civics & Government', code: 'MS-SS-03', description: 'Understanding governmental systems.', teacher: { name: 'Mr. Samuel Greene' }, imageUrl: getImageUrl('course-ancient-civilizations'), category: 'Social Studies' },
 ];
 
 export const availableCourses: Course[] = [

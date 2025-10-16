@@ -59,6 +59,18 @@
       "description": "Digital Art course image",
       "imageUrl": "https://images.unsplash.com/photo-1497091071254-cc9b2ba7c48a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmF3aW5nJTIwdGFibGV0fGVufDB8fHx8MTc1OTU4MTY2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "drawing tablet"
+    },
+    {
+      "id": "course-life-science",
+      "description": "Life Science course image",
+      "imageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtaWNyb3Njb3BlfGVufDB8fHx8fDE3NTk1ODMyMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "microscope"
+    },
+    {
+      "id": "course-ancient-civilizations",
+      "description": "Ancient Civilizations course image",
+      "imageUrl": "https://images.unsplash.com/photo-1528702733972-23c34e976c5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxleXB0JTIwc3RhdHVlfGVufDB8fHx8fDE3NTk1ODMzMjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "egypt statue"
     }
   ]
 }
