@@ -79,7 +79,7 @@ export default function HighSchoolCourseSelectionPage() {
                                       {course.name}
                                     </SelectItem>
                                   ))}
-                                  <SelectItem value="none">None</SelectItem>
+                                  <SelectItem value="none">Study Block</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
