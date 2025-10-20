@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -53,8 +54,17 @@ export default function NewAssignmentPage() {
 
   const handleAddLink = () => {
     if (linkUrl && linkUrl.trim() !== '') {
-      setAttachments(prev => [...prev, { type: 'link', name: linkUrl, url: linkUrl }]);
-      setLinkUrl('');
+      try {
+        const url = new URL(linkUrl);
+        setAttachments(prev => [...prev, { type: 'link', name: url.hostname, url: url.href }]);
+        setLinkUrl('');
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Invalid URL",
+          description: "Please enter a valid web address.",
+        });
+      }
     }
   };
 
@@ -63,33 +73,35 @@ export default function NewAssignmentPage() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <header className="flex items-center justify-between p-4 border-b bg-card">
+    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col bg-muted/20">
+      <header className="flex items-center justify-between p-4 border-b bg-card shrink-0">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="outline" size="sm" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
           </Button>
-          <h1 className="text-xl font-bold font-headline">Create Assignment</h1>
+          <h1 className="text-xl font-bold font-headline hidden sm:block">Create Assignment</h1>
         </div>
-        <Button onClick={handleCreateAssignment}>Create Assignment</Button>
+        <Button onClick={handleCreateAssignment}>Assign</Button>
       </header>
 
-      <main className="flex-1 p-6 grid md:grid-cols-3 gap-6">
+      <main className="flex-1 p-6 grid md:grid-cols-3 gap-6 overflow-y-auto">
         {/* Main Content */}
         <div className="md:col-span-2 space-y-6">
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="title" className="text-lg">Title</Label>
-                  <Input id="title" placeholder="e.g. Chapter 5 Reading Quiz" className="text-2xl p-6" />
+                  <Label htmlFor="title" className="sr-only">Title</Label>
+                  <Input id="title" placeholder="e.g. Chapter 5 Reading Quiz" className="text-2xl p-6 border-0 shadow-none focus-visible:ring-0" />
                 </div>
+                 <Separator />
                 <div>
-                  <Label htmlFor="description">Instructions</Label>
+                  <Label htmlFor="description" className="sr-only">Instructions</Label>
                   <Textarea
                     id="description"
-                    placeholder="Enter assignment instructions..."
-                    className="min-h-[200px]"
+                    placeholder="Instructions (optional)"
+                    className="min-h-[200px] border-0 shadow-none focus-visible:ring-0"
                   />
                 </div>
               </div>
@@ -98,15 +110,30 @@ export default function NewAssignmentPage() {
           
           <Card>
             <CardContent className="pt-6">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-muted-foreground">
                 <Paperclip className="h-5 w-5" />
                 Attachments
               </h3>
               <div className="space-y-4">
+                 {attachments.length > 0 && (
+                  <div className="space-y-2">
+                    {attachments.map((att, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 pl-4 bg-muted/50 border rounded-md text-sm">
+                        <div className="flex items-center gap-3 truncate">
+                          {att.type === 'file' ? <Paperclip className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
+                          <span className="truncate font-medium">{att.name}</span>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeAttachment(index)}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <Label htmlFor="file-upload" className="flex-1">
                     <Button variant="outline" className="w-full" asChild>
-                      <span><Upload className="mr-2 h-4 w-4" /> Upload File</span>
+                      <span><Upload className="mr-2 h-4 w-4" /> File</span>
                     </Button>
                     <Input id="file-upload" type="file" className="sr-only" onChange={handleFileChange} multiple />
                   </Label>
@@ -116,25 +143,10 @@ export default function NewAssignmentPage() {
                       value={linkUrl}
                       onChange={(e) => setLinkUrl(e.target.value)}
                     />
-                    <Button onClick={handleAddLink}><LinkIcon className="mr-2 h-4 w-4" /> Add Link</Button>
+                    <Button onClick={handleAddLink}><LinkIcon className="mr-2 h-4 w-4" /> Add</Button>
                   </div>
                 </div>
 
-                {attachments.length > 0 && (
-                  <div className="space-y-2">
-                    {attachments.map((att, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-muted rounded-md text-sm">
-                        <div className="flex items-center gap-2 truncate">
-                          {att.type === 'file' ? <Upload className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
-                          <span className="truncate">{att.name}</span>
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeAttachment(index)}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>

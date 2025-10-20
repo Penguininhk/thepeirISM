@@ -3,10 +3,10 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { teacherAssignments, assignmentSubmissions } from '@/lib/data';
+import { teacherAssignments, assignmentSubmissions, users, privateComments } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, BookCheck, Clock } from 'lucide-react';
+import { ArrowLeft, Check, BookCheck, Clock, User, Send, Paperclip, Link as LinkIcon } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -21,27 +21,29 @@ import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from '@/components/ui/textarea';
-import type { Submission, Assignment } from '@/lib/data';
+import type { Submission, Assignment, PrivateComment, Student } from '@/lib/data';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
   const resolvedParams = use(params);
   const { assignmentId } = resolvedParams;
 
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const { toast } = useToast();
   
   const [assignment, setAssignment] = useState<Assignment | undefined>(undefined);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [comments, setComments] = useState<PrivateComment[]>([]);
+  const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
     if (assignmentId) {
@@ -50,127 +52,188 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
     }
   }, [assignmentId]);
 
+  useEffect(() => {
+    if (selectedStudent) {
+      const relatedComments = privateComments.filter(c => c.assignmentId === assignmentId && c.studentId === selectedStudent.id);
+      setComments(relatedComments);
+    } else {
+      setComments([]);
+    }
+  }, [selectedStudent, assignmentId]);
+
   if (!assignment) {
     return <div>Loading assignment...</div>;
   }
   
-  const handleGradeSubmission = () => {
+  const handleReturnGrade = () => {
     toast({
-      title: "Grade Submitted",
-      description: `The grade for ${selectedSubmission?.student.name} has been recorded.`,
+      title: "Grade Returned",
+      description: `The grade for ${selectedStudent?.name} has been recorded and returned.`,
     });
-    setSelectedSubmission(null);
+    setSelectedStudent(null);
   }
+
+  const handleAddComment = () => {
+    if (newComment.trim() && selectedStudent) {
+      setComments(prev => [...prev, {
+        id: `comment-${Date.now()}`,
+        assignmentId,
+        studentId: selectedStudent.id,
+        authorId: 'usr-teach-001', // Mock teacher ID
+        content: newComment,
+        timestamp: new Date().toISOString(),
+      }]);
+      setNewComment('');
+      toast({ title: "Comment posted." });
+    }
+  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("");
 
+  const studentList = Array.from(new Set(assignmentSubmissions.filter(s => s.assignmentId === assignmentId).map(s => s.student)))
+    .map(student => {
+        const submission = assignmentSubmissions.find(s => s.student.id === student.id && s.assignmentId === assignmentId);
+        return {
+            ...student,
+            status: submission?.status || 'pending',
+            grade: submission?.grade
+        }
+    });
+
+  const submission = selectedStudent ? submissions.find(s => s.student.id === selectedStudent.id) : null;
+  
   return (
-    <div className="space-y-6">
-      <Button asChild variant="outline" size="sm">
-        <Link href="/dashboard/teacher/classwork">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Classwork
-        </Link>
-      </Button>
-
-      <div>
-        <h1 className="text-3xl font-bold font-headline">{assignment.title}</h1>
-        <p className="text-muted-foreground">Due: {format(new Date(assignment.dueDate), 'MMMM d, yyyy')} - Max Points: {assignment.maxPoints}</p>
+    <div className="flex h-[calc(100vh-theme(spacing.16))]">
+      {/* Student List Sidebar */}
+      <div className="w-64 border-r bg-muted/20 flex flex-col">
+        <div className="p-4 border-b">
+            <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
+                <Link href="/dashboard/teacher/classwork">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                </Link>
+            </Button>
+            <h1 className="text-lg font-bold font-headline truncate">{assignment.title}</h1>
+            <p className="text-sm text-muted-foreground">{assignment.course.name}</p>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+            {studentList.map(student => (
+                <button 
+                    key={student.id} 
+                    onClick={() => setSelectedStudent(student as Student)}
+                    className={cn(
+                        "w-full text-left p-3 border-b hover:bg-accent/50 transition-colors",
+                        selectedStudent?.id === student.id && "bg-accent text-accent-foreground"
+                    )}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="font-medium">{student.name}</span>
+                        {student.grade && <span className="text-xs font-bold">{student.grade}/{assignment.maxPoints}</span>}
+                    </div>
+                     <Badge variant={student.status === 'graded' ? 'default' : student.status === 'submitted' ? 'secondary' : 'outline'} className="mt-1 text-xs">
+                        {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
+                    </Badge>
+                </button>
+            ))}
+        </div>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Student Submissions</CardTitle>
-          <CardDescription>Review submissions and enter grades.</CardDescription>
-        </CardHeader>
-        <CardContent>
-           <div className="overflow-hidden rounded-lg border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Submitted At</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Grade</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {submissions.map((sub) => (
-                  <Dialog key={sub.id} onOpenChange={(isOpen) => !isOpen && setSelectedSubmission(null)}>
-                    <TableRow>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src={sub.student.avatarUrl} alt={sub.student.name} />
-                            <AvatarFallback>{getInitials(sub.student.name)}</AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium">{sub.student.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{format(new Date(sub.submittedAt), 'MMM d, h:mm a')}</TableCell>
-                      <TableCell>
-                         <Badge variant={sub.status === 'graded' ? 'default' : 'secondary'}>
-                          {sub.status === 'graded' ? <BookCheck className="mr-2 h-4 w-4"/> : <Clock className="mr-2 h-4 w-4"/>}
-                          {sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        {sub.grade ? `${sub.grade} / ${assignment.maxPoints}` : '--'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                         <DialogTrigger asChild>
-                            <Button variant="outline" onClick={() => setSelectedSubmission(sub)}>
-                             {sub.status === 'graded' ? 'Edit Grade' : 'Grade'}
-                            </Button>
-                         </DialogTrigger>
-                      </TableCell>
-                    </TableRow>
-                  </Dialog>
-                ))}
-              </TableBody>
-            </Table>
-           </div>
-        </CardContent>
-      </Card>
       
-      {selectedSubmission && (
-        <Dialog open={!!selectedSubmission} onOpenChange={(isOpen) => !isOpen && setSelectedSubmission(null)}>
-           <DialogContent className="sm:max-w-[525px]">
-            <DialogHeader>
-              <DialogTitle>Grade Submission</DialogTitle>
-              <DialogDescription>
-                Reviewing submission from <span className="font-semibold">{selectedSubmission.student.name}</span> for <span className="font-semibold">{assignment.title}</span>.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-               <div className="p-4 bg-muted rounded-md border">
-                 <p className="text-sm text-muted-foreground">Student's submitted work would be displayed here for review. This could be text, a link to a file, or an embedded document.</p>
-               </div>
-               <div className="grid grid-cols-4 items-center gap-4">
-                 <Label htmlFor="grade" className="text-right">
-                   Grade
-                 </Label>
-                 <Input id="grade" type="number" className="col-span-1" placeholder="--" defaultValue={selectedSubmission.grade} />
-                 <span className="col-span-2 text-muted-foreground">/ {assignment.maxPoints} points</span>
-               </div>
-               <div className="grid grid-cols-4 items-start gap-4">
-                <Label htmlFor="feedback" className="text-right pt-2">
-                  Feedback
-                </Label>
-                <Textarea id="feedback" className="col-span-3" placeholder="Provide constructive feedback..." />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => setSelectedSubmission(null)}>Cancel</Button>
-              <Button type="submit" onClick={handleGradeSubmission}>
-                <Check className="mr-2 h-4 w-4" />
-                Submit Grade
+      {/* Main Grading Area */}
+      {selectedStudent ? (
+        <div className="flex-1 flex md:grid md:grid-cols-3">
+          <div className="flex-1 md:col-span-2 p-6 overflow-y-auto space-y-6">
+            <h2 className="text-2xl font-bold">Submission from {selectedStudent.name}</h2>
+             <div className="p-6 bg-muted rounded-lg border min-h-[300px]">
+                 <p className="text-muted-foreground text-center">Student's submitted work would be displayed here for review. This could be text, a link to a file, or an embedded document.</p>
+             </div>
+             <div>
+                <h3 className="font-semibold mb-2">Attachments from Teacher</h3>
+                 {assignment.attachments && assignment.attachments.length > 0 ? (
+                    <div className="space-y-3">
+                        {assignment.attachments.map((att, index) => (
+                            <a key={index} href={att.url} target="_blank" rel="noopener noreferrer" className="block">
+                            <Card className="hover:bg-muted/50 transition-colors">
+                                <CardContent className="p-3 flex items-center gap-4">
+                                <div className="p-2 bg-muted rounded-md">
+                                    {att.type === 'link' ? <LinkIcon className="h-5 w-5 text-primary"/> : <Paperclip className="h-5 w-5 text-primary"/>}
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-primary">{att.name}</p>
+                                    <p className="text-sm text-muted-foreground">{att.type === 'link' ? 'Web Link' : 'File'}</p>
+                                </div>
+                                </CardContent>
+                            </Card>
+                            </a>
+                        ))}
+                    </div>
+                ) : <p className="text-sm text-muted-foreground">No attachments were provided.</p>}
+             </div>
+          </div>
+          <div className="border-l bg-card p-4 space-y-6 flex flex-col">
+              <Card>
+                <CardHeader>
+                    <CardTitle>Grade</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-baseline gap-2">
+                        <Input id="grade" type="number" className="text-lg w-24" placeholder="--" defaultValue={submission?.grade} />
+                        <span className="text-lg text-muted-foreground">/ {assignment.maxPoints}</span>
+                    </div>
+                </CardContent>
+              </Card>
+               <Card className="flex-1 flex flex-col">
+                <CardHeader>
+                    <CardTitle>Private Comments</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-1 overflow-y-auto pr-2">
+                    {comments.map(comment => {
+                    const author = users.find(u => u.id === comment.authorId);
+                    return (
+                        <div key={comment.id} className="flex items-start gap-3">
+                            <Avatar className="h-8 w-8">
+                                <AvatarImage src={author?.avatarUrl} />
+                                <AvatarFallback>{author ? getInitials(author.name) : 'U'}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-semibold text-sm">{author?.name}</p>
+                                <p className="text-sm">{comment.content}</p>
+                            </div>
+                        </div>
+                    )
+                    })}
+                </CardContent>
+                <div className="p-4 border-t">
+                    <div className="relative">
+                        <Textarea 
+                        placeholder="Add a private comment..."
+                        className="pr-12"
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        />
+                        <Button 
+                        size="icon" 
+                        className="absolute right-2 top-2 h-7 w-9"
+                        onClick={handleAddComment}
+                        disabled={!newComment.trim()}
+                        >
+                        <Send className="h-4 w-4"/>
+                        </Button>
+                    </div>
+                </div>
+              </Card>
+              <Button onClick={handleReturnGrade}>
+                <Check className="mr-2 h-4 w-4" /> Return
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </div>
+      ) : (
+         <div className="flex-1 flex items-center justify-center text-center text-muted-foreground">
+            <div>
+                <Users className="h-12 w-12 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold">Select a student</h2>
+                <p>Choose a student from the list to view their submission and start grading.</p>
+            </div>
+         </div>
       )}
-
     </div>
   );
 }

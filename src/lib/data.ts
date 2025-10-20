@@ -1,3 +1,4 @@
+
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -20,9 +21,6 @@ export type Student = User & {
   courses: { id: string; name: string; code: string; teacher: { name: string }; block: string; }[];
   assignments: {
     id: string;
-    title: string;
-    course: { name: string };
-    dueDate: string;
     status: 'pending' | 'submitted' | 'graded';
     grade?: { letter: string; percentage: number };
   }[];
@@ -94,12 +92,21 @@ export type ForumTopic = {
   }
 };
 
+export type AssignmentAttachment = {
+  type: 'file' | 'link';
+  name: string;
+  url: string;
+};
+
 export type Assignment = {
     id: string;
     title: string;
     course: { id: string; name: string };
     dueDate: string; // ISO String
+    postedDate: string; // ISO String
     maxPoints: number;
+    instructions: string;
+    attachments: AssignmentAttachment[];
 };
 
 export type Submission = {
@@ -110,10 +117,20 @@ export type Submission = {
         name: string;
         avatarUrl: string;
     };
-    status: 'submitted' | 'graded';
-    submittedAt: string; // ISO String
+    status: 'submitted' | 'graded' | 'pending';
+    submittedAt?: string; // ISO String
     grade?: number; // points
 };
+
+export type PrivateComment = {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  authorId: string;
+  content: string;
+  timestamp: string; // ISO String
+};
+
 
 export type ChatMessage = {
   id: string;
@@ -212,12 +229,12 @@ export const studentProfile: Student = {
   ],
   courses: studentCourses,
   assignments: [
-    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-05', status: 'graded', grade: { letter: 'A-', percentage: 92 } },
-    { id: 'asg-002', title: 'Derivative Practice Problems', course: { name: 'AP Calculus BC' }, dueDate: '2024-06-08', status: 'submitted' },
-    { id: 'asg-003', title: 'Final Project Proposal', course: { name: 'AP Studio Art: 2D' }, dueDate: '2024-06-12', status: 'pending' },
-    { id: 'asg-004', title: 'Poetry Analysis: The Romantics', course: { name: 'AP English Literature' }, dueDate: '2024-06-15', status: 'pending' },
-    { id: 'asg-005', title: 'DBQ: The Silk Road', course: { name: 'AP World History' }, dueDate: '2024-06-10', status: 'submitted' },
-    { id: 'asg-006', title: 'Whale Migration Patterns Quiz', course: { name: 'AP Marine Biology' }, dueDate: '2024-06-18', status: 'pending' },
+    { id: 'asg-001', status: 'graded', grade: { letter: 'A-', percentage: 92 } },
+    { id: 'asg-002', status: 'submitted' },
+    { id: 'asg-003', status: 'pending' },
+    { id: 'asg-004', status: 'pending' },
+    { id: 'asg-005', status: 'submitted' },
+    { id: 'asg-006', status: 'pending' },
   ],
   schedule: [
     { block: 'A', course: { name: 'AP Marine Biology', code: 'SCI-301', room: 'S201' } },
@@ -414,9 +431,73 @@ export const forumTopics: ForumTopic[] = [
 ];
 
 export const teacherAssignments: Assignment[] = [
-    { id: 'asg-001', title: 'Coral Reef Ecosystem Essay', course: { id: 'crs-101', name: 'AP Marine Biology' }, dueDate: '2024-06-05T23:59:00Z', maxPoints: 100 },
-    { id: 'asg-004', title: 'Poetry Analysis: The Romantics', course: { id: 'crs-102', name: 'AP English Literature' }, dueDate: '2024-06-15T23:59:00Z', maxPoints: 50 },
-    { id: 'asg-006', title: 'Whale Migration Patterns Quiz', course: { id: 'crs-101', name: 'AP Marine Biology' }, dueDate: '2024-06-18T23:59:00Z', maxPoints: 25 },
+    { 
+        id: 'asg-001', 
+        title: 'Coral Reef Ecosystem Essay', 
+        course: { id: 'crs-101', name: 'AP Marine Biology' }, 
+        dueDate: '2024-06-05T23:59:00Z', 
+        postedDate: '2024-05-20T09:00:00Z',
+        maxPoints: 100,
+        instructions: 'Write a 5-page essay on the importance of coral reef ecosystems. Discuss the threats they face and potential conservation strategies. Please include at least 3 academic sources.\n\nSubmission format: PDF document.',
+        attachments: [
+            { type: 'link', name: 'National Geographic: Coral Reefs', url: 'https://www.nationalgeographic.com/environment/habitats/coral-reefs/'},
+            { type: 'file', name: 'Essay Grading Rubric.pdf', url: '#'}
+        ]
+    },
+    { 
+        id: 'asg-002', 
+        title: 'Derivative Practice Problems', 
+        course: { id: 'crs-201', name: 'AP Calculus BC' }, 
+        dueDate: '2024-06-08T23:59:00Z',
+        postedDate: '2024-05-22T11:00:00Z',
+        maxPoints: 50,
+        instructions: 'Complete the attached worksheet on derivatives. Show all your work for full credit.',
+        attachments: [
+            { type: 'file', name: 'Derivatives_Worksheet_1.pdf', url: '#'}
+        ]
+    },
+    { 
+        id: 'asg-003', 
+        title: 'Final Project Proposal', 
+        course: { id: 'crs-401', name: 'AP Studio Art: 2D' }, 
+        dueDate: '2024-06-12T23:59:00Z',
+        postedDate: '2024-05-24T14:30:00Z',
+        maxPoints: 20,
+        instructions: 'Submit a one-page proposal for your final art project. Include your concept, medium, and a rough sketch.',
+        attachments: []
+    },
+    { 
+        id: 'asg-004', 
+        title: 'Poetry Analysis: The Romantics', 
+        course: { id: 'crs-102', name: 'AP English Literature' }, 
+        dueDate: '2024-06-15T23:59:00Z',
+        postedDate: '2024-05-28T10:00:00Z',
+        maxPoints: 50,
+        instructions: 'Choose one poem from the Romantic period reading list and write a 2-page analysis of its themes, imagery, and structure.',
+        attachments: [
+             { type: 'file', name: 'Romantic_Poetry_List.pdf', url: '#'}
+        ]
+    },
+    { 
+        id: 'asg-005', 
+        title: 'DBQ: The Silk Road', 
+        course: { id: 'crs-301', name: 'AP World History' }, 
+        dueDate: '2024-06-10T23:59:00Z',
+        postedDate: '2024-05-25T08:00:00Z',
+        maxPoints: 75,
+        instructions: 'Using the documents provided, write an essay analyzing the economic and cultural impact of the Silk Road.',
+        attachments: []
+    },
+    { 
+        id: 'asg-006', 
+        title: 'Whale Migration Patterns Quiz', 
+        course: { id: 'crs-101', name: 'AP Marine Biology' }, 
+        dueDate: '2024-06-18T23:59:00Z',
+        postedDate: '2024-06-11T13:00:00Z',
+        maxPoints: 25,
+        instructions: 'Complete the multiple-choice quiz on whale migration patterns. You will have 30 minutes to complete it once you begin.',
+        attachments: []
+    },
 ];
 
 export const assignmentSubmissions: Submission[] = [
@@ -435,20 +516,45 @@ export const assignmentSubmissions: Submission[] = [
         status: 'submitted',
         submittedAt: '2024-06-05T11:30:00Z',
     },
-     {
+    {
         id: 'sub-003',
+        assignmentId: 'asg-001',
+        student: { id: 'usr-stud-003', name: 'Charlie Brown', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
+        status: 'pending',
+    },
+     {
+        id: 'sub-004',
         assignmentId: 'asg-004',
         student: { id: 'usr-stud-004', name: 'Diana Prince', avatarUrl: getImageUrl('user-avatar-4') },
         status: 'submitted',
         submittedAt: '2024-06-14T21:00:00Z',
     },
      {
-        id: 'sub-004',
+        id: 'sub-005',
         assignmentId: 'asg-004',
         student: { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
         status: 'submitted',
         submittedAt: '2024-06-15T09:15:00Z',
     },
+];
+
+export const privateComments: PrivateComment[] = [
+  {
+    id: 'pc-001',
+    assignmentId: 'asg-001',
+    studentId: 'usr-stud-001',
+    authorId: 'usr-stud-001',
+    content: 'Dr. Reed, can you clarify the citation format you\'d like us to use?',
+    timestamp: '2024-06-01T15:30:00Z',
+  },
+  {
+    id: 'pc-002',
+    assignmentId: 'asg-001',
+    studentId: 'usr-stud-001',
+    authorId: 'usr-teach-001',
+    content: 'Hi Alice, MLA 9th edition is preferred. Let me know if you need a link to a guide.',
+    timestamp: '2024-06-01T16:00:00Z',
+  },
 ];
 
 export const facultyChat: ChatChannel[] = [
