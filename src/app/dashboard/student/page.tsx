@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { studentProfile, announcements } from "@/lib/data";
+import { studentProfile, announcements, teacherAssignments } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, PlusCircle } from "lucide-react";
@@ -20,6 +20,10 @@ import { Input } from "@/components/ui/input";
 export default function StudentDashboard() {
   const upcomingAssignments = studentProfile.assignments
     .filter((a) => a.status === 'pending')
+    .map(ass => {
+        const fullAssignment = teacherAssignments.find(fullAss => fullAss.id === ass.id);
+        return { ...ass, ...fullAssignment };
+    })
     .slice(0, 3);
   
   const recentAnnouncements = announcements.slice(0, 2);
