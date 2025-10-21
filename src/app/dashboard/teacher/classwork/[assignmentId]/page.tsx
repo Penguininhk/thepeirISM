@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { teacherAssignments, assignmentSubmissions, users, privateComments } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, BookCheck, Clock, User, Send, Paperclip, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Check, BookCheck, Clock, User, Send, Paperclip, Link as LinkIcon, Users } from 'lucide-react';
 import {
   Table,
   TableBody,
