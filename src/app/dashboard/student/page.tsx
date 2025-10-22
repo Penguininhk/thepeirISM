@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
+import { ClientTime } from "@/components/client-time";
 
 export default function StudentDashboard() {
   const upcomingAssignments = studentProfile.assignments
@@ -88,7 +89,9 @@ export default function StudentDashboard() {
                   <TableRow key={ass.id}>
                     <TableCell className="font-medium">{ass.title}</TableCell>
                     <TableCell>{ass.course.name}</TableCell>
-                    <TableCell className="text-right">{format(new Date(ass.dueDate), 'MMM d')}</TableCell>
+                    <TableCell className="text-right">
+                      <ClientTime timestamp={ass.dueDate} formatString="MMM d" />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

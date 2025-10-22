@@ -4,9 +4,9 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ShieldCheck } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import { actionLogs as defaultLogs } from "@/lib/data";
 import type { ActionLog } from "@/lib/data";
+import { ClientTime } from "../client-time";
 
 interface ActionLogFeedProps {
   logs: ActionLog[];
@@ -33,7 +33,7 @@ export function ActionLogFeed({ logs = defaultLogs }: ActionLogFeedProps) {
                 <div>
                   <p className="text-sm font-medium">{log.details}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(log.timestamp), { addSuffix: true })} by {log.admin.name}
+                    <ClientTime timestamp={log.timestamp} /> by {log.admin.name}
                   </p>
                 </div>
               </div>

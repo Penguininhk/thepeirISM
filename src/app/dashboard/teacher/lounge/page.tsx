@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Hash } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import type { ChatChannel } from '@/lib/data';
+import { ClientTime } from '@/components/client-time';
 
 export default function FacultyLoungePage() {
   const [activeChannel, setActiveChannel] = React.useState<ChatChannel>(facultyChat[0]);
@@ -80,9 +81,7 @@ export default function FacultyLoungePage() {
                 <div className="flex-1">
                   <div className="flex items-baseline gap-2">
                     <p className="font-semibold">{message.author.name}</p>
-                    <time className="text-xs text-muted-foreground" title={format(new Date(message.timestamp), "PPPpp")}>
-                      {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
-                    </time>
+                    <ClientTime timestamp={message.timestamp} className="text-xs text-muted-foreground" />
                   </div>
                   <p className="text-foreground/90">{message.content}</p>
                 </div>

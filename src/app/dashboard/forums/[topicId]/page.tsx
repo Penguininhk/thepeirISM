@@ -16,7 +16,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { formatDistanceToNow } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -30,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { ClientTime } from '@/components/client-time';
 
 export default function ForumTopicPage({ params }: { params: { topicId: string } }) {
   const resolvedParams = use(params);
@@ -145,7 +145,7 @@ export default function ForumTopicPage({ params }: { params: { topicId: string }
                     <TableCell className="text-center">{topic.replyCount}</TableCell>
                     <TableCell className="text-center">
                         <div className="text-sm">
-                            {formatDistanceToNow(new Date(topic.lastPost.timestamp), { addSuffix: true })}
+                           <ClientTime timestamp={topic.lastPost.timestamp} />
                         </div>
                         <div className="text-xs text-muted-foreground">
                             by {topic.lastPost.author.name}

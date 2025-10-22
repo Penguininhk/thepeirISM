@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { ClientTime } from "@/components/client-time";
 
 export default function ClassworkPage() {
 
@@ -68,7 +68,7 @@ export default function ClassworkPage() {
                            <div>
                               <p className="font-semibold">{assignment.title}</p>
                               <p className="text-sm text-muted-foreground">
-                                Due: {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })}
+                                Due: <ClientTime timestamp={assignment.dueDate} />
                               </p>
                            </div>
                          </div>
@@ -93,4 +93,3 @@ export default function ClassworkPage() {
     </div>
   );
 }
-
