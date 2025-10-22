@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -59,7 +60,7 @@ export function UserNav({ user }: UserNavProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 rounded-full px-2">
+        <Button variant="ghost" className="relative h-10 rounded-full px-3">
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-block text-sm font-medium">{user.name}</span>
             <Avatar className="h-8 w-8">
