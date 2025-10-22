@@ -1,5 +1,4 @@
 
-
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -388,7 +387,7 @@ export const availableCourses: Course[] = [
 export const forms: Form[] = [
     { id: "form-001", title: "Extended Leave Request", description: "Submit a request for an extended absence from school.", submissionCount: 3, fields: [] },
     { id: "form-002", title: "Student Tech Hub Application", description: "Apply to be a part of the student-run technology support team.", submissionCount: 12, fields: [] },
-    { id: "form-003", title: "Cafeteria Feedback Form", description: "Share your thoughts and suggestions for the school cafeteria.", submissionCount: 47, fields: [] },
+    { id: "form-003", title: "Early Dismissal Request", description: "Submit a request for a student to be dismissed early from school.", submissionCount: 8, fields: [] },
     { id: "form-004", title: "Club Funding Proposal", description: "Official proposal form for student clubs seeking school funding.", submissionCount: 5, fields: [] },
 ];
 
