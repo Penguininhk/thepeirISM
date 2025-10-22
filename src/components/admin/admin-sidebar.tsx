@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -13,6 +14,8 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import AppLogo from "../app-logo";
+import { HkoClock } from "../hko-clock";
+import { Separator } from "../ui/separator";
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -39,6 +42,8 @@ export function AdminSidebar() {
             <p className="text-xs text-sidebar-foreground">Admin Portal</p>
           </div>
         </div>
+        <Separator className="my-2 bg-sidebar-border" />
+        <HkoClock />
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

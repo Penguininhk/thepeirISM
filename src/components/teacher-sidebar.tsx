@@ -14,6 +14,8 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import AppLogo from "./app-logo";
+import { HkoClock } from "./hko-clock";
+import { Separator } from "./ui/separator";
 
 export function TeacherSidebar() {
   const pathname = usePathname();
@@ -39,6 +41,8 @@ export function TeacherSidebar() {
             </h2>
             <p className="text-xs text-sidebar-foreground">Teacher Portal</p>          </div>
         </div>
+        <Separator className="my-2 bg-sidebar-border" />
+        <HkoClock />
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
