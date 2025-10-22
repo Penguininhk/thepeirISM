@@ -31,10 +31,10 @@ export function HkoClock() {
   }, []);
 
   return (
-    <div className="text-center text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
+    <div className="text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
       {time ? (
         <>
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-start gap-2">
             <Clock className="h-4 w-4" />
             <p className="font-mono text-lg font-semibold">{time}</p>
           </div>
