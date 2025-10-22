@@ -18,14 +18,13 @@
     --secondary-foreground: 228 51% 33%;
     --muted: 210 27% 88%;
     --muted-foreground: 228 45% 40%;
-    --accent: 2 68% 61%; /* Soft Orange (#D9534F) */
-    --accent-foreground: 0 0% 100%;
+    --accent: 228 51% 33%; /* Deep Blue (#293B7F) - Was Soft Orange */
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 210 27% 85%;
     --input: 210 27% 90%;
     --ring: 228 51% 33%;
-    --radius: 0.5rem;
     --sidebar-background: 228 51% 23%;
     --sidebar-foreground: 210 40% 85%;
     --sidebar-primary: 210 40% 98%;
@@ -49,8 +48,8 @@
     --secondary-foreground: 210 40% 90%;
     --muted: 229 25% 25%;
     --muted-foreground: 210 40% 60%;
-    --accent: 2 68% 61%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 210 40% 90%;
+    --accent-foreground: 228 51% 33%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 229 25% 25%;
