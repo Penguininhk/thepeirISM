@@ -216,16 +216,16 @@ export const studentProfile: Student = {
   status: 'approved',
   avatarUrl: getImageUrl('user-avatar-1'),
   attendance: [
-    { date: '2024-05-20', status: 'present', course: { name: 'AP Marine Biology'} },
-    { date: '2024-05-21', status: 'present', course: { name: 'AP Calculus BC'} },
-    { date: '2024-05-22', status: 'late', course: { name: 'AP Studio Art: 2D'} },
-    { date: '2024-05-23', status: 'present', course: { name: 'AP World History'} },
-    { date: '2024-05-24', status: 'absent', course: { name: 'AP English Literature'} },
-    { date: '2024-05-20', status: 'present', course: { name: 'AP Calculus BC'} },
-    { date: '2024-05-21', status: 'present', course: { name: 'AP Marine Biology'} },
-    { date: '2024-05-22', status: 'present', course: { name: 'AP World History'} },
-    { date: '2024-05-23', status: 'late', course: { name: 'AP Calculus BC'} },
-    { date: '2024-05-24', status: 'present', course: { name: 'AP Marine Biology'} },
+    { date: '2025-05-20', status: 'present', course: { name: 'AP Marine Biology'} },
+    { date: '2025-05-21', status: 'present', course: { name: 'AP Calculus BC'} },
+    { date: '2025-05-22', status: 'late', course: { name: 'AP Studio Art: 2D'} },
+    { date: '2025-05-23', status: 'present', course: { name: 'AP World History'} },
+    { date: '2025-05-24', status: 'absent', course: { name: 'AP English Literature'} },
+    { date: '2025-05-20', status: 'present', course: { name: 'AP Calculus BC'} },
+    { date: '2025-05-21', status: 'present', course: { name: 'AP Marine Biology'} },
+    { date: '2025-05-22', status: 'present', course: { name: 'AP World History'} },
+    { date: '2025-05-23', status: 'late', course: { name: 'AP Calculus BC'} },
+    { date: '2025-05-24', status: 'present', course: { name: 'AP Marine Biology'} },
   ],
   courses: studentCourses,
   assignments: [
@@ -266,21 +266,21 @@ export const announcements: Announcement[] = [
     title: 'School-wide Science Fair',
     content: 'The annual science fair is scheduled for next month. All students are encouraged to participate. Please see your science teacher for more details on project submission guidelines and deadlines. We look forward to seeing your innovative projects!',
     author: { name: 'Dr. Evelyn Reed', id: 'usr-teach-001' },
-    date: '2024-05-15T10:00:00Z',
+    date: '2025-05-15T10:00:00Z',
   },
   {
     id: 'ann-002',
     title: 'Library Closure for Maintenance',
     content: 'Please be advised that the school library will be closed this Friday for system upgrades and maintenance. Make sure to check out any books you need before then. The online catalog will also be temporarily unavailable.',
     author: { name: 'Admin User', id: 'usr-admin-001' },
-    date: '2024-05-20T09:00:00Z',
+    date: '2025-05-20T09:00:00Z',
   },
   {
     id: 'ann-003',
     title: 'AP Marine Biology Mid-term Reminder',
     content: 'This is a reminder that the AP Marine Biology mid-term exam is next Wednesday. It will cover all topics from the beginning of the semester up to the chapter on deep-sea ecosystems. A study guide has been posted.',
     author: { name: 'Dr. Evelyn Reed', id: 'usr-teach-001' },
-    date: '2024-05-22T14:00:00Z',
+    date: '2025-05-22T14:00:00Z',
     classId: 'crs-101',
   },
 ];
@@ -392,7 +392,7 @@ export const forumTopics: ForumTopic[] = [
     replyCount: 1,
     lastPost: {
       author: { id: "usr-teach-001", name: "Dr. Evelyn Reed" },
-      timestamp: "2024-05-28T14:00:00Z",
+      timestamp: "2025-05-28T14:00:00Z",
     }
   },
   { 
@@ -403,7 +403,7 @@ export const forumTopics: ForumTopic[] = [
     replyCount: 1,
     lastPost: {
       author: { id: "usr-stud-001", name: "Alice Johnson" },
-      timestamp: "2024-05-29T11:20:00Z",
+      timestamp: "2025-05-29T11:20:00Z",
     }
   },
   { 
@@ -414,7 +414,7 @@ export const forumTopics: ForumTopic[] = [
     replyCount: 1,
     lastPost: {
       author: { id: "usr-admin-001", name: "Admin" },
-      timestamp: "2024-05-27T18:00:00Z",
+      timestamp: "2025-05-27T18:00:00Z",
     }
   },
   { 
@@ -425,7 +425,7 @@ export const forumTopics: ForumTopic[] = [
     replyCount: 1,
     lastPost: {
       author: { id: "usr-stud-003", name: "Charlie Brown" },
-      timestamp: "2024-05-29T09:00:00Z",
+      timestamp: "2025-05-29T09:00:00Z",
     }
   },
 ];
@@ -435,8 +435,8 @@ export const teacherAssignments: Assignment[] = [
         id: 'asg-001', 
         title: 'Coral Reef Ecosystem Essay', 
         course: { id: 'crs-101', name: 'AP Marine Biology' }, 
-        dueDate: '2024-06-05T23:59:00Z', 
-        postedDate: '2024-05-20T09:00:00Z',
+        dueDate: '2025-06-05T23:59:00Z', 
+        postedDate: '2025-05-20T09:00:00Z',
         maxPoints: 100,
         instructions: 'Write a 5-page essay on the importance of coral reef ecosystems. Discuss the threats they face and potential conservation strategies. Please include at least 3 academic sources.\n\nSubmission format: PDF document.',
         attachments: [
@@ -448,8 +448,8 @@ export const teacherAssignments: Assignment[] = [
         id: 'asg-002', 
         title: 'Derivative Practice Problems', 
         course: { id: 'crs-201', name: 'AP Calculus BC' }, 
-        dueDate: '2024-06-08T23:59:00Z',
-        postedDate: '2024-05-22T11:00:00Z',
+        dueDate: '2025-06-08T23:59:00Z',
+        postedDate: '2025-05-22T11:00:00Z',
         maxPoints: 50,
         instructions: 'Complete the attached worksheet on derivatives. Show all your work for full credit.',
         attachments: [
@@ -460,8 +460,8 @@ export const teacherAssignments: Assignment[] = [
         id: 'asg-003', 
         title: 'Final Project Proposal', 
         course: { id: 'crs-401', name: 'AP Studio Art: 2D' }, 
-        dueDate: '2024-06-12T23:59:00Z',
-        postedDate: '2024-05-24T14:30:00Z',
+        dueDate: '2025-06-12T23:59:00Z',
+        postedDate: '2025-05-24T14:30:00Z',
         maxPoints: 20,
         instructions: 'Submit a one-page proposal for your final art project. Include your concept, medium, and a rough sketch.',
         attachments: []
@@ -470,8 +470,8 @@ export const teacherAssignments: Assignment[] = [
         id: 'asg-004', 
         title: 'Poetry Analysis: The Romantics', 
         course: { id: 'crs-102', name: 'AP English Literature' }, 
-        dueDate: '2024-06-15T23:59:00Z',
-        postedDate: '2024-05-28T10:00:00Z',
+        dueDate: '2025-06-15T23:59:00Z',
+        postedDate: '2025-05-28T10:00:00Z',
         maxPoints: 50,
         instructions: 'Choose one poem from the Romantic period reading list and write a 2-page analysis of its themes, imagery, and structure.',
         attachments: [
@@ -482,8 +482,8 @@ export const teacherAssignments: Assignment[] = [
         id: 'asg-005', 
         title: 'DBQ: The Silk Road', 
         course: { id: 'crs-301', name: 'AP World History' }, 
-        dueDate: '2024-06-10T23:59:00Z',
-        postedDate: '2024-05-25T08:00:00Z',
+        dueDate: '2025-06-10T23:59:00Z',
+        postedDate: '2025-05-25T08:00:00Z',
         maxPoints: 75,
         instructions: 'Using the documents provided, write an essay analyzing the economic and cultural impact of the Silk Road.',
         attachments: []
@@ -492,8 +492,8 @@ export const teacherAssignments: Assignment[] = [
         id: 'asg-006', 
         title: 'Whale Migration Patterns Quiz', 
         course: { id: 'crs-101', name: 'AP Marine Biology' }, 
-        dueDate: '2024-06-18T23:59:00Z',
-        postedDate: '2024-06-11T13:00:00Z',
+        dueDate: '2025-06-18T23:59:00Z',
+        postedDate: '2025-06-11T13:00:00Z',
         maxPoints: 25,
         instructions: 'Complete the multiple-choice quiz on whale migration patterns. You will have 30 minutes to complete it once you begin.',
         attachments: []
@@ -506,7 +506,7 @@ export const assignmentSubmissions: Submission[] = [
         assignmentId: 'asg-001',
         student: { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
         status: 'graded',
-        submittedAt: '2024-06-04T10:00:00Z',
+        submittedAt: '2025-06-04T10:00:00Z',
         grade: 92
     },
     {
@@ -514,7 +514,7 @@ export const assignmentSubmissions: Submission[] = [
         assignmentId: 'asg-001',
         student: { id: 'usr-stud-002', name: 'Bob Williams', avatarUrl: getImageUrl('user-avatar-3') },
         status: 'submitted',
-        submittedAt: '2024-06-05T11:30:00Z',
+        submittedAt: '2025-06-05T11:30:00Z',
     },
     {
         id: 'sub-003',
@@ -527,14 +527,14 @@ export const assignmentSubmissions: Submission[] = [
         assignmentId: 'asg-004',
         student: { id: 'usr-stud-004', name: 'Diana Prince', avatarUrl: getImageUrl('user-avatar-4') },
         status: 'submitted',
-        submittedAt: '2024-06-14T21:00:00Z',
+        submittedAt: '2025-06-14T21:00:00Z',
     },
      {
         id: 'sub-005',
         assignmentId: 'asg-004',
         student: { id: 'usr-stud-001', name: 'Alice Johnson', avatarUrl: getImageUrl('user-avatar-1') },
         status: 'submitted',
-        submittedAt: '2024-06-15T09:15:00Z',
+        submittedAt: '2025-06-15T09:15:00Z',
     },
 ];
 
@@ -545,7 +545,7 @@ export const privateComments: PrivateComment[] = [
     studentId: 'usr-stud-001',
     authorId: 'usr-stud-001',
     content: 'Dr. Reed, can you clarify the citation format you\'d like us to use?',
-    timestamp: '2024-06-01T15:30:00Z',
+    timestamp: '2025-06-01T15:30:00Z',
   },
   {
     id: 'pc-002',
@@ -553,7 +553,7 @@ export const privateComments: PrivateComment[] = [
     studentId: 'usr-stud-001',
     authorId: 'usr-teach-001',
     content: 'Hi Alice, MLA 9th edition is preferred. Let me know if you need a link to a guide.',
-    timestamp: '2024-06-01T16:00:00Z',
+    timestamp: '2025-06-01T16:00:00Z',
   },
 ];
 
@@ -563,9 +563,9 @@ export const facultyChat: ChatChannel[] = [
     name: 'general',
     description: 'General announcements and discussion for all faculty.',
     messages: [
-      { id: 'msg-001', author: { ...teacherProfile }, timestamp: '2024-05-29T09:05:00Z', content: 'Morning all! Just a reminder that final grades are due this Friday.' },
-      { id: 'msg-002', author: { ...otherTeachers[0] as Teacher }, timestamp: '2024-05-29T09:15:00Z', content: 'Thanks for the reminder, Evelyn. I\'ve got a few more essays to get through.' },
-      { id: 'msg-003', author: { ...otherTeachers[1] as Teacher }, timestamp: '2024-05-29T10:30:00Z', content: 'Anyone else having trouble with the new projector in room 204?' },
+      { id: 'msg-001', author: { ...teacherProfile }, timestamp: '2025-05-29T09:05:00Z', content: 'Morning all! Just a reminder that final grades are due this Friday.' },
+      { id: 'msg-002', author: { ...otherTeachers[0] as Teacher }, timestamp: '2025-05-29T09:15:00Z', content: 'Thanks for the reminder, Evelyn. I\'ve got a few more essays to get through.' },
+      { id: 'msg-003', author: { ...otherTeachers[1] as Teacher }, timestamp: '2025-05-29T10:30:00Z', content: 'Anyone else having trouble with the new projector in room 204?' },
     ],
   },
   {
@@ -573,8 +573,8 @@ export const facultyChat: ChatChannel[] = [
     name: 'curriculum-planning',
     description: 'Collaboration on curriculum development for the next school year.',
     messages: [
-      { id: 'msg-004', author: { ...otherTeachers[3] as Teacher }, timestamp: '2024-05-28T11:00:00Z', content: 'I was thinking of introducing a new segment on the Cold War for the World History class. Thoughts?' },
-      { id: 'msg-005', author: { ...teacherProfile }, timestamp: '2024-05-28T11:25:00Z', content: 'That sounds great, Samuel. We could tie it into the literature of that period in the English class.' },
+      { id: 'msg-004', author: { ...otherTeachers[3] as Teacher }, timestamp: '2025-05-28T11:00:00Z', content: 'I was thinking of introducing a new segment on the Cold War for the World History class. Thoughts?' },
+      { id: 'msg-005', author: { ...teacherProfile }, timestamp: '2025-05-28T11:25:00Z', content: 'That sounds great, Samuel. We could tie it into the literature of that period in the English class.' },
     ],
   },
   {
@@ -582,7 +582,7 @@ export const facultyChat: ChatChannel[] = [
     name: 'random',
     description: 'A place for non-work-related chat and fun.',
     messages: [
-       { id: 'msg-006', author: { ...otherTeachers[2] as Teacher }, timestamp: '2024-05-27T15:00:00Z', content: 'Anyone seen the latest season of that space show? No spoilers!' },
+       { id: 'msg-006', author: { ...otherTeachers[2] as Teacher }, timestamp: '2025-05-27T15:00:00Z', content: 'Anyone seen the latest season of that space show? No spoilers!' },
     ],
   }
 ]
@@ -590,35 +590,35 @@ export const facultyChat: ChatChannel[] = [
 export const actionLogs: ActionLog[] = [
   {
     id: 'log-001',
-    timestamp: '2024-05-30T10:00:00Z',
+    timestamp: '2025-05-30T10:00:00Z',
     admin: adminUser,
     actionType: 'user_status_update',
     details: "Approved 'Ms. Chloe Kim' registration.",
   },
   {
     id: 'log-002',
-    timestamp: '2024-05-29T14:20:00Z',
+    timestamp: '2025-05-29T14:20:00Z',
     admin: adminUser,
     actionType: 'user_status_update',
     details: "Rejected 'Diana Prince' registration.",
   },
   {
     id: 'log-003',
-    timestamp: '2024-05-28T11:00:00Z',
+    timestamp: '2025-05-28T11:00:00Z',
     admin: adminUser,
     actionType: 'user_created',
     details: "Created new student account 'Bob Williams'.",
   },
   {
     id: 'log-004',
-    timestamp: '2024-05-27T09:00:00Z',
+    timestamp: '2025-05-27T09:00:00Z',
     admin: adminUser,
     actionType: 'course_deleted',
     details: "Deleted course 'Intro to Philosophy'.",
   },
   {
     id: 'log-005',
-    timestamp: '2024-05-26T16:45:00Z',
+    timestamp: '2025-05-26T16:45:00Z',
     admin: adminUser,
     actionType: 'user_deleted',
     details: "Deleted user account 'old.student@theharbourschool.edu.hk'.",
@@ -632,7 +632,7 @@ export const reportCards: ReportCard[] = [
     classId: 'cl-101',
     course: { name: 'AP Marine Biology' },
     teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
-    semester: 'Fall 2023',
+    semester: 'Fall 2024',
     grade: 'A-',
     comments: 'Alice has shown a remarkable aptitude for marine biology. Her participation in class discussions is always insightful. Keep up the excellent work!',
     status: 'released',
@@ -643,7 +643,7 @@ export const reportCards: ReportCard[] = [
     classId: 'cl-102',
     course: { name: 'AP English Literature' },
     teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
-    semester: 'Fall 2023',
+    semester: 'Fall 2024',
     grade: 'B+',
     comments: 'Alice is a strong writer, but she could benefit from contributing more to group discussions. Her essays are well-researched and thoughtfully argued.',
     status: 'released',
@@ -654,7 +654,7 @@ export const reportCards: ReportCard[] = [
     classId: 'cl-101',
     course: { name: 'AP Marine Biology' },
     teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
-    semester: 'Fall 2023',
+    semester: 'Fall 2024',
     grade: 'B',
     comments: 'Bob has a solid grasp of the material. I encourage him to be more proactive in asking questions to deepen his understanding.',
     status: 'pending_review',
@@ -665,7 +665,7 @@ export const reportCards: ReportCard[] = [
     classId: 'cl-101',
     course: { name: 'AP Marine Biology' },
     teacher: { id: 'usr-teach-001', name: 'Dr. Evelyn Reed' },
-    semester: 'Fall 2023',
+    semester: 'Fall 2024',
     grade: 'C+',
     comments: 'Charlie is a pleasure to have in class, but he has struggled with some of the more complex topics. Extra help sessions would be beneficial.',
     status: 'draft',

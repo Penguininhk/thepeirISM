@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -18,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ReportCard } from '@/lib/data';
 
-const semesters = ['Fall 2023', 'Spring 2024'];
+const semesters = ['Fall 2024', 'Spring 2025'];
 
 export default function AdminReportsPage() {
   const { toast } = useToast();

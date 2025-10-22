@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -12,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { FileText } from 'lucide-react';
 
-const semesters = ['Fall 2023', 'Spring 2024'];
+const semesters = ['Fall 2024', 'Spring 2025'];
 
 export default function StudentReportsPage() {
   const [selectedSemester, setSelectedSemester] = React.useState(semesters[semesters.length - 1]);

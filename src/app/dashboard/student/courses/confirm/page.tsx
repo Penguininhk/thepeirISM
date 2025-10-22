@@ -81,7 +81,7 @@ export default function ConfirmCourseSelectionsPage() {
                        <div key={index} className="flex items-start gap-3">
                          <Badge variant="outline" className="mt-1">{index + 1}</Badge>
                          <div className="flex-1">
-                          <p className="font-medium">{choice}</p>
+                          <p className="font-medium">{choice === 'none' ? 'Study Block' : choice}</p>
                           <p className="text-xs text-muted-foreground">
                             {index === 0 ? "1st Choice" : index === 1 ? "2nd Choice" : "3rd Choice"}
                           </p>
