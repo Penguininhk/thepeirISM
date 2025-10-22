@@ -1,4 +1,5 @@
 
+
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -80,12 +81,19 @@ export type Forum = {
   postCount: number;
 };
 
+export type FormField = {
+  id: string;
+  label: string;
+  type: 'text' | 'textarea' | 'select';
+  options?: string[];
+};
+
 export type Form = {
   id: string;
   title: string;
   description: string;
   submissionCount: number;
-  fields: any[]; // In a real app, this would be a structured type
+  fields: FormField[];
 }
 
 export type ForumTopic = {
@@ -385,10 +393,54 @@ export const availableCourses: Course[] = [
 ];
 
 export const forms: Form[] = [
-    { id: "form-001", title: "Extended Leave Request", description: "Submit a request for an extended absence from school.", submissionCount: 3, fields: [] },
-    { id: "form-002", title: "Student Tech Hub Application", description: "Apply to be a part of the student-run technology support team.", submissionCount: 12, fields: [] },
-    { id: "form-003", title: "Early Dismissal Request", description: "Submit a request for a student to be dismissed early from school.", submissionCount: 8, fields: [] },
-    { id: "form-004", title: "Club Funding Proposal", description: "Official proposal form for student clubs seeking school funding.", submissionCount: 5, fields: [] },
+    { 
+      id: "form-001", 
+      title: "Extended Leave Request", 
+      description: "Submit a request for an extended absence from school.", 
+      submissionCount: 3, 
+      fields: [
+        { id: 'field-01', label: 'Student Name', type: 'text' },
+        { id: 'field-02', label: 'Start Date of Absence', type: 'text' },
+        { id: 'field-03', label: 'End Date of Absence', type: 'text' },
+        { id: 'field-04', label: 'Reason for Absence', type: 'textarea' },
+      ] 
+    },
+    { 
+      id: "form-002", 
+      title: "Student Tech Hub Application", 
+      description: "Apply to be a part of the student-run technology support team.", 
+      submissionCount: 12, 
+      fields: [
+        { id: 'field-05', label: 'Full Name', type: 'text' },
+        { id: 'field-06', label: 'Grade Level', type: 'select', options: ['Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'] },
+        { id: 'field-07', label: 'Why do you want to join the Tech Hub?', type: 'textarea' },
+        { id: 'field-08', label: 'Describe your experience with technology (hardware, software, etc.).', type: 'textarea' },
+      ]
+    },
+    { 
+      id: "form-003", 
+      title: "Early Dismissal Request", 
+      description: "Submit a request for a student to be dismissed early from school.", 
+      submissionCount: 8, 
+      fields: [
+        { id: 'field-09', label: 'Student Name', type: 'text' },
+        { id: 'field-10', label: 'Date of Dismissal', type: 'text' },
+        { id: 'field-11', label: 'Time of Dismissal', type: 'text' },
+        { id: 'field-12', label: 'Reason for Early Dismissal', type: 'textarea' },
+      ]
+    },
+    { 
+      id: "form-004", 
+      title: "Club Funding Proposal", 
+      description: "Official proposal form for student clubs seeking school funding.", 
+      submissionCount: 5,
+      fields: [
+        { id: 'field-13', label: 'Club Name', type: 'text' },
+        { id: 'field-14', label: 'Faculty Advisor', type: 'text' },
+        { id: 'field-15', label: 'Amount Requested ($)', type: 'text' },
+        { id: 'field-16', label: 'Please provide a detailed breakdown of how the funds will be used.', type: 'textarea' },
+      ]
+    },
 ];
 
 export const forums: Forum[] = [
@@ -686,3 +738,5 @@ export const reportCards: ReportCard[] = [
     status: 'draft',
   }
 ];
+
+    
