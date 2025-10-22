@@ -1,4 +1,5 @@
 
+
 // This file contains mock data for "The PIER" showcase app.
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -79,6 +80,14 @@ export type Forum = {
   threadCount: number;
   postCount: number;
 };
+
+export type Form = {
+  id: string;
+  title: string;
+  description: string;
+  submissionCount: number;
+  fields: any[]; // In a real app, this would be a structured type
+}
 
 export type ForumTopic = {
   id: string;
@@ -374,6 +383,13 @@ export const availableCourses: Course[] = [
     { id: 'crs-alt-B1', name: 'Number Theory', code: 'MATH-401', description: 'The properties of integers.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
     { id: 'crs-alt-B2', name: 'Game Theory', code: 'MATH-402', description: 'The study of strategic decision making.', teacher: { name: 'Mr. David Chen'}, imageUrl: getImageUrl('course-calculus'), block: 'B', term: 1 },
     { id: 'crs-alt-C1', name: 'Photography', code: 'ART-101', description: 'Learn the art of the camera.', teacher: { name: 'Ms. Chloe Kim'}, imageUrl: getImageUrl('course-digital-art'), block: 'C', term: 1 }
+];
+
+export const forms: Form[] = [
+    { id: "form-001", title: "Extended Leave Request", description: "Submit a request for an extended absence from school.", submissionCount: 3, fields: [] },
+    { id: "form-002", title: "Student Tech Hub Application", description: "Apply to be a part of the student-run technology support team.", submissionCount: 12, fields: [] },
+    { id: "form-003", title: "Cafeteria Feedback Form", description: "Share your thoughts and suggestions for the school cafeteria.", submissionCount: 47, fields: [] },
+    { id: "form-004", title: "Club Funding Proposal", description: "Official proposal form for student clubs seeking school funding.", submissionCount: 5, fields: [] },
 ];
 
 export const forums: Forum[] = [

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { classLists, announcements, teacherProfile } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bell, CalendarPlus, PlusCircle, Users, BookMarked, Copy } from "lucide-react";
+import { ArrowRight, Bell, CalendarPlus, PlusCircle, Users, BookMarked, Copy, FileSignature } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TeacherDashboard() {
@@ -85,6 +85,22 @@ export default function TeacherDashboard() {
              <Button asChild className="w-full">
               <Link href="/dashboard/teacher/classwork">
                 Manage Classwork <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card>
+           <CardHeader>
+            <CardTitle className="flex items-center gap-2 font-headline">
+              <FileSignature className="h-5 w-5 text-primary" />
+              <span>Forms</span>
+            </CardTitle>
+             <CardDescription>Create and manage forms for students.</CardDescription>
+          </CardHeader>
+          <CardContent>
+             <Button asChild className="w-full">
+              <Link href="/dashboard/teacher/forms/new">
+                Create New Form <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </CardContent>
