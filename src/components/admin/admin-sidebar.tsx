@@ -72,8 +72,6 @@ export function AdminSidebar() {
           <g className="waves">
             <use href="#gentle-wave" x="48" y="0" fill="hsl(var(--sidebar-accent) / 0.7)" />
             <use href="#gentle-wave" x="48" y="3" fill="hsl(var(--sidebar-accent) / 0.5)" />
-            <use href="#gentle-wave" x="48" y="5" fill="hsl(var(--sidebar-accent) / 0.3)" />
-            <use href="#gentle-wave" x="48" y="7" fill="hsl(var(--sidebar-background))" />
           </g>
         </svg>
       </SidebarFooter>
