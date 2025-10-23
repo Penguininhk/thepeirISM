@@ -3,10 +3,10 @@
 
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { forms } from '@/lib/data';
+import { forms, teacherProfile } from '@/lib/data';
 import type { Form as FormType } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -14,12 +14,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 
+// A simple mock function to determine user role. In a real app, this would come from auth context.
+const useUserRole = () => {
+    // For now, let's pretend we are a teacher to show the create button.
+    // In a real scenario, you might have a hook like: const { user } = useAuth();
+    return teacherProfile.role;
+}
+
 export default function FormPage({ params }: { params: { formId: string } }) {
   const resolvedParams = use(params);
   const { formId } = resolvedParams;
   const router = useRouter();
   const { toast } = useToast();
   const [form, setForm] = useState<FormType | undefined>();
+  const userRole = useUserRole();
+  const canManageForm = userRole === 'teacher' || userRole === 'admin';
+
 
   useEffect(() => {
     if (formId) {
@@ -47,10 +57,18 @@ export default function FormPage({ params }: { params: { formId: string } }) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <Button variant="outline" size="sm" onClick={() => router.back()}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to All Forms
-      </Button>
+      <div className="flex justify-between items-center">
+        <Button variant="outline" size="sm" onClick={() => router.back()}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to All Forms
+        </Button>
+        {canManageForm && (
+          <Button variant="secondary" onClick={() => router.push(`/dashboard/forms/${formId}/responses`)}>
+            <FileText className="mr-2 h-4 w-4" />
+            View Responses
+          </Button>
+        )}
+      </div>
 
       <Card>
         <CardHeader>

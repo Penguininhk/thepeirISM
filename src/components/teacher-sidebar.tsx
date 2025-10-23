@@ -43,7 +43,9 @@ export function TeacherSidebar() {
             <p className="text-xs text-sidebar-foreground">Teacher Portal</p>          </div>
         </div>
         <Separator className="my-2 bg-sidebar-border" />
-        <HkoClock />
+        <div className="px-2">
+          <HkoClock />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
