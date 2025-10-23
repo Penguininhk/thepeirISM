@@ -25,6 +25,7 @@
     --border: 210 27% 85%;
     --input: 210 27% 90%;
     --ring: 228 51% 33%;
+    --radius: 0.5rem;
     --sidebar-background: 228 51% 23%;
     --sidebar-foreground: 210 40% 85%;
     --sidebar-primary: 210 40% 98%;
@@ -55,6 +56,7 @@
     --border: 229 25% 25%;
     --input: 229 25% 25%;
     --ring: 2 68% 61%;
+    --radius: 0.5rem;
     --sidebar-background: 229 25% 12%;
     --sidebar-foreground: 210 40% 85%;
     --sidebar-primary: 210 40% 98%;
