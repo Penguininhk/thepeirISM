@@ -156,7 +156,7 @@ export default function ParentDashboard() {
               <div key={course.id} className="flex items-center justify-between rounded-md border p-3">
                  <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
-                        <AvatarImage src={(teacherAssignments.find(t=>t.course.name === course.name))?.course.teacher.avatarUrl || ''} />
+                        <AvatarImage src={teacherAssignments.find(t=>t.course.name === course.name)?.course.teacher.avatarUrl || ''} />
                         <AvatarFallback>{getInitials(course.teacher.name)}</AvatarFallback>
                     </Avatar>
                     <div>
