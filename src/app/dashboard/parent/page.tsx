@@ -86,7 +86,7 @@ export default function ParentDashboard() {
               ))}
             </ul>
              <Button variant="outline" size="sm" className="mt-4" asChild>
-                <Link href="/dashboard/student/announcements">
+                <Link href="/dashboard/parent/announcements">
                   View All Announcements <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -140,7 +140,7 @@ export default function ParentDashboard() {
             </div>
             <Progress value={Number(attendancePercentage)} className="mt-2 h-2" />
              <Button variant="outline" size="sm" className="w-full mt-4" asChild>
-                <Link href="/dashboard/student/attendance">
+                <Link href="/dashboard/parent/attendance">
                   View Detailed Record <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

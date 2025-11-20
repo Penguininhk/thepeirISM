@@ -22,9 +22,9 @@ export function ParentSidebar() {
 
   const menuItems = [
     { href: "/dashboard/parent", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/dashboard/student/announcements", label: "Announcements", icon: Megaphone },
-    { href: "/dashboard/student/reports", label: "Report Cards", icon: FileText },
-    { href: "/dashboard/student/attendance", label: "Attendance", icon: CalendarCheck },
+    { href: "/dashboard/parent/announcements", label: "Announcements", icon: Megaphone },
+    { href: "/dashboard/parent/reports", label: "Report Cards", icon: FileText },
+    { href: "/dashboard/parent/attendance", label: "Attendance", icon: CalendarCheck },
     { href: "/dashboard/forms", label: "Forms", icon: FileSignature },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
