@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from "next/link";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Settings, User as UserIcon, Shield, Globe, Check, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { Student, Teacher } from "@/lib/data";
+import type { Student, Teacher, Parent } from "@/lib/data";
 
 type AdminUser = {
   id: string;
@@ -32,7 +33,7 @@ type AdminUser = {
 }
 
 interface UserNavProps {
-  user: Student | Teacher | AdminUser;
+  user: Student | Teacher | AdminUser | Parent;
 }
 
 export function UserNav({ user }: UserNavProps) {
@@ -60,7 +61,7 @@ export function UserNav({ user }: UserNavProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 rounded-full px-3">
+        <Button variant="ghost" className="relative h-10 w-auto px-3 rounded-full">
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-block text-sm font-medium">{user.name}</span>
             <Avatar className="h-8 w-8">

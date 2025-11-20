@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -6,10 +7,11 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { UserNav } from '@/components/user-nav';
 import { StudentSidebar } from '@/components/student-sidebar';
 import { TeacherSidebar } from '@/components/teacher-sidebar';
-import { studentProfile, teacherProfile } from '@/lib/data';
+import { ParentSidebar } from '@/components/parent-sidebar';
+import { studentProfile, teacherProfile, parentProfile } from '@/lib/data';
 import { StudyBuddyBubble } from '@/components/study-buddy-bubble';
 
-type Role = 'student' | 'teacher' | 'admin';
+type Role = 'student' | 'teacher' | 'admin' | 'parent';
 
 export default function DashboardLayout({
   children,
@@ -26,6 +28,8 @@ export default function DashboardLayout({
       setRole('teacher');
     } else if (pathname.startsWith('/dashboard/admin')) {
       setRole('admin');
+    } else if (pathname.startsWith('/dashboard/parent')) {
+      setRole('parent');
     }
     // If it's a shared page like /dashboard/forums, the role will persist from the last page.
   }, [pathname]);
@@ -34,11 +38,24 @@ export default function DashboardLayout({
     return <>{children}</>
   }
   
-  const user = role === 'student' ? studentProfile : teacherProfile;
+  const user = role === 'student' ? studentProfile : role === 'teacher' ? teacherProfile : parentProfile;
+
+  const getSidebar = () => {
+    switch (role) {
+      case 'student':
+        return <StudentSidebar />;
+      case 'teacher':
+        return <TeacherSidebar />;
+      case 'parent':
+        return <ParentSidebar />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <SidebarProvider>
-      {role === 'student' ? <StudentSidebar /> : <TeacherSidebar />}
+      {getSidebar()}
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-card px-4 sm:h-16 sm:px-6">
           <SidebarTrigger className="md:hidden" />

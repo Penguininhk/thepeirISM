@@ -11,7 +11,7 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role: 'student' | 'teacher';
+  role: 'student' | 'teacher' | 'parent';
   avatarUrl: string;
   status: 'pending' | 'approved' | 'rejected';
 }
@@ -34,6 +34,11 @@ export type Student = User & {
 export type Teacher = User & {
   role: 'teacher';
   courses: { id: string; name: string; }[];
+};
+
+export type Parent = User & {
+  role: 'parent';
+  children: Student[];
 };
 
 export type Announcement = {
@@ -270,10 +275,21 @@ const otherStudents: User[] = [
   { id: 'usr-stud-006', name: 'Frank Green', role: 'student', email: 'frank@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
 ];
 
+export const parentProfile: Parent = {
+  id: 'usr-prnt-001',
+  name: 'John Johnson',
+  email: 'j.johnson@theharbourschool.edu.hk',
+  role: 'parent',
+  status: 'approved',
+  avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026711d',
+  children: [studentProfile],
+};
+
 export const users: User[] = [
   studentProfile,
   ...otherStudents,
   ...teachersCollection,
+  parentProfile,
 ];
 
 export const announcements: Announcement[] = [

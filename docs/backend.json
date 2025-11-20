@@ -319,7 +319,7 @@
         },
         "role": {
           "type": "string",
-          "description": "The user's role (e.g., student, teacher, admin)."
+          "description": "The user's role (e.g., student, teacher, admin, parent)."
         },
         "status": {
           "type": "string",
@@ -344,6 +344,50 @@
         "email",
         "role",
         "status"
+      ]
+    },
+    "Parent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Parent",
+      "type": "object",
+      "description": "Represents a parent or guardian of a student.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the parent."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The parent's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The parent's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The parent's email address.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["parent"]
+        },
+        "studentIds": {
+          "type": "array",
+          "description": "An array of student IDs associated with this parent. (Relationship: User 1:N User)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "role",
+        "studentIds"
       ]
     },
     "CourseSelection": {
