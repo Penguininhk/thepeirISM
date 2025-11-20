@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { parentProfile, announcements, teacherAssignments } from "@/lib/data";
+import { parentProfile, announcements, teacherAssignments, availableCourses, users } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, User } from "lucide-react";
@@ -152,11 +152,16 @@ export default function ParentDashboard() {
             <CardDescription>Contact your child's teachers.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            {student.courses.map((course) => (
+            {student.courses.map((course) => {
+              const courseDetails = availableCourses.find(c => c.id === course.id || c.name === course.name);
+              const teacherName = courseDetails?.teacher.name;
+              const teacher = users.find(u => u.name === teacherName);
+              
+              return (
               <div key={course.id} className="flex items-center justify-between rounded-md border p-3">
                  <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
-                        <AvatarImage src={teacherAssignments.find(t=>t.course.name === course.name)?.course.teacher.avatarUrl || ''} />
+                        <AvatarImage src={teacher?.avatarUrl || ''} />
                         <AvatarFallback>{getInitials(course.teacher.name)}</AvatarFallback>
                     </Avatar>
                     <div>
@@ -166,7 +171,8 @@ export default function ParentDashboard() {
                  </div>
                  <Button variant="outline" size="sm">Email</Button>
                </div>
-            ))}
+              )
+            })}
           </CardContent>
         </Card>
       </div>
