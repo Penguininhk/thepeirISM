@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function TeacherAnnouncementsPage() {
   const [open, setOpen] = useState(false);
@@ -93,6 +94,15 @@ export default function TeacherAnnouncementsPage() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Options</Label>
+                <div className="col-span-3 flex items-center space-x-2">
+                  <Checkbox id="notify-parents" />
+                  <Label htmlFor="notify-parents" className="font-normal">
+                    Notify Parents
+                  </Label>
+                </div>
               </div>
             </div>
             <DialogFooter>

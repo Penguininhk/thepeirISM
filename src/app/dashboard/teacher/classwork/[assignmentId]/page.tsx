@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { teacherAssignments, assignmentSubmissions, users, privateComments } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, BookCheck, Clock, User, Send, Paperclip, Link as LinkIcon, Users } from 'lucide-react';
+import { ArrowLeft, Check, BookCheck, Clock, User, Send, Paperclip, Link as LinkIcon, Users, HeartHandshake } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -65,10 +65,10 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
     return <div>Loading assignment...</div>;
   }
   
-  const handleReturnGrade = () => {
+  const handleReturnGrade = (notifyParent: boolean) => {
     toast({
       title: "Grade Returned",
-      description: `The grade for ${selectedStudent?.name} has been recorded and returned.`,
+      description: `The grade for ${selectedStudent?.name} has been returned.${notifyParent ? ' The parent has also been notified.' : ''}`,
     });
     setSelectedStudent(null);
   }
@@ -220,9 +220,14 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
                     </div>
                 </div>
               </Card>
-              <Button onClick={handleReturnGrade}>
-                <Check className="mr-2 h-4 w-4" /> Return
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button onClick={() => handleReturnGrade(false)}>
+                  <Check className="mr-2 h-4 w-4" /> Return to Student
+                </Button>
+                <Button variant="secondary" onClick={() => handleReturnGrade(true)}>
+                  <HeartHandshake className="mr-2 h-4 w-4" /> Return & Notify Parent
+                </Button>
+              </div>
           </div>
         </div>
       ) : (

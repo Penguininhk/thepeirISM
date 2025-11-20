@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, Send, Edit } from 'lucide-react';
+import { Check, Send, Edit, HeartHandshake } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ export default function AdminReportsPage() {
   const handleRelease = (reportId: string, studentName: string) => {
     toast({
       title: 'Report Card Released',
-      description: `The report card for ${studentName} has been released.`,
+      description: `The report card for ${studentName} has been released to the parent and student.`,
     });
   };
   
@@ -147,7 +147,7 @@ function ReportList({ reports, onRelease, onSendBack }: ReportListProps) {
               {report.status === 'pending_review' && onRelease && onSendBack && (
                  <div className="flex gap-2 pt-2">
                    <Button size="sm" className="w-full" onClick={() => onRelease(report.id, report.student.name)}>
-                     <Check className="mr-2 h-4 w-4" /> Release
+                     <HeartHandshake className="mr-2 h-4 w-4" /> Release to Parent
                    </Button>
                    <Button size="sm" variant="destructive" className="w-full" onClick={() => onSendBack(report.id, report.student.name)}>
                      <Send className="mr-2 h-4 w-4" /> Send Back
