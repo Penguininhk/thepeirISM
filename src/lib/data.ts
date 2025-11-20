@@ -267,12 +267,20 @@ export const studentProfile: Student = {
   ],
 };
 
+const otherStudentsData: Omit<Student, 'role' | 'status' | 'attendance' | 'courses' | 'assignments' | 'schedule'>[] = [
+  { id: 'usr-stud-002', name: 'Bob Williams', email: 'bob@theharbourschool.edu.hk', avatarUrl: getImageUrl('user-avatar-3') },
+  { id: 'usr-stud-003', name: 'Charlie Brown', email: 'charlie@theharbourschool.edu.hk', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
+  { id: 'usr-stud-004', name: 'Diana Prince', email: 'diana@theharbourschool.edu.hk', avatarUrl: getImageUrl('user-avatar-4') },
+  { id: 'usr-stud-005', name: 'Eve Adams', email: 'eve@theharbourschool.edu.hk', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
+  { id: 'usr-stud-006', name: 'Frank Green', email: 'frank@theharbourschool.edu.hk', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
+];
+
 const otherStudents: User[] = [
-  { id: 'usr-stud-002', name: 'Bob Williams', role: 'student', email: 'bob@theharbourschool.edu.hk', status: 'approved', avatarUrl: getImageUrl('user-avatar-3') },
-  { id: 'usr-stud-003', name: 'Charlie Brown', role: 'student', email: 'charlie@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
-  { id: 'usr-stud-004', name: 'Diana Prince', role: 'student', email: 'diana@theharbourschool.edu.hk', status: 'rejected', avatarUrl: getImageUrl('user-avatar-4') },
-  { id: 'usr-stud-005', name: 'Eve Adams', role: 'student', email: 'eve@theharbourschool.edu.hk', status: 'pending', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
-  { id: 'usr-stud-006', name: 'Frank Green', role: 'student', email: 'frank@theharbourschool.edu.hk', status: 'approved', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026706d' },
+  { ...otherStudentsData[0], role: 'student', status: 'approved' },
+  { ...otherStudentsData[1], role: 'student', status: 'approved' },
+  { ...otherStudentsData[2], role: 'student', status: 'rejected' },
+  { ...otherStudentsData[3], role: 'student', status: 'pending' },
+  { ...otherStudentsData[4], role: 'student', status: 'approved' },
 ];
 
 export const parentProfile: Parent = {
@@ -282,7 +290,18 @@ export const parentProfile: Parent = {
   role: 'parent',
   status: 'approved',
   avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026711d',
-  children: [studentProfile],
+  children: [
+      studentProfile, 
+      { // Mock a second child for demonstration
+        ...otherStudentsData[0],
+        role: 'student',
+        status: 'approved',
+        courses: [],
+        assignments: [],
+        attendance: [],
+        schedule: []
+      }
+    ],
 };
 
 export const users: User[] = [

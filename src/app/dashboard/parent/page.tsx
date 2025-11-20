@@ -1,4 +1,5 @@
 
+
 import Link from "next/link";
 import { parentProfile, announcements, teacherAssignments, availableCourses, users } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -54,7 +55,7 @@ export default function ParentDashboard() {
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
-                    Viewing for: {student.name}
+                    <span>Parent of: <span className="font-bold">{student.name}</span></span>
                 </CardTitle>
                 <CardDescription>This is an overview of your child's current academic status.</CardDescription>
             </CardHeader>
