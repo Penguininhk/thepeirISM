@@ -278,7 +278,7 @@ const otherStudents: User[] = [
 export const parentProfile: Parent = {
   id: 'usr-prnt-001',
   name: 'John Johnson',
-  email: 'j.johnson@theharbourschool.edu.hk',
+  email: 'j.johnson@thsparent.edu.hk',
   role: 'parent',
   status: 'approved',
   avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026711d',

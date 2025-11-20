@@ -35,8 +35,8 @@ export default function ParentLoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="parent@email.com"
-                  defaultValue="j.johnson@theharbourschool.edu.hk"
+                  placeholder="parent@thsparent.edu.hk"
+                  defaultValue="j.johnson@thsparent.edu.hk"
                   required
                 />
               </div>
