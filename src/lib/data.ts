@@ -291,9 +291,10 @@ export const parentProfile: Parent = {
   status: 'approved',
   avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026711d',
   children: [
-      studentProfile, 
+      studentProfile,
       { // Mock a second child for demonstration
         ...otherStudentsData[0],
+        name: "Bobby Johnson",
         role: 'student',
         status: 'approved',
         courses: [],
@@ -430,52 +431,86 @@ export const availableCourses: Course[] = [
 export const forms: Form[] = [
     { 
       id: "form-001", 
-      title: "Extended Leave Request", 
-      description: "Submit a request for an extended absence from school.", 
-      submissionCount: 3, 
+      title: "Extended Leave Form", 
+      description: "For absences longer than 3 consecutive school days.", 
+      submissionCount: 2, 
       fields: [
         { id: 'field-01', label: 'Student Name', type: 'text' },
         { id: 'field-02', label: 'Start Date of Absence', type: 'text' },
         { id: 'field-03', label: 'End Date of Absence', type: 'text' },
-        { id: 'field-04', label: 'Reason for Absence', type: 'textarea' },
+        { id: 'field-04', label: 'Reason for Extended Leave', type: 'textarea' },
       ] 
     },
     { 
       id: "form-002", 
-      title: "Student Tech Hub Application", 
-      description: "Apply to be a part of the student-run technology support team.", 
-      submissionCount: 12, 
+      title: "Excused Absence Form", 
+      description: "For single-day absences due to appointments or family matters.", 
+      submissionCount: 15, 
       fields: [
-        { id: 'field-05', label: 'Full Name', type: 'text' },
-        { id: 'field-06', label: 'Grade Level', type: 'select', options: ['Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'] },
-        { id: 'field-07', label: 'Why do you want to join the Tech Hub?', type: 'textarea' },
-        { id: 'field-08', label: 'Describe your experience with technology (hardware, software, etc.).', type: 'textarea' },
+        { id: 'field-05', label: 'Student Name', type: 'text' },
+        { id: 'field-06', label: 'Date of Absence', type: 'text' },
+        { id: 'field-07', label: 'Reason for Absence', type: 'textarea' },
       ]
     },
     { 
       id: "form-003", 
-      title: "Early Dismissal Request", 
-      description: "Submit a request for a student to be dismissed early from school.", 
-      submissionCount: 8, 
+      title: "Medical Leave Form", 
+      description: "Submit this form for any absence due to illness.", 
+      submissionCount: 5, 
       fields: [
-        { id: 'field-09', label: 'Student Name', type: 'text' },
-        { id: 'field-10', label: 'Date of Dismissal', type: 'text' },
-        { id: 'field-11', label: 'Time of Dismissal', type: 'text' },
-        { id: 'field-12', label: 'Reason for Early Dismissal', type: 'textarea' },
+        { id: 'field-08', label: 'Student Name', type: 'text' },
+        { id: 'field-09', label: 'Date(s) of Absence', type: 'text' },
+        { id: 'field-10', label: 'Nature of Illness', type: 'textarea' },
       ]
     },
-    { 
-      id: "form-004", 
-      title: "Club Funding Proposal", 
-      description: "Official proposal form for student clubs seeking school funding.", 
-      submissionCount: 5,
+    {
+      id: 'form-004',
+      title: 'Medication Information Form',
+      description: 'Provide information about medication to be administered at school.',
+      submissionCount: 1,
       fields: [
-        { id: 'field-13', label: 'Club Name', type: 'text' },
-        { id: 'field-14', label: 'Faculty Advisor', type: 'text' },
-        { id: 'field-15', label: 'Amount Requested ($)', type: 'text' },
-        { id: 'field-16', label: 'Please provide a detailed breakdown of how the funds will be used.', type: 'textarea' },
-      ]
+        { id: 'field-11', label: 'Student Name', type: 'text' },
+        { id: 'field-12', label: 'Medication Name and Dosage', type: 'text' },
+        { id: 'field-13', label: 'Time(s) to be Administered', type: 'text' },
+        { id: 'field-14', label: 'Reason for Medication', type: 'textarea' },
+      ],
     },
+    {
+      id: 'form-005',
+      title: 'Early Dismissal Form',
+      description: 'Request to pick up your child before the end of the school day.',
+      submissionCount: 7,
+      fields: [
+        { id: 'field-15', label: 'Student Name', type: 'text' },
+        { id: 'field-16', label: 'Date of Dismissal', type: 'text' },
+        { id: 'field-17', label: 'Time of Dismissal', type: 'text' },
+        { id: 'field-18', label: 'Reason for Early Dismissal', type: 'textarea' },
+      ],
+    },
+    {
+      id: 'form-006',
+      title: 'Late Arrival Form',
+      description: 'Notify the school if your child will be arriving late.',
+      submissionCount: 4,
+      fields: [
+        { id: 'field-19', label: 'Student Name', type: 'text' },
+        { id: 'field-20', label: 'Date of Late Arrival', type: 'text' },
+        { id: 'field-21', label: 'Expected Arrival Time', type: 'text' },
+        { id: 'field-22', label: 'Reason for Lateness', type: 'textarea' },
+      ],
+    },
+    {
+      id: 'form-007',
+      title: 'Parent-Teacher Meeting Request',
+      description: 'Request a meeting with one of your child\'s teachers.',
+      submissionCount: 3,
+      fields: [
+        { id: 'field-23', label: 'Your Name', type: 'text' },
+        { id: 'field-24', label: 'Student Name', type: 'text' },
+        { id: 'field-25', label: 'Teacher Name', type: 'text' },
+        { id: 'field-26', label: 'Reason for Meeting & Topics', type: 'textarea' },
+      ],
+    }
 ];
 
 export const forums: Forum[] = [

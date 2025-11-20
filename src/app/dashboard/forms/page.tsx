@@ -2,16 +2,19 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { forms, teacherProfile } from "@/lib/data"; // Assuming user role can be determined
+import { forms, teacherProfile, parentProfile } from "@/lib/data"; // Assuming user role can be determined
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileSignature, ArrowRight, PlusCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 // A simple mock function to determine user role. In a real app, this would come from auth context.
 const useUserRole = () => {
-    // For now, let's pretend we are a teacher to show the create button.
-    // In a real scenario, you might have a hook like: const { user } = useAuth();
-    return teacherProfile.role;
+    const pathname = usePathname();
+    if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
+    if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
+    if (pathname.startsWith('/dashboard/admin')) return 'admin';
+    return 'student';
 }
 
 export default function FormsPage() {

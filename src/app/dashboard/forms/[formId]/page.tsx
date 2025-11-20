@@ -2,8 +2,8 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { forms, teacherProfile } from '@/lib/data';
+import { useRouter, usePathname } from 'next/navigation';
+import { forms, teacherProfile, parentProfile } from '@/lib/data';
 import type { Form as FormType } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, FileText } from 'lucide-react';
@@ -16,9 +16,11 @@ import { useToast } from '@/hooks/use-toast';
 
 // A simple mock function to determine user role. In a real app, this would come from auth context.
 const useUserRole = () => {
-    // For now, let's pretend we are a teacher to show the create button.
-    // In a real scenario, you might have a hook like: const { user } = useAuth();
-    return teacherProfile.role;
+    const pathname = usePathname();
+    if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
+    if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
+    if (pathname.startsWith('/dashboard/admin')) return 'admin';
+    return 'student';
 }
 
 export default function FormPage({ params }: { params: { formId: string } }) {
