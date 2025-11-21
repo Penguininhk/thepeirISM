@@ -4,7 +4,7 @@ import Link from "next/link";
 import { parentProfile, announcements, teacherAssignments, availableCourses, users } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, User } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CalendarCheck, Check, ChevronDown, Megaphone, User, Users } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
   Table,
@@ -17,6 +17,8 @@ import {
 import { format } from "date-fns";
 import { ClientTime } from "@/components/client-time";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { Parent } from "@/lib/data";
 
 export default function ParentDashboard() {
   // For simplicity, we'll focus on the first child in the mock data.
@@ -53,11 +55,34 @@ export default function ParentDashboard() {
       <div className="space-y-6 lg:col-span-2">
         <Card>
             <CardHeader>
-                <CardTitle className="font-headline flex items-center gap-2">
-                    <User className="h-5 w-5 text-primary" />
-                    <span>Parent of: <span className="font-bold">{student.name}</span></span>
-                </CardTitle>
-                <CardDescription>This is an overview of your child's current academic status.</CardDescription>
+                <div className="flex items-start justify-between">
+                    <div>
+                        <CardTitle className="font-headline flex items-center gap-2">
+                            <User className="h-5 w-5 text-primary" />
+                            <span>Parent of: <span className="font-bold">{student.name}</span></span>
+                        </CardTitle>
+                        <CardDescription>This is an overview of your child's current academic status.</CardDescription>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline">
+                          <Users className="mr-2 h-4 w-4" />
+                          Switch Child
+                          <ChevronDown className="ml-2 h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {(parentProfile as Parent).children.map(child => (
+                          <DropdownMenuItem key={child.id}>
+                              <span className="flex items-center">
+                                {child.name}
+                                { student.id === child.id && <Check className="ml-auto h-4 w-4" />}
+                              </span>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </CardHeader>
         </Card>
 

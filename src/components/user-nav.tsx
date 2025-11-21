@@ -19,7 +19,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User as UserIcon, Shield, Globe, Check, ChevronDown, Users } from "lucide-react";
+import { LogOut, Settings, User as UserIcon, Shield, Globe, Check, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Student, Teacher, Parent } from "@/lib/data";
 
@@ -49,7 +49,6 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   const is_admin = user.role === 'admin';
-  const is_parent = user.role === 'parent';
 
   const handleLanguageChange = (lang: string) => {
     setLanguage(lang);
@@ -90,27 +89,6 @@ export function UserNav({ user }: UserNavProps) {
               <span>Profile</span>
             </Link>
           </DropdownMenuItem>
-          {is_parent && (
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Users className="mr-2 h-4 w-4" />
-                <span>Switch Child</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  {(user as Parent).children.map(child => (
-                     <DropdownMenuItem key={child.id}>
-                        <span className="flex items-center">
-                          {child.name}
-                          {/* We can add a checkmark here for the currently active child */}
-                          { (user as Parent).children[0].id === child.id && <Check className="ml-auto h-4 w-4" />}
-                        </span>
-                     </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-          )}
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Globe className="mr-2 h-4 w-4" />
