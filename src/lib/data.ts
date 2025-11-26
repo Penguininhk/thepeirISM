@@ -29,6 +29,7 @@ export type Student = User & {
     block: string;
     course: { name: string; code: string; room: string; } | null;
   }[];
+  badges: Badge[];
 };
 
 export type Teacher = User & {
@@ -67,7 +68,7 @@ export type ClassInfo = {
 };
 
 export type Course = {
-  id: string;
+  id:string;
   name: string;
   code: string;
   description: string;
@@ -90,14 +91,6 @@ export type SchoolExtensionActivity = {
   imageUrl: string;
 };
 
-export type Forum = {
-  id: string;
-  title: string;
-  description: string;
-  threadCount: number;
-  postCount: number;
-};
-
 export type FormField = {
   id: string;
   label: string;
@@ -112,6 +105,14 @@ export type Form = {
   submissionCount: number;
   fields: FormField[];
 }
+
+export type Forum = {
+  id: string;
+  title: string;
+  description: string;
+  threadCount: number;
+  postCount: number;
+};
 
 export type ForumTopic = {
   id: string;
@@ -206,6 +207,23 @@ export type ReportCard = {
   status: 'draft' | 'pending_review' | 'released';
 };
 
+export type Badge = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+};
+
+export type Resource = {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  type: 'guide' | 'video' | 'paper';
+  courseId: string;
+};
+
 
 // --- MOCK DATA ---
 
@@ -263,9 +281,9 @@ export const studentProfile: Student = {
   courses: studentCourses,
   assignments: [
     { id: 'asg-001', status: 'graded', grade: { letter: 'A-', percentage: 92 } },
-    { id: 'asg-002', status: 'submitted' },
-    { id: 'asg-003', status: 'pending' },
-    { id: 'asg-004', status: 'pending' },
+    { id: 'asg-002', status: 'graded', grade: { letter: 'B', percentage: 85 } },
+    { id: 'asg-003', status: 'graded', grade: { letter: 'A', percentage: 95 } },
+    { id: 'asg-004', status: 'graded', grade: { letter: 'C+', percentage: 78 } },
     { id: 'asg-005', status: 'submitted' },
     { id: 'asg-006', status: 'pending' },
   ],
@@ -277,9 +295,16 @@ export const studentProfile: Student = {
     { block: 'E', course: null }, // Free block
     { block: 'F', course: { name: 'AP English Literature', code: 'ENG-401', room: 'L212' } },
   ],
+  badges: [
+    { id: 'badge-01', name: 'Perfect Attendance', description: '10 consecutive days of perfect attendance.', icon: 'CalendarCheck', unlocked: true },
+    { id: 'badge-02', name: 'On a Roll', description: 'Submitted 5 assignments in a row on time.', icon: 'TrendingUp', unlocked: true },
+    { id: 'badge-03', name: 'Forum Starter', description: 'Started a popular discussion thread.', icon: 'MessageSquarePlus', unlocked: false },
+    { id: 'badge-04', name: 'Top Performer', description: 'Achieved a grade of A on 3 assignments.', icon: 'Award', unlocked: true },
+    { id: 'badge-05', name: 'Early Bird', description: 'Submitted an assignment more than 2 days before the deadline.', icon: 'AlarmClock', unlocked: false },
+  ]
 };
 
-const otherStudentsData: Omit<Student, 'role' | 'status' | 'attendance' | 'courses' | 'assignments' | 'schedule'>[] = [
+const otherStudentsData: Omit<Student, 'role' | 'status' | 'attendance' | 'courses' | 'assignments' | 'schedule' | 'badges'>[] = [
   { id: 'usr-stud-002', name: 'Bob Williams', email: 'bob@theharbourschool.edu.hk', avatarUrl: getImageUrl('user-avatar-3') },
   { id: 'usr-stud-003', name: 'Charlie Brown', email: 'charlie@theharbourschool.edu.hk', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
   { id: 'usr-stud-004', name: 'Diana Prince', email: 'diana@theharbourschool.edu.hk', avatarUrl: getImageUrl('user-avatar-4') },
@@ -312,7 +337,8 @@ export const parentProfile: Parent = {
         courses: [],
         assignments: [],
         attendance: [],
-        schedule: []
+        schedule: [],
+        badges: [],
       }
     ],
 };
@@ -879,6 +905,11 @@ export const schoolExtensionActivities: SchoolExtensionActivity[] = [
   }
 ];
 
-    
-
-    
+export const resources: Resource[] = [
+  { id: 'res-001', courseId: 'crs-101', title: 'Guide to Marine Invertebrates', description: 'A comprehensive visual guide to common marine invertebrates.', url: '#', type: 'guide' },
+  { id: 'res-002', courseId: 'crs-101', title: 'Deep Sea Exploration Documentary', description: 'A breathtaking look at the creatures of the deep sea.', url: '#', type: 'video' },
+  { id: 'res-003', courseId: 'crs-201', title: 'Calculus Cheat Sheet', description: 'A quick reference for common derivatives and integrals.', url: '#', type: 'guide' },
+  { id: 'res-004', courseId: 'crs-201', title: '3Blue1Brown: The Essence of Calculus', description: 'An intuitive video series explaining the fundamentals of calculus.', url: '#', type: 'video' },
+  { id: 'res-005', courseId: 'crs-301', title: 'Primary Sources of the Silk Road', description: 'A collection of translated texts from travelers on the Silk Road.', url: '#', type: 'paper' },
+  { id: 'res-006', courseId: 'crs-102', title: 'Understanding Shakespearean English', description: 'A guide to reading and understanding Shakespeare\'s language.', url: '#', type: 'guide' },
+];

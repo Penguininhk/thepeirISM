@@ -1,9 +1,10 @@
 
+
 import Link from "next/link";
 import { studentProfile, announcements, teacherAssignments } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, PlusCircle } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, PlusCircle, Award, TrendingUp, MessageSquarePlus, AlarmClock, CalendarCheck2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -17,6 +18,18 @@ import {
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { ClientTime } from "@/components/client-time";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import * as LucideIcons from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type IconName = keyof typeof LucideIcons;
+
+const Icon = ({ name, ...props }: { name: IconName } & LucideIcons.LucideProps) => {
+  const LucideIcon = LucideIcons[name] as React.ComponentType<LucideIcons.LucideProps>;
+  if (!LucideIcon) return null;
+  return <LucideIcon {...props} />;
+};
+
 
 export default function StudentDashboard() {
   const upcomingAssignments = studentProfile.assignments
@@ -106,6 +119,38 @@ export default function StudentDashboard() {
       </div>
 
       <div className="space-y-6">
+         <Card>
+          <CardHeader>
+             <CardTitle className="font-headline">My Badges</CardTitle>
+             <CardDescription>Your unlocked achievements.</CardDescription>
+           </CardHeader>
+           <CardContent>
+             <TooltipProvider>
+              <div className="flex gap-4">
+                {studentProfile.badges.map(badge => (
+                   <Tooltip key={badge.id}>
+                    <TooltipTrigger asChild>
+                      <div className={cn(
+                        "flex items-center justify-center h-12 w-12 rounded-full border-2",
+                        badge.unlocked ? "border-amber-400 bg-amber-50" : "border-muted bg-muted/50"
+                      )}>
+                        <Icon 
+                           name={badge.icon as IconName} 
+                           className={cn("h-6 w-6", badge.unlocked ? "text-amber-500" : "text-muted-foreground")}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="font-semibold">{badge.name}</p>
+                      <p className="text-sm text-muted-foreground">{badge.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+             </TooltipProvider>
+           </CardContent>
+        </Card>
+        
         <Card>
            <CardHeader>
             <CardTitle className="font-headline">Join a Class</CardTitle>

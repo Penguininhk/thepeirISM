@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenCheck, CalendarCheck, LayoutDashboard, ListPlus, Megaphone, FileText, Calendar, MessageSquare, Settings, FileSignature } from "lucide-react";
+import { BookOpenCheck, CalendarCheck, LayoutDashboard, ListPlus, Megaphone, FileText, Calendar, MessageSquare, Settings, FileSignature, BarChart3, Library } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -24,10 +24,12 @@ export function StudentSidebar() {
     { href: "/dashboard/student", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/student/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/student/classwork", label: "Classwork", icon: BookOpenCheck },
+    { href: "/dashboard/student/progress", label: "My Progress", icon: BarChart3 },
     { href: "/dashboard/student/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/student/attendance", label: "Attendance", icon: CalendarCheck },
     { href: "/dashboard/student/schedule", label: "My Schedule", icon: Calendar },
     { href: "/dashboard/student/courses", label: "Course Selection", icon: ListPlus },
+    { href: "/dashboard/resources", label: "Resource Hub", icon: Library },
     { href: "/dashboard/forums", label: "Forums", icon: MessageSquare },
     { href: "/dashboard/forms", label: "Forms", icon: FileSignature },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
