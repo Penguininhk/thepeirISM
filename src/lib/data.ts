@@ -78,6 +78,18 @@ export type Course = {
   category?: 'Science' | 'Social Studies';
 };
 
+export type SEACourse = {
+  id: string;
+  name: string;
+  description: string;
+  instructor: string;
+  ageGroup: 'Primary' | 'Middle School';
+  term: string;
+  schedule: string;
+  price: number;
+  imageUrl: string;
+};
+
 export type Forum = {
   id: string;
   title: string;
@@ -122,7 +134,7 @@ export type AssignmentAttachment = {
 export type Assignment = {
     id: string;
     title: string;
-    course: { id: string; name: string };
+    course: { id: string; name: string; teacher?: { avatarUrl?: string } };
     dueDate: string; // ISO String
     postedDate: string; // ISO String
     maxPoints: number;
@@ -806,6 +818,64 @@ export const reportCards: ReportCard[] = [
     grade: 'C+',
     comments: 'Charlie is a pleasure to have in class, but he has struggled with some of the more complex topics. Extra help sessions would be beneficial.',
     status: 'draft',
+  }
+];
+
+export const seaCourses: SEACourse[] = [
+  {
+    id: 'sea-001',
+    name: 'LEGO Robotics',
+    description: 'Build and program robots using LEGO Mindstorms. Learn the fundamentals of engineering and coding in a fun, hands-on environment.',
+    instructor: 'Mr. Smith',
+    ageGroup: 'Primary',
+    term: 'Fall 2024',
+    schedule: 'Mon 3:30 PM - 4:30 PM',
+    price: 1500,
+    imageUrl: getImageUrl('course-robotics'),
+  },
+  {
+    id: 'sea-002',
+    name: 'Creative Coding with Scratch',
+    description: 'Learn to code your own interactive stories, games, and animations using Scratch, a visual programming language from MIT.',
+    instructor: 'Ms. Davis',
+    ageGroup: 'Primary',
+    term: 'Fall 2024',
+    schedule: 'Wed 3:30 PM - 4:30 PM',
+    price: 1200,
+    imageUrl: getImageUrl('course-digital-art'),
+  },
+  {
+    id: 'sea-003',
+    name: 'Debate Club',
+    description: 'Develop critical thinking and public speaking skills. Students will learn to construct arguments, engage in respectful debate, and participate in tournaments.',
+    instructor: 'Mr. Samuel Greene',
+    ageGroup: 'Middle School',
+    term: 'Fall 2024',
+    schedule: 'Tue 4:00 PM - 5:00 PM',
+    price: 1000,
+    imageUrl: getImageUrl('admin-user-management'),
+  },
+  {
+    id: 'sea-004',
+    name: 'Model United Nations (MUN)',
+    description: 'Simulate the UN and debate global issues. A great way to learn about international relations, diplomacy, and public speaking.',
+    instructor: 'Dr. Evelyn Reed',
+    ageGroup: 'Middle School',
+    term: 'Full Year',
+    schedule: 'Thu 4:00 PM - 5:30 PM',
+    price: 2500,
+    imageUrl: getImageUrl('course-world-history'),
+  },
+  {
+    id: 'sea-005',
+    name: 'Digital Photography',
+    description: 'Learn the basics of composition, lighting, and editing to take stunning photos with any digital camera.',
+    instructor: 'Ms. Chloe Kim',
+    ageGroup: 'Middle School',
+    term: 'Spring 2025',
+    schedule: 'Fri 3:30 PM - 5:00 PM',
+    price: 1800,
+    imageUrl: getImageUrl('course-digital-art'),
   }
 ];
 

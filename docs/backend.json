@@ -486,6 +486,57 @@
         "comments",
         "status"
       ]
+    },
+    "SEACourse": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SEA Course",
+      "type": "object",
+      "description": "Represents a Special Enrichment Activity (SEA) course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SEA course."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the SEA course."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the SEA course."
+        },
+        "instructor": {
+          "type": "string",
+          "description": "The name of the instructor."
+        },
+        "ageGroup": {
+          "type": "string",
+          "enum": ["Primary", "Middle School"],
+          "description": "The target age group for the course."
+        },
+        "term": {
+          "type": "string",
+          "description": "The term the course is offered (e.g., 'Fall 2024', 'Full Year')."
+        },
+        "schedule": {
+          "type": "string",
+          "description": "The meeting time and day for the course."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the course in HKD."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "instructor",
+        "ageGroup",
+        "term",
+        "schedule",
+        "price"
+      ]
     }
   },
   "auth": {
@@ -675,10 +726,24 @@
             }
           ]
         }
+      },
+      {
+        "path": "/sea-courses/{seaCourseId}",
+        "definition": {
+          "entityName": "SEACourse",
+          "schema": {
+            "$ref": "#/backend/entities/SEACourse"
+          },
+          "description": "Special Enrichment Activity (SEA) courses available for enrollment.",
+          "params": [
+            {
+              "name": "seaCourseId",
+              "description": "Unique identifier for the SEA course."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to address the issues of announcement updates, assignment creation/grading, course information updates, and course selection visibility. It prioritizes authorization independence and QAPs through denormalization and structural segregation.\n\n**Authorization Independence:**\n*   Admin roles are checked using custom claims (`isAdmin: true`) on the user's auth token. This is more efficient and secure than checking document existence.\n*   Announcements include denormalized `classIds` and `schoolWide` flags to avoid requiring `get()` operations to determine visibility for users.\n*   Submissions are stored under a path that includes both `assignmentId` and `studentId` for easy retrieval and permission validation.\n*   Access to course selections uses path-based ownership (`/users/{userId}/courseSelections/{courseSelectionId}`) so we don't need to store student information on course selections for security.\n\n**QAPs:**\n*   Segregation of data by user role and ownership allows for secure `list` operations. For example, listing assignments for a specific course is done within the `/courses/{courseId}/assignments` collection, and security rules can easily verify the requesting user is the course teacher or an enrolled student.\n\n**Structure Explanation:**\n*   `/actionLogs`: A new collection to store logs of administrative actions for accountability.\n*   `/announcements`: School-wide announcements. The `schoolWide` boolean determines visibility.\n*   `/classes/{classId}/announcements`: Class-specific announcements. Teachers associated with the class can create announcements. Students enrolled in the class can view them.\n*   `/courses`: Courses offered by the school. Teachers who 'own' the course can manage its details and create assignments.\n*   `/courses/{courseId}/assignments`: Assignments for a specific course.\n*   `/assignments/{assignmentId}/submissions/{submissionId}`: Student submissions are nested under their associated assignment for easier retrieval and grading.\n*   `/users/{userId}`: User profiles, containing basic information like name, email, and role.\n*   `/users/{userId}/courseSelections`: Course selections made by students.  This ensures that only the student (or an admin) can view or modify their course selections.\n*   `/users/{userId}/reportCards/{reportCardId}`: A new collection to store student report cards. This structure ensures that a student's report cards are directly tied to their user document, simplifying security rules for access control."
+    "reasoning": "The Firestore structure is designed to address the issues of announcement updates, assignment creation/grading, course information updates, and course selection visibility. It prioritizes authorization independence and QAPs through denormalization and structural segregation.\n\n**Authorization Independence:**\n*   Admin roles are checked using custom claims (`isAdmin: true`) on the user's auth token. This is more efficient and secure than checking document existence.\n*   Announcements include denormalized `classIds` and `schoolWide` flags to avoid requiring `get()` operations to determine visibility for users.\n*   Submissions are stored under a path that includes both `assignmentId` and `studentId` for easy retrieval and permission validation.\n*   Access to course selections uses path-based ownership (`/users/{userId}/courseSelections/{courseSelectionId}`) so we don't need to store student information on course selections for security.\n\n**QAPs:**\n*   Segregation of data by user role and ownership allows for secure `list` operations. For example, listing assignments for a specific course is done within the `/courses/{courseId}/assignments` collection, and security rules can easily verify the requesting user is the course teacher or an enrolled student.\n\n**Structure Explanation:**\n*   `/actionLogs`: A new collection to store logs of administrative actions for accountability.\n*   `/announcements`: School-wide announcements. The `schoolWide` boolean determines visibility.\n*   `/classes/{classId}/announcements`: Class-specific announcements. Teachers associated with the class can create announcements. Students enrolled in the class can view them.\n*   `/courses`: Courses offered by the school. Teachers who 'own' the course can manage its details and create assignments.\n*   `/courses/{courseId}/assignments`: Assignments for a specific course.\n*   `/assignments/{assignmentId}/submissions/{submissionId}`: Student submissions are nested under their associated assignment for easier retrieval and grading.\n*   `/users/{userId}`: User profiles, containing basic information like name, email, and role.\n*   `/users/{userId}/courseSelections`: Course selections made by students.  This ensures that only the student (or an admin) can view or modify their course selections.\n*   `/users/{userId}/reportCards/{reportCardId}`: A new collection to store student report cards. This structure ensures that a student's report cards are directly tied to their user document, simplifying security rules for access control.\n*   `/sea-courses`: A new collection for Special Enrichment Activity (SEA) courses."
   }
 }
-
-    

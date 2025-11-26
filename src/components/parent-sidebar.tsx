@@ -1,9 +1,10 @@
 
+
 'use client';
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Megaphone, FileText, CalendarCheck, Settings, FileSignature } from "lucide-react";
+import { LayoutDashboard, Megaphone, FileText, CalendarCheck, Settings, FileSignature, Sparkles } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +26,7 @@ export function ParentSidebar() {
     { href: "/dashboard/parent/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/parent/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/parent/attendance", label: "Attendance", icon: CalendarCheck },
+    { href: "/dashboard/sea", label: "SEA Courses", icon: Sparkles },
     { href: "/dashboard/forms", label: "Forms", icon: FileSignature },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
