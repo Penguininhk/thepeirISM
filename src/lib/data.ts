@@ -78,7 +78,7 @@ export type Course = {
   category?: 'Science' | 'Social Studies';
 };
 
-export type SEACourse = {
+export type SchoolExtensionActivity = {
   id: string;
   name: string;
   description: string;
@@ -821,7 +821,7 @@ export const reportCards: ReportCard[] = [
   }
 ];
 
-export const seaCourses: SEACourse[] = [
+export const schoolExtensionActivities: SchoolExtensionActivity[] = [
   {
     id: 'sea-001',
     name: 'LEGO Robotics',
@@ -878,5 +878,7 @@ export const seaCourses: SEACourse[] = [
     imageUrl: getImageUrl('course-digital-art'),
   }
 ];
+
+    
 
     

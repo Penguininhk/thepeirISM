@@ -2,8 +2,8 @@
 'use client';
 
 import * as React from 'react';
-import { seaCourses, teacherProfile, parentProfile } from '@/lib/data';
-import type { SEACourse } from '@/lib/data';
+import { schoolExtensionActivities, teacherProfile, parentProfile } from '@/lib/data';
+import type { SchoolExtensionActivity } from '@/lib/data';
 import { usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,8 +36,8 @@ export default function SeaCoursesPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                <h1 className="text-3xl font-bold font-headline">SEA Courses</h1>
-                <p className="text-muted-foreground">Browse and manage Special Enrichment Activities.</p>
+                <h1 className="text-3xl font-bold font-headline">School Extension Activities</h1>
+                <p className="text-muted-foreground">Browse and manage extracurricular courses for Primary and Middle School.</p>
                 </div>
                 {canManage && (
                 <Button>
@@ -48,7 +48,7 @@ export default function SeaCoursesPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {seaCourses.map((course) => (
+                {schoolExtensionActivities.map((course) => (
                 <Card key={course.id} className="flex flex-col overflow-hidden transition-all hover:shadow-xl">
                     <div className="relative h-40 w-full">
                         <Image src={course.imageUrl} alt={course.name} layout="fill" objectFit="cover" />
@@ -84,3 +84,5 @@ export default function SeaCoursesPage() {
         </div>
     );
 }
+
+    

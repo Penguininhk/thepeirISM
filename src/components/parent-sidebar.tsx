@@ -26,7 +26,7 @@ export function ParentSidebar() {
     { href: "/dashboard/parent/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/parent/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/parent/attendance", label: "Attendance", icon: CalendarCheck },
-    { href: "/dashboard/sea", label: "SEA Courses", icon: Sparkles },
+    { href: "/dashboard/sea", label: "Extension Activities", icon: Sparkles },
     { href: "/dashboard/forms", label: "Forms", icon: FileSignature },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
@@ -83,3 +83,5 @@ export function ParentSidebar() {
     </Sidebar>
   );
 }
+
+    

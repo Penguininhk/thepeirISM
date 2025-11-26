@@ -27,7 +27,7 @@ export function AdminSidebar() {
     { href: "/dashboard/admin/announcements", label: "Announcements", icon: Megaphone },
     { href: "/dashboard/admin/courses", label: "Courses", icon: BookOpen },
     { href: "/dashboard/admin/reports", label: "Report Cards", icon: FileText },
-    { href: "/dashboard/sea", label: "SEA Courses", icon: Sparkles },
+    { href: "/dashboard/sea", label: "Extension Activities", icon: Sparkles },
     { href: "/dashboard/admin/logs", label: "Action Logs", icon: Shield },
     { href: "/dashboard/forms", label: "Forms", icon: FileSignature },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -82,3 +82,5 @@ export function AdminSidebar() {
     </Sidebar>
   );
 }
+
+    

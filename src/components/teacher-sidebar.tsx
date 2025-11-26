@@ -26,7 +26,7 @@ export function TeacherSidebar() {
     { href: "/dashboard/teacher/classwork", label: "Classwork", icon: BookMarked },
     { href: "/dashboard/teacher/reports", label: "Report Cards", icon: FileText },
     { href: "/dashboard/teacher/announcements", label: "Announcements", icon: Megaphone },
-    { href: "/dashboard/sea", label: "SEA Courses", icon: Sparkles },
+    { href: "/dashboard/sea", label: "Extension Activities", icon: Sparkles },
     { href: "/dashboard/forums", label: "Forums", icon: MessageSquare },
     { href: "/dashboard/teacher/lounge", label: "Faculty Lounge", icon: Coffee },
     { href: "/dashboard/forms", label: "Forms", icon: FileSignature },
@@ -81,3 +81,5 @@ export function TeacherSidebar() {
     </Sidebar>
   );
 }
+
+    
