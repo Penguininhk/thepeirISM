@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { FileText } from 'lucide-react';
 
-const currentYear = new Date().getFullYear();
+const currentYear = 2025;
 const semesters = [`Fall ${currentYear}`, `Spring ${currentYear + 1}`];
 
 export default function StudentReportsPage() {

@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, CheckCircle, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-const currentYear = new Date().getFullYear();
+const currentYear = 2025;
 // Mock data for selections
 const mockSelections = {
   [`Term 1 (${currentYear})`]: {

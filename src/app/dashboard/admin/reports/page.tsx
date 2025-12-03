@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ReportCard } from '@/lib/data';
 
-const currentYear = new Date().getFullYear();
+const currentYear = 2025;
 const semesters = [`Fall ${currentYear}`, `Spring ${currentYear + 1}`];
 
 export default function AdminReportsPage() {

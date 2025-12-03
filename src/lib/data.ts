@@ -228,7 +228,7 @@ export type Resource = {
 // --- MOCK DATA ---
 
 const today = new Date();
-const currentYear = today.getFullYear();
+const currentYear = 2025; // Set to the desired school year start
 const pastDate = (days: number) => new Date(today.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
 const futureDate = (days: number) => new Date(today.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
 const formatDate = (date: Date) => date.toISOString().split('T')[0];
