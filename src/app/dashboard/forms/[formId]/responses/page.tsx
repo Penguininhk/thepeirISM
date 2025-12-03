@@ -3,7 +3,7 @@
 
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { forms } from '@/lib/data';
+import { forms, mockResponses } from '@/lib/data';
 import type { Form as FormType } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -16,13 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { format } from 'date-fns';
 
-// Mock responses
-const mockResponses = [
-    { responseId: 'resp-001', student: 'Alice Johnson', submissionDate: '2025-05-20', data: { 'Reason for Absence': 'Family matter.' } },
-    { responseId: 'resp-002', student: 'Bob Williams', submissionDate: '2025-05-21', data: { 'Reason for Absence': 'Doctor\'s appointment.' } },
-    { responseId: 'resp-003', student: 'Charlie Brown', submissionDate: '2025-05-22', data: { 'Reason for Absence': 'Travel.' } },
-];
 
 export default function FormResponsesPage({ params }: { params: { formId: string } }) {
   const resolvedParams = use(params);
@@ -73,7 +68,7 @@ export default function FormResponsesPage({ params }: { params: { formId: string
                         {mockResponses.map(response => (
                             <TableRow key={response.responseId}>
                                 <TableCell className="font-medium">{response.student}</TableCell>
-                                <TableCell>{response.submissionDate}</TableCell>
+                                <TableCell>{format(new Date(response.submissionDate), 'MMM d, yyyy')}</TableCell>
                                 {fieldLabels.map(label => (
                                     <TableCell key={label}>{response.data[label as keyof typeof response.data] || '--'}</TableCell>
                                 ))}

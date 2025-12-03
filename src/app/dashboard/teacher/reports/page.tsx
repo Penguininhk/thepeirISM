@@ -20,7 +20,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ReportCard, Student } from '@/lib/data';
 
-const semesters = ['Fall 2024', 'Spring 2025'];
+const currentYear = new Date().getFullYear();
+const semesters = [`Fall ${currentYear}`, `Spring ${currentYear + 1}`];
 
 export default function TeacherReportsPage() {
   const { toast } = useToast();

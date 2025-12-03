@@ -9,9 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, CheckCircle, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
+const currentYear = new Date().getFullYear();
 // Mock data for selections
 const mockSelections = {
-  "Term 1": {
+  [`Term 1 (${currentYear})`]: {
     "Block A": ["AP Marine Biology", "Oceanography", "Astrophysics"],
     "Block B": ["AP Calculus BC", "Number Theory", "Game Theory"],
     "Block C": ["AP Studio Art: 2D", "Photography", "Study Block"],
@@ -19,7 +20,7 @@ const mockSelections = {
     "Block E": ["Intro to Robotics", "Study Block", "Study Block"],
     "Block F": ["AP English Literature", "Study Block", "Study Block"],
   },
-  "Term 2": {
+  [`Term 2 (${currentYear + 1})`]: {
     "Block A": ["Genetics", "Study Block", "Study Block"],
     "Block B": ["Linear Algebra", "Study Block", "Study Block"],
     "Block C": ["3D Modeling", "Study Block", "Study Block"],
@@ -27,7 +28,7 @@ const mockSelections = {
     "Block E": ["Advanced Robotics", "Study Block", "Study Block"],
     "Block F": ["Creative Non-Fiction", "Study Block", "Study Block"],
   },
-    "Term 3": {
+    [`Term 3 (${currentYear + 1})`]: {
     "Block A": ["Environmental Science", "Study Block", "Study Block"],
     "Block B": ["Statistics", "Study Block", "Study Block"],
     "Block C": ["Animation", "Study Block", "Study Block"],

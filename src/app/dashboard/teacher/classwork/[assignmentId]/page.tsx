@@ -59,6 +59,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
     } else {
       setComments([]);
     }
+    setNewComment('');
   }, [selectedStudent, assignmentId]);
 
   if (!assignment) {

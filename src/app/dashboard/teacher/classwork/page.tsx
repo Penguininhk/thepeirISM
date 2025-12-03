@@ -28,7 +28,7 @@ export default function TeacherClassworkPage() {
   }, {} as Record<string, typeof myAssignments>);
 
   const getSubmissionCount = (assignmentId: string) => {
-    return assignmentSubmissions.filter(sub => sub.assignmentId === assignmentId).length;
+    return assignmentSubmissions.filter(sub => sub.assignmentId === assignmentId && sub.status !== 'pending').length;
   };
 
   const defaultTab = Object.keys(assignmentsByCourse)[0] || "";
@@ -47,7 +47,7 @@ export default function TeacherClassworkPage() {
       </div>
 
       <Tabs defaultValue={defaultTab} className="w-full">
-         <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${Object.keys(assignmentsByCourse).length}, minmax(0, 1fr))` }}>
+         <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${Object.keys(assignmentsByCourse).length || 1}, minmax(0, 1fr))` }}>
           {Object.keys(assignmentsByCourse).map((courseName) => (
             <TabsTrigger key={courseName} value={courseName}>{courseName}</TabsTrigger>
           ))}
@@ -62,7 +62,7 @@ export default function TeacherClassworkPage() {
                   <Card key={assignment.id} className="flex flex-col">
                     <CardHeader>
                       <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                      <CardDescription>Due: {format(assignment.dueDate, 'MMM d, yyyy')}</CardDescription>
+                      <CardDescription>Due: {format(new Date(assignment.dueDate), 'MMM d, yyyy')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col justify-between">
                        <div className="space-y-2 mb-4">

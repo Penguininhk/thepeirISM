@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/select';
 import { FileText } from 'lucide-react';
 
-const semesters = ['Fall 2024', 'Spring 2025'];
+const currentYear = new Date().getFullYear();
+const semesters = [`Fall ${currentYear}`, `Spring ${currentYear + 1}`];
 
 export default function StudentReportsPage() {
-  const [selectedSemester, setSelectedSemester] = React.useState(semesters[semesters.length - 1]);
+  const [selectedSemester, setSelectedSemester] = React.useState(semesters[0]);
 
   const studentReports = reportCards
     .filter((r) => r.student.id === studentProfile.id && r.status === 'released' && r.semester === selectedSemester)
