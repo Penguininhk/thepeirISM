@@ -9,7 +9,6 @@ import { StudentSidebar } from '@/components/student-sidebar';
 import { TeacherSidebar } from '@/components/teacher-sidebar';
 import { ParentSidebar } from '@/components/parent-sidebar';
 import { studentProfile, teacherProfile, parentProfile } from '@/lib/data';
-import { StudyBuddyBubble } from '@/components/study-buddy-bubble';
 
 type Role = 'student' | 'teacher' | 'admin' | 'parent';
 
@@ -65,7 +64,6 @@ export default function DashboardLayout({
           <UserNav user={user} />
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
-        {role === 'student' && <StudyBuddyBubble />}
       </SidebarInset>
     </SidebarProvider>
   );
