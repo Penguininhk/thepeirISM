@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -18,20 +17,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from '@/components/ui/textarea';
 import type { Submission, Assignment, PrivateComment, Student } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
+
+export function generateStaticParams() {
+  return teacherAssignments.map((assignment) => ({
+    assignmentId: assignment.id,
+  }));
+}
 
 export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
   const resolvedParams = use(params);
@@ -120,7 +116,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
             {studentList.map(student => (
                 <button 
                     key={student.id} 
-                    onClick={() => setSelectedStudent(student as Student)}
+                    onClick={() => setSelectedStudent(student as any)}
                     className={cn(
                         "w-full text-left p-3 border-b hover:bg-accent/50 transition-colors",
                         selectedStudent?.id === student.id && "bg-accent text-accent-foreground"
@@ -172,7 +168,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
           <div className="border-l bg-card p-4 space-y-6 flex flex-col">
               <Card>
                 <CardHeader>
-                    <CardTitle>Grade</CardTitle>
+                    <CardTitle className="text-base font-semibold">Grade</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-baseline gap-2">
@@ -183,7 +179,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
               </Card>
                <Card className="flex-1 flex flex-col">
                 <CardHeader>
-                    <CardTitle>Private Comments</CardTitle>
+                    <CardTitle className="text-base font-semibold">Private Comments</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1 overflow-y-auto pr-2">
                     {comments.map(comment => {

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -31,6 +30,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ClientTime } from '@/components/client-time';
 
+export function generateStaticParams() {
+  return forums.map((forum) => ({
+    topicId: forum.id,
+  }));
+}
+
 export default function ForumTopicPage({ params }: { params: { topicId: string } }) {
   const resolvedParams = use(params);
   const { topicId } = resolvedParams;
@@ -38,8 +43,8 @@ export default function ForumTopicPage({ params }: { params: { topicId: string }
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   
-  const [forum, setForum] = useState(undefined);
-  const [topics, setTopics] = useState([]);
+  const [forum, setForum] = useState<any>(undefined);
+  const [topics, setTopics] = useState<any[]>([]);
 
   useEffect(() => {
     if (topicId) {

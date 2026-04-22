@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -13,6 +12,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import type { PrivateComment } from '@/lib/data';
+
+export function generateStaticParams() {
+  return teacherAssignments.map((assignment) => ({
+    assignmentId: assignment.id,
+  }));
+}
 
 export default function StudentAssignmentDetailPage({ params }: { params: { assignmentId: string } }) {
   const resolvedParams = use(params);

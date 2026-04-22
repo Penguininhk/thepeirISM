@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, use } from 'react';
@@ -21,11 +20,17 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 
+export function generateStaticParams() {
+  return classLists.map((cl) => ({
+    classId: cl.id,
+  }));
+}
+
 export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
   const resolvedParams = use(params);
   const { classId } = resolvedParams;
 
-  const [classInfo, setClassInfo] = useState(undefined);
+  const [classInfo, setClassInfo] = useState<any>(undefined);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -83,7 +88,7 @@ export default function TakeAttendancePage({ params }: { params: { classId: stri
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {classInfo.students.map(student => (
+                {classInfo.students.map((student: any) => (
                   <TableRow key={student.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">

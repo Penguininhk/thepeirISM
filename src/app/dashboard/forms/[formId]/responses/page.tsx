@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, use } from 'react';
@@ -18,6 +17,11 @@ import {
 } from "@/components/ui/table";
 import { format } from 'date-fns';
 
+export function generateStaticParams() {
+  return forms.map((form) => ({
+    formId: form.id,
+  }));
+}
 
 export default function FormResponsesPage({ params }: { params: { formId: string } }) {
   const resolvedParams = use(params);

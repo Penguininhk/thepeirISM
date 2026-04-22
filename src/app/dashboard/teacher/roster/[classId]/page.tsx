@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -17,11 +16,17 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
+export function generateStaticParams() {
+  return classLists.map((cl) => ({
+    classId: cl.id,
+  }));
+}
+
 export default function ClassRosterPage({ params }: { params: { classId: string } }) {
   const resolvedParams = use(params);
   const { classId } = resolvedParams;
 
-  const [classInfo, setClassInfo] = useState(undefined);
+  const [classInfo, setClassInfo] = useState<any>(undefined);
 
   useEffect(() => {
     if (classId) {
@@ -68,7 +73,7 @@ export default function ClassRosterPage({ params }: { params: { classId: string 
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {classInfo.students.map((student) => (
+                {classInfo.students.map((student: any) => (
                   <TableRow key={student.id}>
                     <TableCell>
                       <Avatar className="h-10 w-10">
