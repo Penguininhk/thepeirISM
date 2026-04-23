@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -30,11 +29,10 @@ export default function DashboardLayout({
     } else if (pathname.startsWith('/dashboard/parent')) {
       setRole('parent');
     }
-    // If it's a shared page like /dashboard/forums, the role will persist from the last page.
   }, [pathname]);
 
   if (role === 'admin') {
-    return <>{children}</>
+    return <>{children}</>;
   }
   
   const user = role === 'student' ? studentProfile : role === 'teacher' ? teacherProfile : parentProfile;
@@ -59,7 +57,6 @@ export default function DashboardLayout({
         <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-card px-4 sm:h-16 sm:px-6">
           <SidebarTrigger className="md:hidden" />
           <div className="flex-1">
-            {/* Header content like breadcrumbs or page title can go here */}
           </div>
           <UserNav user={user} />
         </header>
