@@ -1,7 +1,11 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   output: 'export',
+  // Change this to match your repository name exactly
+  basePath: '/thepeirlSM',
+  assetPrefix: '/thepeirlSM',
   trailingSlash: true,
   images: {
     unoptimized: true,
