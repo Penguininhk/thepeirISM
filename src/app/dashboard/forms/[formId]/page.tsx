@@ -14,29 +14,28 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return forms.map((form) => ({
     formId: form.id,
   }));
 }
 
-const useUserRole = () => {
-    const pathname = usePathname();
-    if (!pathname) return 'student';
-    if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
-    if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
-    if (pathname.startsWith('/dashboard/admin')) return 'admin';
-    return 'student';
-}
-
 export default function FormPage({ params }: { params: Promise<{ formId: string }> }) {
   const { formId } = use(params);
   const router = useRouter();
+  const pathname = usePathname();
   const { toast } = useToast();
   const [form, setForm] = useState<FormType | undefined>();
-  const userRole = useUserRole();
-  const canManageForm = userRole === 'teacher' || userRole === 'admin';
 
+  const userRole = (() => {
+      if (!pathname) return 'student';
+      if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
+      if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
+      if (pathname.startsWith('/dashboard/admin')) return 'admin';
+      return 'student';
+  })();
+
+  const canManageForm = userRole === 'teacher' || userRole === 'admin';
 
   useEffect(() => {
     if (formId) {
