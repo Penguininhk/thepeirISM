@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { format } from 'date-fns';
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return forms.map((form) => ({
     formId: form.id,
   }));
