@@ -3,7 +3,7 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   output: 'export',
-  // Change this to match your repository name exactly
+  // Matches your repository name exactly for GitHub Pages compatibility
   basePath: '/thepeirlSM',
   assetPrefix: '/thepeirlSM',
   trailingSlash: true,

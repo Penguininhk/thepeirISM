@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -5,22 +6,13 @@ import Link from 'next/link';
 import { teacherAssignments, assignmentSubmissions, users, privateComments } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, BookCheck, Clock, User, Send, Paperclip, Link as LinkIcon, Users, HeartHandshake } from 'lucide-react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { ArrowLeft, Check, Send, Paperclip, Link as LinkIcon, Users, HeartHandshake } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from '@/components/ui/textarea';
-import type { Submission, Assignment, PrivateComment, Student } from '@/lib/data';
+import type { Submission, Assignment, PrivateComment } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
 export function generateStaticParams() {
@@ -33,7 +25,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
   const resolvedParams = use(params);
   const { assignmentId } = resolvedParams;
 
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const { toast } = useToast();
   
   const [assignment, setAssignment] = useState<Assignment | undefined>(undefined);
@@ -76,7 +68,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
         id: `comment-${Date.now()}`,
         assignmentId,
         studentId: selectedStudent.id,
-        authorId: 'usr-teach-001', // Mock teacher ID
+        authorId: 'usr-teach-001',
         content: newComment,
         timestamp: new Date().toISOString(),
       }]);
@@ -87,11 +79,11 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("");
 
-  const studentList = Array.from(new Set(assignmentSubmissions.filter(s => s.assignmentId === assignmentId).map(s => s.student)))
-    .map(student => {
-        const submission = assignmentSubmissions.find(s => s.student.id === student.id && s.assignmentId === assignmentId);
+  const studentList = Array.from(new Set(assignmentSubmissions.filter(s => s.assignmentId === assignmentId).map(s => s.student.id)))
+    .map(studentId => {
+        const submission = assignmentSubmissions.find(s => s.student.id === studentId && s.assignmentId === assignmentId);
         return {
-            ...student,
+            ...submission?.student,
             status: submission?.status || 'pending',
             grade: submission?.grade
         }
@@ -101,7 +93,6 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
   
   return (
     <div className="flex h-[calc(100vh-theme(spacing.16))]">
-      {/* Student List Sidebar */}
       <div className="w-64 border-r bg-muted/20 flex flex-col">
         <div className="p-4 border-b">
             <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
@@ -116,7 +107,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
             {studentList.map(student => (
                 <button 
                     key={student.id} 
-                    onClick={() => setSelectedStudent(student as any)}
+                    onClick={() => setSelectedStudent(student)}
                     className={cn(
                         "w-full text-left p-3 border-b hover:bg-accent/50 transition-colors",
                         selectedStudent?.id === student.id && "bg-accent text-accent-foreground"
@@ -124,7 +115,7 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
                 >
                     <div className="flex items-center justify-between">
                         <span className="font-medium">{student.name}</span>
-                        {student.grade && <span className="text-xs font-bold">{student.grade}/{assignment.maxPoints}</span>}
+                        {student.grade !== undefined && <span className="text-xs font-bold">{student.grade}/{assignment.maxPoints}</span>}
                     </div>
                      <Badge variant={student.status === 'graded' ? 'default' : student.status === 'submitted' ? 'secondary' : 'outline'} className="mt-1 text-xs">
                         {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
@@ -134,13 +125,12 @@ export default function GradeAssignmentPage({ params }: { params: { assignmentId
         </div>
       </div>
       
-      {/* Main Grading Area */}
       {selectedStudent ? (
         <div className="flex-1 flex md:grid md:grid-cols-3">
           <div className="flex-1 md:col-span-2 p-6 overflow-y-auto space-y-6">
             <h2 className="text-2xl font-bold">Submission from {selectedStudent.name}</h2>
              <div className="p-6 bg-muted rounded-lg border min-h-[300px]">
-                 <p className="text-muted-foreground text-center">Student's submitted work would be displayed here for review. This could be text, a link to a file, or an embedded document.</p>
+                 <p className="text-muted-foreground text-center">Student's submitted work would be displayed here for review.</p>
              </div>
              <div>
                 <h3 className="font-semibold mb-2">Attachments from Teacher</h3>
