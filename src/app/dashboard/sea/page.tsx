@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -51,7 +50,12 @@ export default function SeaCoursesPage() {
                 {schoolExtensionActivities.map((course) => (
                 <Card key={course.id} className="flex flex-col overflow-hidden transition-all hover:shadow-xl">
                     <div className="relative h-40 w-full">
-                        <Image src={course.imageUrl} alt={course.name} layout="fill" objectFit="cover" />
+                        <Image 
+                            src={course.imageUrl} 
+                            alt={course.name} 
+                            fill 
+                            style={{ objectFit: 'cover' }} 
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <div className="absolute top-2 right-2">
                            <Badge variant="secondary">{course.ageGroup}</Badge>
@@ -84,5 +88,3 @@ export default function SeaCoursesPage() {
         </div>
     );
 }
-
-    

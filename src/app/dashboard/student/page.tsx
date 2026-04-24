@@ -1,10 +1,8 @@
-
-
 import Link from "next/link";
 import { studentProfile, announcements, teacherAssignments } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, PlusCircle, Award, TrendingUp, MessageSquarePlus, AlarmClock, CalendarCheck2 } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CalendarCheck, Megaphone, PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -24,12 +22,11 @@ import { cn } from "@/lib/utils";
 
 type IconName = keyof typeof LucideIcons;
 
-const Icon = ({ name, ...props }: { name: IconName } & LucideIcons.LucideProps) => {
-  const LucideIcon = LucideIcons[name] as React.ComponentType<LucideIcons.LucideProps>;
+const Icon = ({ name, ...props }: { name: string } & LucideIcons.LucideProps) => {
+  const LucideIcon = (LucideIcons as any)[name] as React.ComponentType<LucideIcons.LucideProps>;
   if (!LucideIcon) return null;
   return <LucideIcon {...props} />;
 };
-
 
 export default function StudentDashboard() {
   const upcomingAssignments = studentProfile.assignments
@@ -135,7 +132,7 @@ export default function StudentDashboard() {
                         badge.unlocked ? "border-amber-400 bg-amber-50" : "border-muted bg-muted/50"
                       )}>
                         <Icon 
-                           name={badge.icon as IconName} 
+                           name={badge.icon} 
                            className={cn("h-6 w-6", badge.unlocked ? "text-amber-500" : "text-muted-foreground")}
                         />
                       </div>

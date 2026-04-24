@@ -6,9 +6,9 @@ const AppLogo = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) 
         <Image
             src="https://www.imghost.online/ib/YuTNsX5eknArWcm_1764130145.gif"
             alt="The Harbour School Logo"
-            layout="fill"
-            objectFit="contain"
-            unoptimized // Required for GIFs
+            fill
+            style={{ objectFit: 'contain' }}
+            unoptimized
         />
     </div>
 );
