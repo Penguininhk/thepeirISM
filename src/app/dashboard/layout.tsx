@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -20,6 +21,7 @@ export default function DashboardLayout({
   const [role, setRole] = React.useState<Role>('student');
 
   React.useEffect(() => {
+    if (!pathname) return;
     if (pathname.startsWith('/dashboard/student')) {
       setRole('student');
     } else if (pathname.startsWith('/dashboard/teacher')) {
