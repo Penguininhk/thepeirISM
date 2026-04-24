@@ -41,7 +41,7 @@ export default function TakeAttendancePage({ params }: { params: Promise<{ class
 
   if (!classInfo) {
     return (
-      <div className="text-center">
+      <div className="text-center p-12">
         <h1 className="text-2xl font-bold">Class not found</h1>
         <p className="text-muted-foreground">The requested class could not be found.</p>
         <Button asChild variant="link" className="mt-4">
@@ -52,7 +52,6 @@ export default function TakeAttendancePage({ params }: { params: Promise<{ class
   }
 
   const handleSubmitAttendance = () => {
-    // In a real app, this would submit data to a server
     toast({
       title: "Attendance Submitted",
       description: `Attendance for ${classInfo.course.name} on ${format(new Date(), 'MMMM d, yyyy')} has been recorded.`,

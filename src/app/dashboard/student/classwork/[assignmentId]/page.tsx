@@ -39,7 +39,7 @@ export default function StudentAssignmentDetailPage({ params }: { params: Promis
   }, [assignmentId]);
 
   if (!assignment) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center p-12 text-muted-foreground">Loading assignment...</div>;
   }
   
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("");

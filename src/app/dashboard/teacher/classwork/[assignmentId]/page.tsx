@@ -40,7 +40,7 @@ export default function GradeAssignmentPage({ params }: { params: Promise<{ assi
   }, [assignmentId]);
 
   useEffect(() => {
-    if (selectedStudent) {
+    if (selectedStudent && assignmentId) {
       const relatedComments = privateComments.filter(c => c.assignmentId === assignmentId && c.studentId === selectedStudent.id);
       setComments(relatedComments);
     } else {
@@ -50,7 +50,7 @@ export default function GradeAssignmentPage({ params }: { params: Promise<{ assi
   }, [selectedStudent, assignmentId]);
 
   if (!assignment) {
-    return <div>Loading assignment...</div>;
+    return <div className="flex items-center justify-center p-12 text-muted-foreground">Loading assignment...</div>;
   }
   
   const handleReturnGrade = (notifyParent: boolean) => {
@@ -62,7 +62,7 @@ export default function GradeAssignmentPage({ params }: { params: Promise<{ assi
   }
 
   const handleAddComment = () => {
-    if (newComment.trim() && selectedStudent) {
+    if (newComment.trim() && selectedStudent && assignmentId) {
       setComments(prev => [...prev, {
         id: `comment-${Date.now()}`,
         assignmentId,
