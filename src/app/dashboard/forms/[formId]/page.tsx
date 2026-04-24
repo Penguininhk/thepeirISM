@@ -22,6 +22,7 @@ export function generateStaticParams() {
 
 const useUserRole = () => {
     const pathname = usePathname();
+    if (!pathname) return 'student';
     if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
     if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
     if (pathname.startsWith('/dashboard/admin')) return 'admin';
@@ -113,7 +114,7 @@ export default function FormPage({ params }: { params: Promise<{ formId: string 
               </div>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }
