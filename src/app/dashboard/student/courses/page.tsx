@@ -23,7 +23,7 @@ export default function CourseSelectionHubPage() {
                 src={getImageUrl('course-calculus')} 
                 alt="High School" 
                 fill={true}
-                objectFit="cover"
+                style={{ objectFit: 'cover' }}
                 data-ai-hint="chalkboard equations"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -52,7 +52,7 @@ export default function CourseSelectionHubPage() {
                 src={getImageUrl('course-life-science')}
                 alt="Middle School" 
                 fill={true}
-                objectFit="cover"
+                style={{ objectFit: 'cover' }}
                 data-ai-hint="microscope"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

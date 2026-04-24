@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
               src={getImageUrl('admin-user-management')} 
               alt="User Management" 
               fill={true}
-              objectFit="cover"
+              style={{ objectFit: 'cover' }}
               data-ai-hint="people working"
             />
              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
               src={getImageUrl('admin-announcements')} 
               alt="Announcements" 
               fill={true}
-              objectFit="cover"
+              style={{ objectFit: 'cover' }}
               data-ai-hint="megaphone broadcast"
             />
              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
               src={getImageUrl('admin-course-catalog')} 
               alt="Course Catalog" 
               fill={true}
-              objectFit="cover"
+              style={{ objectFit: 'cover' }}
               data-ai-hint="library books"
             />
              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
