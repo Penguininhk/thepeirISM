@@ -46,7 +46,6 @@ export default function StudentAssignmentDetailPage({ params }: { params: Promis
 
   const handleAddComment = () => {
     if (newComment.trim()) {
-      // In a real app, this would be a server action
       setComments(prev => [...prev, {
         id: `comment-${Date.now()}`,
         assignmentId,
@@ -73,7 +72,6 @@ export default function StudentAssignmentDetailPage({ params }: { params: Promis
 
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
-          {/* Main Assignment Details */}
           <div className="flex items-start gap-4">
             <div className="p-3 bg-primary text-primary-foreground rounded-full">
                 <User className="h-6 w-6"/>
@@ -91,7 +89,6 @@ export default function StudentAssignmentDetailPage({ params }: { params: Promis
 
           <p className="text-foreground/90 whitespace-pre-wrap">{assignment.instructions}</p>
 
-          {/* Attachments */}
           {assignment.attachments && assignment.attachments.length > 0 && (
             <div className="space-y-3">
               {assignment.attachments.map((att, index) => (
@@ -114,7 +111,6 @@ export default function StudentAssignmentDetailPage({ params }: { params: Promis
         </div>
 
         <div className="space-y-6">
-          {/* Your Work Card */}
           <Card>
             <CardHeader>
               <CardTitle>Your Work</CardTitle>
@@ -127,7 +123,6 @@ export default function StudentAssignmentDetailPage({ params }: { params: Promis
             </CardContent>
           </Card>
 
-          {/* Private Comments Card */}
           <Card>
             <CardHeader>
               <CardTitle>Private Comments</CardTitle>
