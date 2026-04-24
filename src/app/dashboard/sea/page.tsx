@@ -1,8 +1,8 @@
+
 'use client';
 
 import * as React from 'react';
 import { schoolExtensionActivities, teacherProfile, parentProfile } from '@/lib/data';
-import type { SchoolExtensionActivity } from '@/lib/data';
 import { usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const useUserRole = () => {
     const pathname = usePathname();
+    if (!pathname) return 'student';
     if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
     if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
     if (pathname.startsWith('/dashboard/admin')) return 'admin';

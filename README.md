@@ -3,17 +3,20 @@
 
 The official portal for students and faculty of The Harbour School, Hong Kong.
 
-## Live Site
-If you are seeing this text on the website URL, the Next.js build is likely still in progress or has encountered an error. Check the **Actions** tab in your GitHub repository for status.
+## Access the Portal
+The portal is optimized for static hosting. Click the link below to enter:
 
-Once the build is complete, you can access the portal directly.
+👉 **[Launch The PIER Portal](https://alice-johnson.github.io/thepeirlSM/)**
+*(Note: Replace with your actual live URL after the build succeeds)*
+
+## Build Status
+This project uses GitHub Actions for automated deployment. If you see the "README" text on your site instead of the portal, check the **Actions** tab in your repository for build errors.
 
 ## Development
-To run this project locally:
-1. `npm install`
+1. `npm install --legacy-peer-deps`
 2. `npm run dev`
 
-## Deployment
-This project is configured for a static export. To build the project:
+## Static Export
+To generate the static site manually:
 `npm run build`
-The static files will be generated in the `out/` directory.
+The files will be in the `out/` directory.

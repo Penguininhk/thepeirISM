@@ -1,16 +1,17 @@
+
 'use client';
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { forms, teacherProfile, parentProfile } from "@/lib/data"; // Assuming user role can be determined
+import { forms, teacherProfile, parentProfile } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileSignature, ArrowRight, PlusCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-// A simple mock function to determine user role. In a real app, this would come from auth context.
 const useUserRole = () => {
     const pathname = usePathname();
+    if (!pathname) return 'student';
     if (pathname.startsWith('/dashboard/teacher')) return teacherProfile.role;
     if (pathname.startsWith('/dashboard/parent')) return parentProfile.role;
     if (pathname.startsWith('/dashboard/admin')) return 'admin';
