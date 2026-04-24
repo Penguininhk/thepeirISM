@@ -1,16 +1,10 @@
 
-import Image from "next/image";
+import { School } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const AppLogo = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-    <div className={cn("relative rounded-full overflow-hidden", className)} {...props}>
-        <Image
-            src="https://www.imghost.online/ib/YuTNsX5eknArWcm_1764130145.gif"
-            alt="The Harbour School Logo"
-            fill
-            style={{ objectFit: 'contain' }}
-            unoptimized
-        />
+    <div className={cn("relative flex items-center justify-center bg-primary rounded-xl p-1.5 shadow-sm border border-primary-foreground/10", className)} {...props}>
+        <School className="w-full h-full text-primary-foreground" strokeWidth={1.5} />
     </div>
 );
 
