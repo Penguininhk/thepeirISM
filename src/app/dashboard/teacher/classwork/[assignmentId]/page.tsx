@@ -21,9 +21,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function GradeAssignmentPage({ params }: { params: { assignmentId: string } }) {
-  const resolvedParams = use(params);
-  const { assignmentId } = resolvedParams;
+export default function GradeAssignmentPage({ params }: { params: Promise<{ assignmentId: string }> }) {
+  const { assignmentId } = use(params);
 
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const { toast } = useToast();

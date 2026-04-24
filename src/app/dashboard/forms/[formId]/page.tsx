@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, use } from 'react';
@@ -27,9 +28,8 @@ const useUserRole = () => {
     return 'student';
 }
 
-export default function FormPage({ params }: { params: { formId: string } }) {
-  const resolvedParams = use(params);
-  const { formId } = resolvedParams;
+export default function FormPage({ params }: { params: Promise<{ formId: string }> }) {
+  const { formId } = use(params);
   const router = useRouter();
   const { toast } = useToast();
   const [form, setForm] = useState<FormType | undefined>();

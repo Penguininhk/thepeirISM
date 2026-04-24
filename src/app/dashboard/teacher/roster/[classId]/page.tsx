@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -22,9 +23,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ClassRosterPage({ params }: { params: { classId: string } }) {
-  const resolvedParams = use(params);
-  const { classId } = resolvedParams;
+export default function ClassRosterPage({ params }: { params: Promise<{ classId: string }> }) {
+  const { classId } = use(params);
 
   const [classInfo, setClassInfo] = useState<any>(undefined);
 

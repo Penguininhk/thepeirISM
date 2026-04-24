@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -19,9 +20,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function StudentAssignmentDetailPage({ params }: { params: { assignmentId: string } }) {
-  const resolvedParams = use(params);
-  const { assignmentId } = resolvedParams;
+export default function StudentAssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string }> }) {
+  const { assignmentId } = use(params);
   const router = useRouter();
   const { toast } = useToast();
 

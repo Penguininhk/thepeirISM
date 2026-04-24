@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, use } from 'react';
@@ -26,9 +27,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function TakeAttendancePage({ params }: { params: { classId: string } }) {
-  const resolvedParams = use(params);
-  const { classId } = resolvedParams;
+export default function TakeAttendancePage({ params }: { params: Promise<{ classId: string }> }) {
+  const { classId } = use(params);
 
   const [classInfo, setClassInfo] = useState<any>(undefined);
   const { toast } = useToast();

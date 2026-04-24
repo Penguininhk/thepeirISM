@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Paperclip, Link as LinkIcon, Upload, X } from 'lucide-react';
 import { teacherProfile, classLists } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 type Attachment = {
   type: 'file' | 'link';

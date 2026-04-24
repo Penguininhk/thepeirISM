@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, use } from 'react';
@@ -36,9 +37,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ForumTopicPage({ params }: { params: { topicId: string } }) {
-  const resolvedParams = use(params);
-  const { topicId } = resolvedParams;
+export default function ForumTopicPage({ params }: { params: Promise<{ topicId: string }> }) {
+  const { topicId } = use(params);
 
   const [open, setOpen] = useState(false);
   const { toast } = useToast();

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, use } from 'react';
@@ -23,9 +24,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function FormResponsesPage({ params }: { params: { formId: string } }) {
-  const resolvedParams = use(params);
-  const { formId } = resolvedParams;
+export default function FormResponsesPage({ params }: { params: Promise<{ formId: string }> }) {
+  const { formId } = use(params);
   const router = useRouter();
   const [form, setForm] = useState<FormType | undefined>();
 
