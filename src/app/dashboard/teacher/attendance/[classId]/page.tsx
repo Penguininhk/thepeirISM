@@ -21,12 +21,6 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 
-export function generateStaticParams() {
-  return classLists.map((cl) => ({
-    classId: cl.id,
-  }));
-}
-
 export default function TakeAttendancePage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = use(params);
 

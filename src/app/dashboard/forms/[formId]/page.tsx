@@ -14,12 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 
-export async function generateStaticParams() {
-  return forms.map((form) => ({
-    formId: form.id,
-  }));
-}
-
 export default function FormPage({ params }: { params: Promise<{ formId: string }> }) {
   const { formId } = use(params);
   const router = useRouter();

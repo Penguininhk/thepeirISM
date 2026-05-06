@@ -17,12 +17,6 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export async function generateStaticParams() {
-  return classLists.map((cl) => ({
-    classId: cl.id,
-  }));
-}
-
 export default function ClassRosterPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = use(params);
 
