@@ -1,7 +1,8 @@
-
 'use client';
 
-export default function StudentSignupPage() {
+import { Suspense } from 'react';
+
+function SignupContent() {
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <div className="text-center bg-card p-8 rounded-lg shadow-sm border">
@@ -9,5 +10,13 @@ export default function StudentSignupPage() {
         <p className="text-muted-foreground mt-2">Self-registration is currently disabled. Please contact your school administrator.</p>
       </div>
     </div>
+  );
+}
+
+export default function StudentSignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupContent />
+    </Suspense>
   );
 }

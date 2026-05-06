@@ -1,4 +1,3 @@
-
 'use client';
 
 import { School } from "lucide-react";

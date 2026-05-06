@@ -1,3 +1,4 @@
+'use client';
 
 import Link from "next/link";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -92,7 +93,7 @@ export default function Home() {
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground relative z-10">
-        <p>&copy; {new Date().getFullYear()} Adriel Tan, Hong Kong.</p>
+        <p>&copy; {new Date().getFullYear()} Hong Kong.</p>
         <p className="mt-1">
             <Link href="/login/admin" className="underline hover:text-primary">
                 Administrator Login
