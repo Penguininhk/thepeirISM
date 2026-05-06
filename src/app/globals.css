@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @tailwind base;
@@ -74,6 +75,9 @@
   }
   body {
     @apply bg-background text-foreground font-body;
+  }
+  .waves-svg {
+    @apply max-h-[150px];
   }
   .waves > use {
     animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
