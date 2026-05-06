@@ -14,6 +14,14 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import type { PrivateComment } from '@/lib/data';
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return teacherAssignments.map((assignment) => ({
+    assignmentId: assignment.id,
+  }));
+}
+
 export default function StudentAssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string }> }) {
   const { assignmentId } = use(params);
   const router = useRouter();

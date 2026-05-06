@@ -31,6 +31,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ClientTime } from '@/components/client-time';
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return forums.map((forum) => ({
+    topicId: forum.id,
+  }));
+}
+
 export default function ForumTopicPage({ params }: { params: Promise<{ topicId: string }> }) {
   const { topicId } = use(params);
 

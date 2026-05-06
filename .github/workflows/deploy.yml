@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Opt into Node.js 24 for all Javascript actions to resolve deprecation warnings
+      # Explicitly force Node.js 24 for actions and the environment
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
@@ -28,7 +28,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          # Use Node.js 24 for the build process
           node-version: "24"
           cache: "npm"
 

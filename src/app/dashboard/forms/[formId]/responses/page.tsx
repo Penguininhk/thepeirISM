@@ -18,6 +18,14 @@ import {
 } from "@/components/ui/table";
 import { format } from 'date-fns';
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return forms.map((form) => ({
+    formId: form.id,
+  }));
+}
+
 export default function FormResponsesPage({ params }: { params: Promise<{ formId: string }> }) {
   const { formId } = use(params);
   const router = useRouter();

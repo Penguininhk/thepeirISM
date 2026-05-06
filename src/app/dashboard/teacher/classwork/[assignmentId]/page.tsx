@@ -15,6 +15,14 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Submission, Assignment, PrivateComment } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return teacherAssignments.map((assignment) => ({
+    assignmentId: assignment.id,
+  }));
+}
+
 export default function GradeAssignmentPage({ params }: { params: Promise<{ assignmentId: string }> }) {
   const { assignmentId } = use(params);
 
