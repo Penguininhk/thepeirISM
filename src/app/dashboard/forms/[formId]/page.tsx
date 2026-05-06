@@ -1,5 +1,4 @@
 
-import { use } from 'react';
 import { forms } from '@/lib/data';
 import FormPageClient from '@/components/forms/form-page-client';
 
@@ -11,7 +10,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function FormPage({ params }: { params: Promise<{ formId: string }> }) {
-  const resolvedParams = use(params);
+export default async function FormPage({ params }: { params: Promise<{ formId: string }> }) {
+  const resolvedParams = await params;
   return <FormPageClient formId={resolvedParams.formId} />;
 }

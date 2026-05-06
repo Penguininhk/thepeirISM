@@ -1,5 +1,4 @@
 
-import { use } from 'react';
 import { teacherAssignments } from '@/lib/data';
 import GradeAssignmentClient from '@/components/teacher/grade-assignment-client';
 
@@ -11,7 +10,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function GradeAssignmentPage({ params }: { params: Promise<{ assignmentId: string }> }) {
-  const resolvedParams = use(params);
+export default async function GradeAssignmentPage({ params }: { params: Promise<{ assignmentId: string }> }) {
+  const resolvedParams = await params;
   return <GradeAssignmentClient assignmentId={resolvedParams.assignmentId} />;
 }

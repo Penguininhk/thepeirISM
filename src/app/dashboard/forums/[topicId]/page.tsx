@@ -1,5 +1,4 @@
 
-import { use } from 'react';
 import { forums } from '@/lib/data';
 import ForumTopicClient from '@/components/forums/forum-topic-client';
 
@@ -11,7 +10,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ForumTopicPage({ params }: { params: Promise<{ topicId: string }> }) {
-  const resolvedParams = use(params);
+export default async function ForumTopicPage({ params }: { params: Promise<{ topicId: string }> }) {
+  const resolvedParams = await params;
   return <ForumTopicClient topicId={resolvedParams.topicId} />;
 }

@@ -1,5 +1,4 @@
 
-import { use } from 'react';
 import { classLists } from '@/lib/data';
 import TakeAttendanceClient from '@/components/teacher/take-attendance-client';
 
@@ -11,7 +10,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function TakeAttendancePage({ params }: { params: Promise<{ classId: string }> }) {
-  const resolvedParams = use(params);
+export default async function TakeAttendancePage({ params }: { params: Promise<{ classId: string }> }) {
+  const resolvedParams = await params;
   return <TakeAttendanceClient classId={resolvedParams.classId} />;
 }

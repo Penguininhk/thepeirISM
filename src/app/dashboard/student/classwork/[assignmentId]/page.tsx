@@ -1,5 +1,4 @@
 
-import { use } from 'react';
 import { teacherAssignments } from '@/lib/data';
 import StudentAssignmentDetailClient from '@/components/student/assignment-detail-client';
 
@@ -11,7 +10,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function StudentAssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string }> }) {
-  const resolvedParams = use(params);
+export default async function StudentAssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string }> }) {
+  const resolvedParams = await params;
   return <StudentAssignmentDetailClient assignmentId={resolvedParams.assignmentId} />;
 }
