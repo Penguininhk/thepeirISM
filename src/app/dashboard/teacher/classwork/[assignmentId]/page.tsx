@@ -136,8 +136,8 @@ export default function GradeAssignmentPage({ params }: { params: Promise<{ assi
                                 <div className="p-2 bg-muted rounded-md">
                                     {att.type === 'link' ? <LinkIcon className="h-5 w-5 text-primary"/> : <Paperclip className="h-5 w-5 text-primary"/>}
                                 </div>
-                                <div>
-                                    <p className="font-semibold text-primary">{att.name}</p>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-primary truncate">{att.name}</p>
                                     <p className="text-sm text-muted-foreground">{att.type === 'link' ? 'Web Link' : 'File'}</p>
                                 </div>
                                 </CardContent>
@@ -173,7 +173,7 @@ export default function GradeAssignmentPage({ params }: { params: Promise<{ assi
                                 <AvatarImage src={author?.avatarUrl} />
                                 <AvatarFallback>{author ? getInitials(author.name) : 'U'}</AvatarFallback>
                             </Avatar>
-                            <div>
+                            <div className="flex-1">
                                 <p className="font-semibold text-sm">{author?.name}</p>
                                 <p className="text-sm">{comment.content}</p>
                             </div>
